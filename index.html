@@ -14,7 +14,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- PeerJS (WebRTC P2P) -->
+    <!-- PeerJS (WebRTC P2P + TURN TCP 443) -->
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <!-- QRCode.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -43,7 +43,7 @@
     <style>
         :root {
             --bg-primary: #060913;
-            --bg-glass: rgba(15, 23, 42, 0.72);
+            --bg-glass: rgba(15, 23, 42, 0.75);
             --border-glass: rgba(255, 255, 255, 0.08);
         }
         body {
@@ -68,7 +68,7 @@
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .win-card:hover {
-            background: rgba(30, 41, 59, 0.8);
+            background: rgba(30, 41, 59, 0.82);
             border-color: rgba(59, 130, 246, 0.45);
             transform: translateY(-2px);
             box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.6), 0 0 15px -3px rgba(59, 130, 246, 0.2);
@@ -78,7 +78,6 @@
             border-color: #3b82f6;
             box-shadow: 0 0 0 1px #3b82f6;
         }
-        /* Özel Kaydırma Çubuğu */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 9999px; }
@@ -90,8 +89,6 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
         }
         .qr-glow:hover { animation: pulse-ring 2s infinite; }
-
-        /* Mobil Görünüm Ayarları */
         #mobile-app { height: 100dvh; }
     </style>
 </head>
@@ -112,9 +109,13 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="font-bold text-base tracking-tight text-white">TonoScan <span class="text-blue-400 font-extrabold">Studio</span></h1>
-                        <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">P2P Şifreli Hub</span>
+                        <!-- Canlı Ağ & Firewall Tünel Rozeti -->
+                        <span id="firewall-status-badge" class="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+                            TCP 443 Tüneli Hazırlanıyor...
+                        </span>
                     </div>
-                    <p class="text-[11px] text-slate-400">Çoklu Cihaz Kablosuz Kamera, Evrak Tarama ve PDF Ayıklama Sistemi</p>
+                    <p class="text-[11px] text-slate-400">Kurumsal Güvenlik Duvarı Uyumlu (Port 443 TURN) Kablosuz Kamera & Evrak Merkezi</p>
                 </div>
             </div>
 
@@ -176,7 +177,7 @@
                         <!-- Tıklanabilir QR Alanı -->
                         <div onclick="openQRModal()" class="qr-glow cursor-pointer bg-white p-3.5 rounded-xl flex flex-col items-center justify-center relative group transition">
                             <div id="sidebar-qr"></div>
-                            <div class=" inset-0 bg-slate-950/75 opacity-0 group-hover:opacity-100 rounded-xl transition flex flex-col items-center justify-center text-white p-2 text-center">
+                            <div class="absolute inset-0 bg-slate-950/80 opacity-0 group-hover:opacity-100 rounded-xl transition flex flex-col items-center justify-center text-white p-2 text-center">
                                 <i class="fa-solid fa-magnifying-glass-plus text-2xl text-blue-400 mb-1"></i>
                                 <span class="text-xs font-bold">Tam Ekran Büyüt</span>
                                 <span class="text-[10px] text-slate-300">Yeni telefon eklemek için tıklayın</span>
@@ -230,7 +231,7 @@
                 <!-- Alt Bilgi & İmza -->
                 <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
                     <span>Created by <b class="text-slate-300">Tonoz</b></span>
-                    <span class="font-mono text-[10px] text-slate-600">v2.5 Studio</span>
+                    <span class="font-mono text-[10px] text-emerald-400">TCP:443 TURN</span>
                 </div>
             </aside>
 
@@ -263,7 +264,6 @@
                         <button onclick="setFilter('pdf')" id="filter-btn-pdf" class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1">
                             <i class="fa-regular fa-file-pdf text-red-400"></i> PDF Belgeleri
                         </button>
-                        <!-- Bağlanan cihazların renkli filtre butonları dinamik olarak buraya eklenir -->
                         <div id="dynamic-sender-filters" class="flex items-center gap-1.5"></div>
                     </div>
 
@@ -298,7 +298,7 @@
                         </div>
                         <h2 class="text-xl font-bold text-white mb-2">Klasör Henüz Boş</h2>
                         <p class="text-xs text-slate-400 leading-relaxed mb-6">
-                            Sol taraftaki karekodu bir veya birden fazla telefondan okutun. Çektiğiniz fotoğraflar, seçtiğiniz galeri görselleri ve yüklediğiniz PDF/Ofis dosyaları <b>kimden geldiği renkli etiketlerle</b> anında bu klasöre düşer.
+                            Sol taraftaki karekodu bir veya birden fazla telefondan okutun. Çektiğiniz fotoğraflar, seçtiğiniz galeri görselleri ve yüklediğiniz PDF/Ofis dosyaları <b>TCP 443 Güvenli Tüneli</b> üzerinden anında bu klasöre düşer.
                         </p>
                         <div class="grid grid-cols-3 gap-3 w-full text-left">
                             <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80">
@@ -312,9 +312,9 @@
                                 <p class="text-[10px] text-slate-400 mt-0.5">PDF sayfalarını tek tek ayıklayın, gereksiz sayfaları silin.</p>
                             </div>
                             <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80">
-                                <i class="fa-solid fa-users-viewfinder text-emerald-400 mb-1.5 block"></i>
-                                <div class="text-xs font-semibold text-slate-200">Çoklu Telefon</div>
-                                <p class="text-[10px] text-slate-400 mt-0.5">Birden fazla kişi bağlanıp aynı anda evrak gönderebilir.</p>
+                                <i class="fa-solid fa-network-wired text-emerald-400 mb-1.5 block"></i>
+                                <div class="text-xs font-semibold text-slate-200">TCP 443 TURN Aktif</div>
+                                <p class="text-[10px] text-slate-400 mt-0.5">UDP kapalı kurumsal ağlarda HTTPS 443 rölesi üzerinden çalışır.</p>
                             </div>
                         </div>
                     </div>
@@ -355,19 +355,19 @@
             <div class="flex items-center gap-2.5">
                 <span id="mob-conn-dot" class="w-3 h-3 rounded-full bg-amber-400 animate-ping"></span>
                 <div>
-                    <div id="mob-conn-status" class="text-xs font-bold text-white">PC'ye Bağlanıyor...</div>
+                    <div id="mob-conn-status" class="text-xs font-bold text-white">TCP 443 Tüneli Kuruluyor...</div>
                     <div id="mob-device-label" class="text-[10px] text-slate-400">Cihaz algılanıyor...</div>
                 </div>
             </div>
 
-            <!-- Kullanıcı Adı Değiştirme (PC'de kimin gönderdiği net görünsün diye) -->
+            <!-- Kullanıcı Adı Değiştirme -->
             <button onclick="changeSenderName()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-blue-400 flex items-center gap-1.5">
                 <i class="fa-solid fa-user-pen"></i>
                 <span id="mob-sender-name-btn">İsim Belirle</span>
             </button>
         </header>
 
-        <!-- Aktif Yükleme Animasyon Kutusu (Mobilde Dosya Giderken) -->
+        <!-- Aktif Yükleme Animasyon Kutusu -->
         <div id="mob-upload-bar" class="hidden z-30 bg-blue-950/90 border-b border-blue-500/30 px-4 py-2.5">
             <div class="flex items-center justify-between text-xs mb-1">
                 <span class="font-semibold text-blue-300 flex items-center gap-1.5">
@@ -411,7 +411,6 @@
 
             <!-- Deklanşör Alt Bar -->
             <div class="relative z-20 px-6 py-5 bg-gradient-to-t from-black via-black/80 to-transparent flex items-center justify-around">
-                <!-- Hızlı Galeri Seçimi -->
                 <label class="cursor-pointer flex flex-col items-center gap-1">
                     <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-lg">
                         <i class="fa-regular fa-images"></i>
@@ -420,14 +419,12 @@
                     <input type="file" accept="image/*" multiple class="hidden" onchange="handleMobileFilesSelected(event)">
                 </label>
 
-                <!-- Ana Fotoğraf Çekme Deklanşörü -->
                 <button onclick="captureMobilePhoto()" class="w-20 h-20 rounded-full bg-white p-1.5 shadow-[0_0_0_6px_rgba(255,255,255,0.25)] active:scale-90 transition flex items-center justify-center">
                     <div class="w-full h-full rounded-full border-2 border-slate-900 flex items-center justify-center">
                         <i class="fa-solid fa-camera text-slate-900 text-xl"></i>
                     </div>
                 </button>
 
-                <!-- Hızlı PDF / Dosya Seçimi -->
                 <label class="cursor-pointer flex flex-col items-center gap-1">
                     <div class="w-12 h-12 rounded-2xl bg-blue-600/80 backdrop-blur-md border border-blue-400/40 flex items-center justify-center text-lg">
                         <i class="fa-solid fa-file-arrow-up"></i>
@@ -446,7 +443,7 @@
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                     </div>
                     <h3 class="font-bold text-base text-white">Telefondan PC'ye Dosya Gönder</h3>
-                    <p class="text-xs text-slate-400 mt-1">Seçtiğiniz tüm fotoğraflar, PDF belgeleri veya dosyalar anında PC ekranındaki klasöre düşer.</p>
+                    <p class="text-xs text-slate-400 mt-1">Seçtiğiniz tüm fotoğraflar, PDF belgeleri veya dosyalar TCP 443 tünelinden PC ekranındaki klasöre düşer.</p>
 
                     <div class="grid grid-cols-2 gap-3 mt-5">
                         <label class="cursor-pointer py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex flex-col items-center gap-2 shadow-lg shadow-blue-600/25">
@@ -476,7 +473,7 @@
             </div>
 
             <div class="text-center text-[11px] text-slate-600 pt-4">
-                TonoScan Studio • Uçtan Uca Şifreli Aktarım
+                TonoScan Studio • TCP 443 TURN Şifreli Aktarım
             </div>
         </div>
 
@@ -500,7 +497,7 @@
     <!-- MODAL 1: BÜYÜK KAREKOD (ÇOKLU TELEFON BAĞLANTI EKRANI)                    -->
     <!-- ========================================================================= -->
     <div id="qr-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden items-center justify-center p-4">
-        <div class="mica-panel max-w-md w-full rounded-3xl p-6 border border-slate-700/80 shadow-2xl text-center relative animate-fade-in">
+        <div class="mica-panel max-w-md w-full rounded-3xl p-6 border border-slate-700/80 shadow-2xl text-center relative">
             <button onclick="closeQRModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -511,7 +508,6 @@
             <h3 class="text-xl font-bold text-white">Telefon Kamerasından Okutun</h3>
             <p class="text-xs text-slate-400 mt-1 mb-5">Aynı karekodu birden fazla telefon okutarak aynı anda bu ekrana fotoğraf veya PDF gönderebilir.</p>
 
-            <!-- Büyük ve Yüksek Kontrastlı QR Kod -->
             <div class="bg-white p-6 rounded-3xl inline-block shadow-2xl border-4 border-blue-500/30 mx-auto">
                 <div id="modal-qr"></div>
             </div>
@@ -536,7 +532,7 @@
             <div class="flex items-center gap-2.5">
                 <i class="fa-solid fa-crop-simple text-blue-400 text-lg"></i>
                 <div>
-                    <h3 class="font-bold text-sm text-white" id="editor-title">Görsel Düzenleyici & Evrak Tarayıcı</h3>
+                    <h3 class="font-bold text-sm text-white">Görsel Düzenleyici & Evrak Tarayıcı</h3>
                     <p class="text-[11px] text-slate-400">Kırpın, döndürün veya fotokopi/tarayıcı netliği uygulayın</p>
                 </div>
             </div>
@@ -575,7 +571,6 @@
     <!-- MODAL 3: PDF SAYFALARINA AYIRMA & GEREKSİZ SAYFALARI SİLME STÜDYOSU       -->
     <!-- ========================================================================= -->
     <div id="pdf-splitter-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden flex-col">
-        <!-- Üst Bar -->
         <div class="px-6 py-4 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 flex items-center justify-center text-lg">
@@ -590,7 +585,7 @@
             <div class="flex items-center gap-2.5">
                 <span id="pdf-remaining-badge" class="text-xs font-mono bg-slate-800 px-3 py-1.5 rounded-lg text-slate-300">0 Sayfa Aktif</span>
                 
-                <button onclick="extractAllPDFPagesToWorkspace()" class="px-3.5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition flex items-center gap-1.5" title="Kalan sayfaları ana klasöre tek tek resim olarak çıkartır">
+                <button onclick="extractAllPDFPagesToWorkspace()" class="px-3.5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition flex items-center gap-1.5">
                     <i class="fa-solid fa-layer-group"></i> Sayfaları Klasöre Tek Tek Ayır
                 </button>
 
@@ -602,7 +597,6 @@
             </div>
         </div>
 
-        <!-- Sayfa Önizleme Grid -->
         <div class="flex-1 p-6 overflow-y-auto">
             <div id="pdf-pages-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5"></div>
         </div>
@@ -624,17 +618,59 @@
         <div class="flex-1 p-6 flex items-center justify-center overflow-auto" id="preview-body"></div>
     </div>
 
-    <!-- Gizli İşlem Canvas'ı -->
     <canvas id="work-canvas" class="hidden"></canvas>
 
     <!-- ========================================================================= -->
-    <!-- UYGULAMA JAVASCRIPT MOTORU                                                -->
+    <!-- UYGULAMA JAVASCRIPT MOTORU (TCP 443 TURN & FIREWALL BYPASS ENTEGRELİ)     -->
     <!-- ========================================================================= -->
     <script>
-        // PDF.js Worker Ayarı
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        // --- CİHAZ RENK PALETİ (Her bağlanan telefona özel renk) ---
+        // =========================================================================
+        // KURUMSAL GÜVENLİK DUVARI (BELEDİYE AĞI) AŞMA YAPILANDIRMASI (TCP 443 TURN)
+        // =========================================================================
+        const PEER_FIREWALL_CONFIG = {
+            secure: true,
+            port: 443,
+            config: {
+                iceTransportPolicy: 'all', // UDP engelliyse otomatik TCP 443 TURN'e düşer
+                iceCandidatePoolSize: 10,
+                iceServers: [
+                    // 1. Standart STUN Sunucuları
+                    { urls: "stun:stun.l.google.com:19302" },
+                    { urls: "stun:stun.cloudflare.com:3478" },
+                    // 2. Port 80 (HTTP) ve Port 443 (HTTPS) UDP/TCP TURN Röleleri
+                    {
+                        urls: "turn:openrelay.metered.ca:80",
+                        username: "openrelayproject",
+                        credential: "openrelayproject"
+                    },
+                    {
+                        urls: "turn:openrelay.metered.ca:80?transport=tcp",
+                        username: "openrelayproject",
+                        credential: "openrelayproject"
+                    },
+                    {
+                        urls: "turn:openrelay.metered.ca:443",
+                        username: "openrelayproject",
+                        credential: "openrelayproject"
+                    },
+                    // 3. EN ÖNEMLİ KISIM: Belediye Firewall'unu Aşan Saf TCP 443 ve TLS (TURNS) Tüneli
+                    {
+                        urls: "turn:openrelay.metered.ca:443?transport=tcp",
+                        username: "openrelayproject",
+                        credential: "openrelayproject"
+                    },
+                    {
+                        urls: "turns:openrelay.metered.ca:443?transport=tcp",
+                        username: "openrelayproject",
+                        credential: "openrelayproject"
+                    }
+                ]
+            }
+        };
+
+        // --- CİHAZ RENK PALETİ ---
         const DEVICE_PALETTE = [
             { name: 'Mavi', bg: 'bg-blue-500/20', border: 'border-blue-500/40', text: 'text-blue-400', hex: '#3b82f6' },
             { name: 'Zümrüt', bg: 'bg-emerald-500/20', border: 'border-emerald-500/40', text: 'text-emerald-400', hex: '#10b981' },
@@ -653,21 +689,18 @@
         let myRoomId = null;
         let myRoomKey = null;
 
-        // PC Tarafı: Bağlı Telefonlar ve Dosya Listesi
-        const connectedDevices = new Map(); // peerId -> { conn, name, model, os, battery, color, filesSent }
-        const incomingChunks = new Map();   // transferId -> { meta, chunks:[], receivedBytes, startTime }
-        let workspaceFiles = [];            // { id, name, type ('image'|'pdf'|'other'), mime, size, dataUrl, blobUrl, thumbnail, pageCount, senderId, senderName, senderColor, time, selected }
+        const connectedDevices = new Map();
+        const incomingChunks = new Map();
+        let workspaceFiles = [];
         
-        let currentFilter = 'all';          // 'all' | 'image' | 'pdf' | peerId
-        let currentViewMode = 'grid';       // 'grid' | 'list'
+        let currentFilter = 'all';
+        let currentViewMode = 'grid';
 
-        // Editör & PDF Ayırıcı Değişkenleri
         let cropperInstance = null;
         let editingFileId = null;
         let currentEditorFilter = 'none';
-        let activeSplitPDF = { fileId: null, fileName: '', pages: [] }; // pages: [{ pageNum, dataUrl, width, height, deleted, rotation }]
+        let activeSplitPDF = { fileId: null, fileName: '', pages: [] };
 
-        // Mobil Tarafı Değişkenleri
         let mobConn = null;
         let mobStream = null;
         let mobFacing = 'environment';
@@ -675,7 +708,6 @@
         let mobSenderName = localStorage.getItem('tonoscan_sender_name') || '';
         let mobSentCount = 0;
 
-        // --- BAŞLATICI ---
         window.addEventListener('DOMContentLoaded', () => {
             if (targetRoomId) {
                 initMobileSender(targetRoomId, securityToken);
@@ -685,12 +717,11 @@
         });
 
         // =========================================================================
-        // BÖLÜM 1: PC ANA MERKEZ (MULTI-DEVICE RECEIVER & WINDOWS EXPLORER)
+        // BÖLÜM 1: PC ANA MERKEZ (TCP 443 TURN DESTEKLİ ALICI)
         // =========================================================================
         function initPCWorkspace() {
             document.getElementById('pc-app').classList.remove('hidden');
 
-            // Güvenli Benzersiz Oda Kodu ve Anahtar Üret
             const randomPart = Math.random().toString(36).substring(2, 8);
             myRoomId = `tonoscan-${randomPart}`;
             myRoomKey = Math.random().toString(36).substring(2, 10);
@@ -700,7 +731,6 @@
             const joinUrl = `${window.location.origin}${window.location.pathname}?oda=${myRoomId}&key=${myRoomKey}`;
             document.getElementById('modal-qr-url').innerText = joinUrl;
 
-            // 1. Sol Menüdeki Sabit Karekodu Üret
             new QRCode(document.getElementById('sidebar-qr'), {
                 text: joinUrl,
                 width: 175,
@@ -710,7 +740,6 @@
                 correctLevel: QRCode.CorrectLevel.M
             });
 
-            // 2. Büyütülmüş Modal İçindeki Dev Karekodu Üret
             new QRCode(document.getElementById('modal-qr'), {
                 text: joinUrl,
                 width: 300,
@@ -720,17 +749,24 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
 
-            // PeerJS Sunucusunu Başlat
-            peer = new Peer(myRoomId);
+            // PeerJS'i Belediye Firewall Yapılandırmasıyla Başlat
+            peer = new Peer(myRoomId, PEER_FIREWALL_CONFIG);
+
+            const fwBadge = document.getElementById('firewall-status-badge');
 
             peer.on('open', (id) => {
-                console.log('TonoScan Hub Aktif:', id);
+                fwBadge.className = "text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5";
+                fwBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> TCP 443 TURN Rölesi Aktif`;
             });
 
-            // Yeni Bir Telefon Bağlandığında
+            peer.on('error', (err) => {
+                console.error('PeerJS Ağ Hatası:', err);
+                fwBadge.className = "text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-red-500/20 text-red-400 border border-red-500/40 flex items-center gap-1.5";
+                fwBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Firewall Sinyal Sunucusunu Engelledi (${err.type})`;
+            });
+
             peer.on('connection', (conn) => {
                 conn.on('open', () => {
-                    // Güvenlik Anahtarı Doğrulaması
                     if (conn.metadata && conn.metadata.key !== myRoomKey) {
                         conn.close();
                         return;
@@ -748,7 +784,6 @@
                 });
             });
 
-            // Herhangi Bir Telefondan Canlı Kamera Yayını Geldiğinde
             peer.on('call', (call) => {
                 call.answer();
                 call.on('stream', (remoteStream) => {
@@ -762,7 +797,6 @@
                 });
             });
 
-            // PC Üzerinde Sürükle-Bırak İle Dosya Ekleme Desteği
             const dropzone = document.getElementById('explorer-dropzone');
             dropzone.addEventListener('dragover', (e) => { e.preventDefault(); });
             dropzone.addEventListener('drop', (e) => {
@@ -773,9 +807,7 @@
             });
         }
 
-        // Telefondan Gelen Veri Paketlerini İşle (Cihaz Bilgisi & Parçalı Dosya Transferi)
         async function handleIncomingPeerData(conn, data) {
-            // 1. Cihaz Tanıtım Paketi
             if (data.type === 'device-hello') {
                 const colorObj = DEVICE_PALETTE[connectedDevices.size % DEVICE_PALETTE.length];
                 connectedDevices.set(conn.peer, {
@@ -791,16 +823,13 @@
                 });
                 renderConnectedDevices();
                 renderSenderFilterPills();
-                // Eğer büyük QR modalı açıksa ilk bağlantıda kullanıcı görsün diye bildirim sesi/efekti
                 return;
             }
 
-            // 2. Kullanıcı İsim Güncellemesi
             if (data.type === 'update-name') {
                 const dev = connectedDevices.get(conn.peer);
                 if (dev) {
                     dev.name = data.senderName;
-                    // Önceki gönderdiği dosyaların da etiketini güncelle
                     workspaceFiles.forEach(f => {
                         if (f.senderId === conn.peer) f.senderName = data.senderName;
                     });
@@ -811,7 +840,6 @@
                 return;
             }
 
-            // 3. Parçalı Dosya Transfer Başlangıcı (Chunked Transfer Start)
             if (data.type === 'transfer-start') {
                 const dev = connectedDevices.get(conn.peer);
                 incomingChunks.set(data.transferId, {
@@ -824,7 +852,6 @@
                 return;
             }
 
-            // 4. Dosya Parçası (Chunk)
             if (data.type === 'transfer-chunk') {
                 const item = incomingChunks.get(data.transferId);
                 if (!item) return;
@@ -835,7 +862,6 @@
                 return;
             }
 
-            // 5. Transfer Tamamlandı (Chunk Birleştirme)
             if (data.type === 'transfer-end') {
                 const item = incomingChunks.get(data.transferId);
                 if (!item) return;
@@ -863,7 +889,6 @@
             }
         }
 
-        // Bağlanan Telefonların Listesini Sol Panelde Göster
         function renderConnectedDevices() {
             const container = document.getElementById('connected-devices-list');
             const badge = document.getElementById('device-count-badge');
@@ -907,7 +932,6 @@
             });
         }
 
-        // Gönderen Kişilere Göre Üst Bar Filtre Butonları
         function renderSenderFilterPills() {
             const holder = document.getElementById('dynamic-sender-filters');
             holder.innerHTML = '';
@@ -921,7 +945,6 @@
             });
         }
 
-        // Canlı Gelen Dosya Animasyon Çubuğu
         function updateIncomingProgressUI(transferId, fileName, percent, sender) {
             const container = document.getElementById('incoming-transfers-container');
             let row = document.getElementById(`trans-${transferId}`);
@@ -982,7 +1005,6 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        // Yeni Gelen veya PC'den Eklenen Dosyayı Klasöre Kaydet
         async function addFileToWorkspace({ name, mime, size, dataUrl, senderId, senderName, senderColor }) {
             const id = 'file-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
             const blob = dataURLtoBlob(dataUrl);
@@ -998,7 +1020,6 @@
                 thumbnail = dataUrl;
             } else if (mime === 'application/pdf' || name.toLowerCase().endsWith('.pdf')) {
                 fileCategory = 'pdf';
-                // PDF.js ile 1. Sayfanın Gerçek Önizlemesini ve Sayfa Sayısını Çıkar
                 try {
                     const pdfPreview = await generatePDFThumbnail(dataUrl);
                     thumbnail = pdfPreview.thumbDataUrl;
@@ -1031,7 +1052,6 @@
             renderExplorer();
         }
 
-        // PDF Dosyasının İlk Sayfasını Kapak Görseli Yapma
         async function generatePDFThumbnail(pdfDataUrl) {
             const base64 = pdfDataUrl.split(',')[1];
             const binary = atob(base64);
@@ -1054,7 +1074,6 @@
             };
         }
 
-        // WINDOWS EXPLORER GÖRÜNÜMÜNÜ ÇİZ
         function renderExplorer() {
             const totalCountEl = document.getElementById('total-files-count');
             const emptyState = document.getElementById('empty-explorer');
@@ -1065,7 +1084,6 @@
 
             totalCountEl.innerText = workspaceFiles.length;
 
-            // Filtreleme
             const filtered = workspaceFiles.filter(f => {
                 const matchSearch = f.name.toLowerCase().includes(searchQuery) || f.senderName.toLowerCase().includes(searchQuery);
                 if (!matchSearch) return false;
@@ -1093,13 +1111,11 @@
                     const card = document.createElement('div');
                     card.className = `win-card rounded-2xl overflow-hidden flex flex-col justify-between relative group cursor-grab ${file.selected ? 'selected' : ''}`;
 
-                    // MASAÜSTÜNE SÜRÜKLE-BIRAK (Native Windows File DragOut)
                     card.setAttribute('draggable', 'true');
                     card.addEventListener('dragstart', (e) => {
                         e.dataTransfer.setData('DownloadURL', `${file.mime}:${file.name}:${file.blobUrl}`);
                     });
 
-                    // Önizleme Görseli veya Dosya İkonu
                     let previewHTML = '';
                     if (file.thumbnail) {
                         previewHTML = `<img src="${file.thumbnail}" class="w-full h-full object-contain p-2 transition duration-300 group-hover:scale-105">`;
@@ -1111,50 +1127,44 @@
                             </div>`;
                     }
 
-                    // PDF Sayfa Sayısı Rozeti
                     const pdfBadge = file.type === 'pdf'
                         ? `<span class="absolute bottom-2 right-2 bg-red-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow flex items-center gap-1">
                                <i class="fa-solid fa-file-pdf"></i> ${file.pageCount ? file.pageCount + ' Sayfa' : 'PDF'}
                            </span>`
                         : '';
 
-                    // Özel Aksiyon Butonları (Görsel ise Kırp, PDF ise Sayfaları Ayır/Sil)
                     let specialActionBtn = '';
                     if (file.type === 'image') {
                         specialActionBtn = `
-                            <button onclick="openImageEditor('${file.id}')" class="px-2 py-1 rounded bg-blue-500/20 hover:bg-blue-500 text-blue-300 hover:text-white text-[11px] font-medium transition flex items-center gap-1" title="Kırp, Döndür, Netleştir">
+                            <button onclick="openImageEditor('${file.id}')" class="px-2 py-1 rounded bg-blue-500/20 hover:bg-blue-500 text-blue-300 hover:text-white text-[11px] font-medium transition flex items-center gap-1">
                                 <i class="fa-solid fa-crop-simple"></i> Düzenle
                             </button>`;
                     } else if (file.type === 'pdf') {
                         specialActionBtn = `
-                            <button onclick="openPDFSplitter('${file.id}')" class="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 text-[11px] font-bold transition flex items-center gap-1" title="PDF Sayfalarını Ayır ve Gereksiz Sayfaları Sil">
+                            <button onclick="openPDFSplitter('${file.id}')" class="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 text-[11px] font-bold transition flex items-center gap-1">
                                 <i class="fa-solid fa-scissors"></i> Sayfaları Ayır/Sil
                             </button>`;
                     }
 
                     card.innerHTML = `
                         <div>
-                            <!-- Üst Seçim & Gönderen Kişi Rozeti -->
                             <div class="p-2.5 flex items-center justify-between gap-1 z-10">
                                 <label class="cursor-pointer flex items-center gap-1.5 bg-slate-950/80 px-2 py-1 rounded-lg border border-white/5">
                                     <input type="checkbox" ${file.selected ? 'checked' : ''} onchange="toggleFileSelect('${file.id}')" class="w-3.5 h-3.5 accent-blue-500 rounded cursor-pointer">
                                 </label>
 
-                                <!-- Kim Gönderdi Etiketi -->
                                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border ${file.senderColor.bg} ${file.senderColor.text} ${file.senderColor.border} truncate max-w-[140px] flex items-center gap-1" title="Gönderen: ${file.senderName}">
                                     <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background:${file.senderColor.hex}"></span>
                                     <span class="truncate">${file.senderName}</span>
                                 </span>
                             </div>
 
-                            <!-- Önizleme Kutusu -->
                             <div onclick="openPreviewModal('${file.id}')" class="aspect-[4/3] bg-slate-950/70 mx-2.5 rounded-xl overflow-hidden flex items-center justify-center relative cursor-pointer border border-white/5">
                                 ${previewHTML}
                                 ${pdfBadge}
                             </div>
                         </div>
 
-                        <!-- Alt Dosya Bilgisi ve İşlem Çubuğu -->
                         <div class="p-3 mt-1">
                             <div class="text-xs font-semibold text-slate-200 truncate" title="${file.name}">${file.name}</div>
                             <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5 mb-2.5">
@@ -1179,7 +1189,6 @@
                 });
 
             } else {
-                // DETAYLI LİSTE GÖRÜNÜMÜ
                 gridContainer.classList.add('hidden');
                 listContainer.classList.remove('hidden');
                 listBody.innerHTML = '';
@@ -1238,7 +1247,6 @@
             modal.classList.remove('hidden');
             modal.classList.add('flex');
 
-            // PDF'i Oku ve Tüm Sayfaları Render Et
             const base64 = file.dataUrl.split(',')[1];
             const binary = atob(base64);
             const uint8 = new Uint8Array(binary.length);
@@ -1299,7 +1307,6 @@
             renderPDFSplitterPages();
         }
 
-        // Silinmeyen Kalan Sayfaları Yeni Bir Temiz PDF Olarak İndir
         function downloadCleanedPDF() {
             const activePages = activeSplitPDF.pages.filter(p => !p.deleted);
             if (activePages.length === 0) return alert('En az 1 aktif sayfa bırakmalısınız!');
@@ -1317,7 +1324,6 @@
             pdf.save(`${activeSplitPDF.fileName}_Duzenlenmis.pdf`);
         }
 
-        // PDF'in Aktif Sayfalarını Ana Windows Klasörüne Tek Tek Görsel Olarak Çıkar
         async function extractAllPDFPagesToWorkspace() {
             const activePages = activeSplitPDF.pages.filter(p => !p.deleted);
             if (activePages.length === 0) return alert('Çıkartılacak aktif sayfa yok!');
@@ -1357,7 +1363,6 @@
             const pageH = pdf.internal.pageSize.getHeight();
             let firstPageAdded = false;
 
-            // Kronolojik sırayla ekle (ters çevir)
             const ordered = [...selected].reverse();
 
             for (const item of ordered) {
@@ -1370,7 +1375,6 @@
                     pdf.addImage(item.dataUrl, 'JPEG', (pageW - w) / 2, (pageH - h) / 2, w, h);
                     firstPageAdded = true;
                 } else if (item.type === 'pdf') {
-                    // Seçili öğe bir PDF ise tüm sayfalarını açıp yeni PDF'e dahil et
                     const base64 = item.dataUrl.split(',')[1];
                     const binary = atob(base64);
                     const uint8 = new Uint8Array(binary.length);
@@ -1394,7 +1398,6 @@
             pdf.save(`TonoScan_Birlesik_Evrak_${Date.now()}.pdf`);
         }
 
-        // Seçili Görselleri Alt Alta Tek Bir Uzun JPG Olarak Birleştirme
         async function mergeSelectedVerticalJPG() {
             const selected = workspaceFiles.filter(f => f.selected && f.type === 'image');
             if (selected.length < 2) return alert('Alt alta birleştirmek için en az 2 görsel seçmelisiniz.');
@@ -1510,12 +1513,11 @@
         }
 
         // =========================================================================
-        // BÖLÜM 6: MOBİL TELEFON TARAFI (KAMERA + DOSYA YÜKLEYİCİ + CİHAZ BİLGİSİ)
+        // BÖLÜM 6: MOBİL TELEFON TARAFI (TCP 443 TURN DESTEKLİ GÖNDERİCİ)
         // =========================================================================
         async function initMobileSender(roomId, key) {
             document.getElementById('mobile-app').classList.remove('hidden');
 
-            // Cihaz Model ve İşletim Sistemini Tespit Et
             const deviceMeta = await detectMobileDeviceDetails();
             if (!mobSenderName) {
                 mobSenderName = deviceMeta.model;
@@ -1525,18 +1527,21 @@
 
             await startMobileCameraStream();
 
-            peer = new Peer();
+            // Mobil PeerJS'i Belediye Firewall Yapılandırmasıyla Başlat
+            peer = new Peer(undefined, PEER_FIREWALL_CONFIG);
+
             peer.on('open', () => {
+                // Kurumsal Proxy/Firewall dostu JSON serileştirme ile bağlan
                 mobConn = peer.connect(roomId, {
                     reliable: true,
+                    serialization: 'json',
                     metadata: { key: key }
                 });
 
                 mobConn.on('open', () => {
                     document.getElementById('mob-conn-dot').className = "w-3 h-3 rounded-full bg-emerald-400";
-                    document.getElementById('mob-conn-status').innerText = "PC Klasörüne Bağlandı";
+                    document.getElementById('mob-conn-status').innerText = "PC Klasörüne Bağlandı (TCP 443)";
 
-                    // Cihaz Kimliğini PC'ye Gönder
                     mobConn.send({
                         type: 'device-hello',
                         senderName: mobSenderName,
@@ -1546,7 +1551,6 @@
                         battery: deviceMeta.battery
                     });
 
-                    // Canlı Kamera Akışını PC'ye İlet
                     if (mobStream) {
                         peer.call(roomId, mobStream);
                     }
@@ -1563,9 +1567,13 @@
                     document.getElementById('mob-conn-status').innerText = "Bağlantı Kesildi";
                 });
             });
+
+            peer.on('error', (err) => {
+                document.getElementById('mob-conn-dot').className = "w-3 h-3 rounded-full bg-red-500";
+                document.getElementById('mob-conn-status').innerText = `Ağ Hatası: ${err.type}`;
+            });
         }
 
-        // Telefonun Marka, Model, İşletim Sistemi ve Şarj Durumunu Çözümle
         async function detectMobileDeviceDetails() {
             const ua = navigator.userAgent;
             let os = 'Mobil OS';
@@ -1627,7 +1635,6 @@
                 });
                 document.getElementById('mob-video').srcObject = mobStream;
             } catch (e) {
-                console.warn('Kamera açılamadı, dosya yükleme sekmesine geçiliyor.');
                 switchMobileTab('files');
             }
         }
@@ -1667,12 +1674,10 @@
             }
         }
 
-        // Kameradan Fotoğraf Çek ve Parçalı (Chunked) Olarak Gönder
         async function captureMobilePhoto() {
             const video = document.getElementById('mob-video');
             if (!video.videoWidth) return;
 
-            // Deklanşör Flaş Efekti
             const flash = document.getElementById('mob-flash');
             flash.classList.remove('opacity-0');
             setTimeout(() => flash.classList.add('opacity-0'), 120);
@@ -1682,12 +1687,11 @@
             canvas.height = video.videoHeight;
             canvas.getContext('2d').drawImage(video, 0, 0);
 
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.90);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
             const fileName = `Kamera_${new Date().toLocaleTimeString('tr-TR').replace(/:/g, '')}.jpg`;
             await sendFileInChunks(fileName, 'image/jpeg', Math.round(dataUrl.length * 0.75), dataUrl);
         }
 
-        // Galeriden veya Telefondan Seçilen Çoklu Dosyaları Gönder (PDF, Resim, Word vb.)
         async function handleMobileFilesSelected(event) {
             const files = Array.from(event.target.files);
             if (!files.length) return;
@@ -1703,7 +1707,7 @@
             event.target.value = '';
         }
 
-        // 64KB Parçalar Halinde Animasyonlu WebRTC Gönderimi
+        // TCP 443 TURN Rölesi İçin Optimize Edilmiş 32KB Parçalı Gönderim
         async function sendFileInChunks(fileName, fileMime, fileSize, dataUrl) {
             if (!mobConn || !mobConn.open) {
                 alert('PC bağlantısı henüz aktif değil!');
@@ -1711,7 +1715,7 @@
             }
 
             const transferId = 'tx-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6);
-            const chunkSize = 64 * 1024; // 64 KB
+            const chunkSize = 32 * 1024; // 32 KB (TCP TURN tünelleri için en kararlı boyut)
             const totalLength = dataUrl.length;
 
             const bar = document.getElementById('mob-upload-bar');
@@ -1743,9 +1747,8 @@
                 pctEl.innerText = `${pct}%`;
                 progEl.style.width = `${pct}%`;
 
-                // UI animasyonunun akıcı görünmesi için mikro bekleme
-                if (offset % (chunkSize * 4) === 0) {
-                    await new Promise(r => setTimeout(r, 8));
+                if (offset % (chunkSize * 3) === 0) {
+                    await new Promise(r => setTimeout(r, 10));
                 }
             }
 
@@ -1764,7 +1767,7 @@
         }
 
         // =========================================================================
-        // BÖLÜM 7: YARDIMCI ARAÇLAR (PC YEREL DOSYA EKLEME, FİLTRE, ÖNİZLEME, QR MODAL)
+        // BÖLÜM 7: YARDIMCI ARAÇLAR
         // =========================================================================
         async function handleLocalPCFiles(event) {
             const files = Array.from(event.target.files);

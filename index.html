@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>TonoScan Studio | Kablosuz Evrak Aktarım Merkezi</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%232563eb%22/><text x=%2250%%22 y=%2255%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2260%22>📷</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -17,121 +16,235 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <style>
-body{font-family:Inter,system-ui,sans-serif;background:#060913;background-image:radial-gradient(at 0 0,#2563eb24,transparent 45%),radial-gradient(at 100% 0,#8b5cf61f,transparent 45%);color:#f8fafc;overflow:hidden}
-.b{padding:.4rem .7rem;border-radius:.5rem;background:#1e293b;border:1px solid #334155;font-size:.75rem;display:inline-flex;gap:.4rem;align-items:center;cursor:pointer}
-.b:hover{background:#334155}.p{background:#2563eb;border-color:#2563eb}.g{background:#059669;border-color:#059669}.r{color:#f87171}
-.card{background:#1e293b80;border:1px solid #ffffff14;border-radius:1rem;overflow:hidden;transition:.2s}.card:hover{border-color:#3b82f673}.card.sel{border-color:#3b82f6;background:#2563eb2e}
-.md{position:fixed;inset:0;background:#020617f2;z-index:50;display:none;flex-direction:column}.md.on{display:flex}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#94a3b833;border-radius:9px}
+:root{--bg:#060914;--s1:#0d1424;--s2:#141d33;--s3:#1c2742;--line:#ffffff14;--tx:#e8eefb;--mu:#8795b0;--bl:#3b82f6;--r:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--tx);overflow:hidden;font-size:13px;background-image:radial-gradient(900px 500px at 0 -10%,#2563eb26,transparent 60%),radial-gradient(800px 500px at 100% -10%,#8b5cf622,transparent 60%)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input[type=file]{display:none}
+.hidden{display:none!important}.mu{color:var(--mu)}.sm{font-size:11px}
+::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-thumb{background:#94a3b833;border-radius:9px}
+/* Butonlar */
+.btn{height:36px;padding:0 14px;border-radius:10px;display:inline-flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--line);font-weight:600;font-size:12.5px;white-space:nowrap;transition:.15s;cursor:pointer}
+.btn:hover{background:var(--s3);transform:translateY(-1px);border-color:#ffffff2e}
+.btn:active{transform:none}.btn:disabled{opacity:.4;pointer-events:none}
+.btn.pri{background:linear-gradient(135deg,#3b82f6,#7c3aed);border-color:transparent;box-shadow:0 6px 18px -6px #3b82f6aa}
+.btn.ok{background:linear-gradient(135deg,#10b981,#0d9488);border-color:transparent;box-shadow:0 6px 18px -6px #10b981aa}
+.btn.pri:hover,.btn.ok:hover{filter:brightness(1.12)}
+.btn.dg{color:#fca5a5;background:#ef444414;border-color:#ef444433}.btn.dg:hover{background:#ef444429}
+.btn.sm{height:30px;padding:0 10px;font-size:12px;border-radius:8px}
+.btn.on{background:#3b82f633;border-color:var(--bl);color:#bfdbfe}
+/* Üst bar */
+#pc{display:none;height:100vh;flex-direction:column}#pc.on{display:flex}
+.top{height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);background:#0a1020cc;backdrop-filter:blur(16px);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:grid;place-items:center;color:#fff;box-shadow:0 8px 20px -6px #6366f1aa}
+.bt{display:flex;align-items:center;gap:10px}
+.brand h1{font-size:16px;font-weight:800}.brand h1 span{background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand p{font-size:11px;color:var(--mu);margin-top:1px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600;background:#f59e0b22;color:#fbbf24;border:1px solid #f59e0b44}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.ok{background:#10b98122;color:#34d399;border-color:#10b98144}.chip.bad{background:#ef444422;color:#f87171;border-color:#ef444444}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sep{width:1px;height:22px;background:var(--line)}
+.body{flex:1;display:flex;overflow:hidden}
+aside{width:300px;flex-shrink:0;border-right:1px solid var(--line);padding:16px;overflow-y:auto;display:flex;flex-direction:column;justify-content:space-between;gap:16px;background:#0a1020aa}
+.panel{background:var(--s1);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:14px}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+.qrbox{background:#fff;padding:12px;border-radius:12px;display:grid;place-items:center;cursor:pointer;transition:.15s}.qrbox:hover{box-shadow:0 0 0 3px #3b82f666}
+.qa{display:flex;justify-content:space-between;margin-top:10px;gap:6px}
+.foot{font-size:11px;color:#64748b;border-top:1px solid var(--line);padding-top:12px;line-height:1.7}
+.dev{display:flex;gap:10px;padding:10px;border-radius:12px;background:var(--s2);border:1px solid var(--line);margin-bottom:8px}
+.av{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+.dr{display:flex;justify-content:space-between;gap:6px;align-items:center}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}
+.acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+/* Ana alan */
+main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.bar{padding:12px 20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.path{display:flex;align-items:center;gap:8px;font-weight:600}.path i{color:#fbbf24}.path small{background:var(--s2);border-radius:99px;padding:1px 9px;font-size:11px;color:var(--mu)}
+.bar-r{display:flex;gap:10px;align-items:center}
+.seg{display:flex;background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg button{padding:5px 13px;border-radius:7px;font-size:12px;font-weight:600;color:var(--mu)}.seg button.on{background:var(--s3);color:#fff}
+.search{position:relative}.search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:12px}
+.search input{display:block;height:36px;width:210px;background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:0 12px 0 32px;color:var(--tx);outline:0;font:inherit}.search input:focus{border-color:var(--bl)}
+.inc{padding:12px 20px 0;display:flex;flex-direction:column;gap:8px}.inc:empty{display:none}
+.tr{background:var(--s1);border:1px solid #3b82f633;border-radius:12px;padding:10px 12px}
+.tr .l{display:flex;justify-content:space-between;gap:8px}
+.pb{height:6px;background:var(--s3);border-radius:9px;overflow:hidden;margin-top:7px}.pb>div{height:100%;border-radius:9px;transition:width .15s}
+.scroll{flex:1;overflow-y:auto;padding:20px 20px 110px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+.empty{height:100%;min-height:340px;flex-direction:column;align-items:center;justify-content:center;text-align:center;max-width:430px;margin:0 auto;color:var(--mu);line-height:1.7;display:flex}
+.empty .big{width:88px;height:88px;border-radius:28px;display:grid;place-items:center;font-size:36px;color:#60a5fa;background:linear-gradient(135deg,#3b82f61f,#8b5cf61f);border:1px solid #3b82f633;margin-bottom:18px}
+.empty h2{color:#fff;font-size:19px;margin-bottom:6px}
+.card{background:var(--s1);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:.18s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-3px);border-color:#3b82f666;box-shadow:0 16px 32px -14px #000}
+.card.sel{border-color:var(--bl);box-shadow:0 0 0 2px #3b82f655}
+.th{position:relative;aspect-ratio:4/3;background:repeating-conic-gradient(#0b1222 0 25%,#0e1628 0 50%) 0 0/16px 16px;display:grid;place-items:center;cursor:pointer;overflow:hidden}
+.th img{width:100%;height:100%;object-fit:contain;transition:.25s}.card:hover .th img{transform:scale(1.04)}
+.th .ico{font-size:34px;color:#60a5fa}
+.num{position:absolute;top:8px;left:8px;width:28px;height:28px;border-radius:50%;border:2px solid #ffffff77;background:#0009;backdrop-filter:blur(4px);display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;transition:.15s;z-index:2}
+.num:hover{border-color:#fff;transform:scale(1.12)}
+.sel .num{background:linear-gradient(135deg,#3b82f6,#7c3aed);border-color:#fff;box-shadow:0 4px 12px #3b82f688}
+.tag{position:absolute;bottom:8px;left:8px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:#000b;color:#fff}.tag.pdf{background:#dc2626}
+.who{position:absolute;top:8px;right:8px;max-width:58%;font-size:10px;font-weight:700;padding:3px 9px;border-radius:99px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;backdrop-filter:blur(6px)}
+.ci{padding:10px 12px 12px}
+.nm{font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{display:flex;justify-content:space-between;color:var(--mu);font-size:11px;margin-top:2px}
+.sp{margin-left:auto;display:flex;gap:6px}
+/* Seçim çubuğu */
+.selbar{position:absolute;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;padding:10px 12px;background:#0f1a30f0;border:1px solid #ffffff24;border-radius:18px;backdrop-filter:blur(18px);box-shadow:0 20px 50px -10px #000;transition:.25s;z-index:30;max-width:96%;flex-wrap:wrap;justify-content:center}
+.selbar.on{opacity:1;pointer-events:auto;transform:translate(-50%,0)}
+.selbar .c{font-weight:800;padding:0 8px;display:flex;flex-direction:column;line-height:1.25}.selbar .c small{font-weight:500;color:var(--mu);font-size:10px}
+/* Modallar */
+.modal{position:fixed;inset:0;background:#030712ee;backdrop-filter:blur(8px);z-index:50;display:none;flex-direction:column}.modal.on{display:flex}
+.center{align-items:center;justify-content:center;padding:16px}
+.sheet{background:var(--s1);border:1px solid var(--line);border-radius:24px;padding:28px;text-align:center;max-width:430px;width:100%;box-shadow:0 30px 80px -20px #000}
+.sheet h3{font-size:19px;margin:10px 0 4px}.sheet p{color:var(--mu);font-size:12px;line-height:1.6;margin-bottom:16px}
+.pill{display:inline-flex;gap:6px;align-items:center;padding:4px 12px;border-radius:99px;background:#3b82f626;border:1px solid #3b82f650;color:#93c5fd;font-size:11px;font-weight:700}
+.qwrap{background:#fff;padding:20px;border-radius:22px;display:inline-block;box-shadow:0 0 0 5px #3b82f633}
+.mh{padding:14px 20px;background:var(--s1);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.mh b{font-size:14px}.mh small{display:block;color:var(--mu);font-size:11px;margin-top:2px}
+.mf{padding:12px;background:var(--s1);border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.mb{flex:1;min-height:0;overflow:auto;padding:20px;display:flex;align-items:center;justify-content:center}
+.mb.ov{overflow:hidden;background:#0007}
+.pgs{width:100%;align-self:flex-start;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.pg{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:10px;transition:.15s}.pg.del{border-color:#ef444466;opacity:.4}
+.pg .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px}
+.pg img{width:100%;background:#fff;border-radius:8px;display:block}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#1e293bf2;border:1px solid #475569;padding:10px 18px;border-radius:12px;z-index:90;font-size:12.5px;font-weight:500;box-shadow:0 12px 30px -8px #000}
+/* Mobil */
+#mob{display:none;height:100dvh;flex-direction:column;background:#000;position:relative;overflow:hidden}#mob.on{display:flex}
+#mv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.frame{position:absolute;inset:96px 26px 200px;pointer-events:none}
+.frame i{position:absolute;width:26px;height:26px;border:3px solid #60a5fa;opacity:.9}
+.frame i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0;border-radius:10px 0 0 0}.frame i:nth-child(2){top:0;right:0;border-left:0;border-bottom:0;border-radius:0 10px 0 0}
+.frame i:nth-child(3){bottom:0;left:0;border-right:0;border-top:0;border-radius:0 0 0 10px}.frame i:nth-child(4){bottom:0;right:0;border-left:0;border-top:0;border-radius:0 0 10px 0}
+.mtop{position:absolute;top:0;left:0;right:0;z-index:5;padding:max(12px,env(safe-area-inset-top)) 14px 22px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(#000d,transparent)}
+.mst{display:flex;align-items:center;gap:10px}#md{width:11px;height:11px;border-radius:50%;background:#fbbf24;box-shadow:0 0 0 4px #fbbf2433}
+#ms{font-weight:700;font-size:13px}#ml{font-size:10.5px;color:#aab6cc}
+.glass{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:99px;background:#ffffff1f;border:1px solid #ffffff33;backdrop-filter:blur(12px);font-size:12px;font-weight:600;color:#fff}
+#mu{position:absolute;top:calc(env(safe-area-inset-top,0px) + 72px);left:14px;right:14px;z-index:6;background:#0b1b4ad9;backdrop-filter:blur(12px);border:1px solid #3b82f666;border-radius:14px;padding:10px 12px;font-size:12px}
+#mu .l{display:flex;justify-content:space-between;gap:8px;font-weight:600}#mu .l span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side{position:absolute;right:14px;top:50%;transform:translateY(-60%);z-index:5;display:flex;flex-direction:column;gap:12px}
+.cb{width:46px;height:46px;border-radius:50%;background:#0008;border:1px solid #ffffff33;backdrop-filter:blur(10px);display:grid;place-items:center;color:#fff;font-size:16px}.cb.on{background:#f59e0b;color:#000}
+#mh{position:absolute;left:14px;right:84px;bottom:176px;z-index:4;display:flex;flex-direction:column;gap:5px;pointer-events:none}
+#mh div{padding:5px 11px;border-radius:99px;background:#000a;color:#34d399;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:fit-content;max-width:100%}
+.mbot{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:30px 20px calc(20px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;align-items:center;background:linear-gradient(transparent,#000e)}
+.rb{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#dbe4f5;cursor:pointer}
+.rb .c{width:56px;height:56px;border-radius:19px;background:#ffffff26;border:1px solid #ffffff33;backdrop-filter:blur(12px);display:grid;place-items:center;font-size:20px}
+.rb.b .c{background:linear-gradient(135deg,#3b82f6,#7c3aed);border-color:transparent}
+.shut{width:80px;height:80px;border-radius:50%;background:#fff;box-shadow:0 0 0 5px #ffffff55;display:grid;place-items:center;color:#0f172a;font-size:25px;transition:.12s}.shut:active{transform:scale(.9)}
+#fl{pointer-events:none;position:fixed;inset:0;background:#fff;opacity:0;transition:opacity .15s;z-index:99}
+@media(max-width:1100px){.brand p{display:none}.search input{width:150px}}
 </style>
 </head>
 <body>
 
 <!-- PC -->
-<div id="pc" class="hidden h-screen">
- <header class="h-14 px-4 flex items-center justify-between border-b border-slate-800 shrink-0 gap-2">
-  <div class="flex items-center gap-3"><b class="text-base">TonoScan <span class="text-blue-400">Studio</span></b><span id="st" class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400">Bağlanıyor...</span></div>
-  <div class="flex gap-2 flex-wrap">
-   <label class="b"><i class="fa-solid fa-folder-plus text-amber-400"></i>PC'den Ekle<input type="file" multiple hidden onchange="pcFiles(this.files);this.value=''"></label>
-   <button class="b" onclick="selAll()"><i class="fa-solid fa-check-double text-blue-400"></i>Tümünü Seç</button>
-   <button class="b" onclick="mergeJPG()"><i class="fa-solid fa-arrows-up-down text-purple-400"></i>Alt Alta JPG</button>
-   <button class="b g" onclick="mergePDF()"><i class="fa-solid fa-file-pdf"></i>Seçilileri PDF Birleştir</button>
-   <button class="b p" onclick="dlSel()"><i class="fa-solid fa-download"></i>Seçilileri İndir</button>
-   <button class="b r" onclick="clearAll()" title="Tüm dosyaları sil"><i class="fa-solid fa-trash-can"></i>Temizle</button>
+<div id="pc">
+ <header class="top">
+  <div class="brand">
+   <div class="logo"><i class="fa-solid fa-qrcode"></i></div>
+   <div><div class="bt"><h1>TonoScan <span>Studio</span></h1><span id="st" class="chip">Bağlanıyor...</span></div><p>Telefondan PC'ye şifreli evrak ve fotoğraf aktarımı</p></div>
+  </div>
+  <div class="tools">
+   <label class="btn"><i class="fa-solid fa-folder-plus" style="color:#fbbf24"></i>PC'den Ekle<input type="file" multiple onchange="pcFiles(this.files);this.value=''"></label>
+   <button class="btn" onclick="selAll()"><i class="fa-solid fa-list-check" style="color:#60a5fa"></i>Tümünü Seç</button>
+   <div class="sep"></div>
+   <button class="btn dg" onclick="clearAll()"><i class="fa-solid fa-trash-can"></i>Temizle</button>
   </div>
  </header>
- <div class="flex" style="height:calc(100vh - 3.5rem)">
-  <aside class="w-72 shrink-0 border-r border-slate-800 p-4 overflow-y-auto flex flex-col justify-between gap-4">
-   <div class="space-y-4">
-    <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800">
-     <div class="flex justify-between items-center mb-2 text-xs"><span class="font-semibold"><i class="fa-solid fa-shield-halved text-emerald-400"></i> Uçtan Uca Şifreli Karekod</span><button class="text-blue-400" onclick="show('qm',1)">Büyüt</button></div>
-     <div class="bg-white p-3 rounded-xl flex justify-center cursor-pointer" onclick="show('qm',1)"><div id="qr1"></div></div>
-     <div class="flex justify-between mt-2 text-[11px] text-slate-400"><button onclick="copyLink()"><i class="fa-regular fa-copy"></i> Linki Kopyala</button><button class="text-amber-400" onclick="newRoom()"><i class="fa-solid fa-rotate"></i> QR'ı Yenile</button></div>
+ <div class="body">
+  <aside>
+   <div>
+    <div class="panel">
+     <div class="ph"><span><i class="fa-solid fa-shield-halved" style="color:#34d399"></i> Şifreli Karekod</span><button class="btn sm" onclick="show('qm',1)"><i class="fa-solid fa-expand"></i>Büyüt</button></div>
+     <div class="qrbox" onclick="show('qm',1)"><div id="qr1"></div></div>
+     <div class="qa"><button class="btn sm" onclick="copyLink()"><i class="fa-regular fa-copy"></i>Kopyala</button><button class="btn sm dg" onclick="newRoom()"><i class="fa-solid fa-rotate"></i>QR'ı Yenile</button></div>
     </div>
-    <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800">
-     <div class="flex justify-between mb-2"><h2 class="text-xs font-bold uppercase text-slate-400"><i class="fa-solid fa-mobile-screen-button text-blue-400"></i> Cihazlar</h2><span id="dc" class="text-[11px] text-blue-400">0 aktif</span></div>
-     <div id="dl" class="space-y-2 max-h-72 overflow-y-auto"></div>
+    <div class="panel">
+     <div class="ph"><span><i class="fa-solid fa-mobile-screen-button" style="color:#60a5fa"></i> Cihazlar</span><span id="dc" style="color:#60a5fa">0 aktif</span></div>
+     <div id="dl"></div>
     </div>
    </div>
-   <div class="text-[11px] text-slate-500 border-t border-slate-800 pt-3"><div id="stor">Depolama...</div><div>Created by <b class="text-slate-300">Tonoz</b></div></div>
+   <div class="foot"><div id="stor">Depolama...</div>Created by <b style="color:#cbd5e1">Tonoz</b></div>
   </aside>
-  <main class="flex-1 flex flex-col overflow-hidden" id="drop">
-   <div class="px-5 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
-    <div class="text-xs"><i class="fa-solid fa-folder-open text-amber-400"></i> Gelen Evraklar (<span id="cnt">0</span>)</div>
-    <div class="flex gap-1.5">
-     <button class="b" id="f-all" onclick="setFlt('all')">Tümü</button><button class="b" id="f-image" onclick="setFlt('image')">Görseller</button><button class="b" id="f-pdf" onclick="setFlt('pdf')">PDF</button>
-     <input id="q" oninput="render()" placeholder="Ara..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 text-xs outline-none w-44">
+  <main id="drop">
+   <div class="bar">
+    <div class="path"><i class="fa-solid fa-folder-open"></i>Gelen Evraklar<small id="cnt">0</small></div>
+    <div class="bar-r">
+     <div class="seg"><button id="f-all" onclick="setFlt('all')">Tümü</button><button id="f-image" onclick="setFlt('image')">Görseller</button><button id="f-pdf" onclick="setFlt('pdf')">PDF</button></div>
+     <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input id="q" oninput="render()" placeholder="Dosya veya cihaz ara..."></div>
     </div>
    </div>
-   <div id="inc" class="px-5 pt-3 space-y-2 empty:hidden"></div>
-   <div class="flex-1 p-5 overflow-y-auto">
-    <div id="empty" class="h-full flex flex-col items-center justify-center text-center max-w-md mx-auto text-slate-400 text-xs">
-     <i class="fa-solid fa-cloud-arrow-up text-5xl text-blue-400 mb-4"></i><h2 class="text-lg font-bold text-white mb-1">Klasör boş</h2>
-     Karekodu telefondan okutun. Fotoğraf ve dosyalar şifrelenerek gelir, bu bilgisayarda saklanır; sayfayı yenileseniz de kalır. Dosyaları sürükleyip masaüstüne atabilirsiniz.
+   <div id="inc" class="inc"></div>
+   <div class="scroll">
+    <div id="empty" class="empty">
+     <div class="big"><i class="fa-solid fa-cloud-arrow-up"></i></div><h2>Klasör henüz boş</h2>
+     Karekodu telefondan okutun. Fotoğraf ve dosyalar şifrelenerek gelir, bu bilgisayarda saklanır ve sayfayı yenileseniz de kalır. Dosyaları sürükleyip masaüstüne bırakabilirsiniz.
     </div>
-    <div id="grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4"></div>
+    <div id="grid" class="grid"></div>
+   </div>
+   <div id="selbar" class="selbar">
+    <div class="c"><span id="selc">0 seçili</span><small>Birleştirme seçim sırasına göre (1, 2, 3...)</small></div>
+    <button id="bpdf" class="btn ok" onclick="mergePDF()"><i class="fa-solid fa-file-pdf"></i>PDF Birleştir</button>
+    <button id="bjpg" class="btn" onclick="mergeJPG()"><i class="fa-solid fa-arrows-up-down" style="color:#c4b5fd"></i>Alt Alta JPG</button>
+    <button class="btn pri" onclick="dlSel()"><i class="fa-solid fa-download"></i>İndir</button>
+    <button class="btn" onclick="clearSel()"><i class="fa-solid fa-xmark"></i>Seçimi Temizle</button>
    </div>
   </main>
  </div>
 </div>
 
 <!-- MOBİL -->
-<div id="mob" class="hidden h-[100dvh] bg-black">
- <header class="px-4 py-3 bg-slate-900 flex justify-between items-center z-10">
-  <div class="flex items-center gap-2.5"><span id="md" class="w-3 h-3 rounded-full bg-amber-400"></span><div><div id="ms" class="text-xs font-bold">Bağlanıyor...</div><div id="ml" class="text-[10px] text-slate-400"></div></div></div>
-  <button class="b" onclick="rename()"><i class="fa-solid fa-user-pen text-blue-400"></i><span id="mn"></span></button>
- </header>
- <div id="mu" class="hidden bg-blue-950 px-4 py-2 text-xs z-10"><div class="flex justify-between"><span id="mun" class="truncate"></span><span id="mup" class="font-mono font-bold"></span></div><div class="h-1.5 bg-slate-800 rounded mt-1 overflow-hidden"><div id="mub" class="h-full bg-blue-500" style="width:0"></div></div></div>
- <div class="flex-1 relative overflow-hidden">
-  <video id="mv" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover"></video>
-  <div class="absolute inset-6 border-2 border-white/25 rounded-2xl pointer-events-none"></div>
-  <div class="absolute top-3 right-3 flex flex-col gap-2">
-   <button onclick="torch()" id="mt" class="w-10 h-10 rounded-full bg-black/60 border border-white/15"><i class="fa-solid fa-bolt"></i></button>
-   <button onclick="flip()" class="w-10 h-10 rounded-full bg-black/60 border border-white/15"><i class="fa-solid fa-camera-rotate"></i></button>
-  </div>
-  <div id="mh" class="absolute bottom-2 left-3 right-3 space-y-1 text-[11px]"></div>
+<div id="mob">
+ <video id="mv" autoplay playsinline muted></video>
+ <div class="frame"><i></i><i></i><i></i><i></i></div>
+ <div class="mtop">
+  <div class="mst"><span id="md"></span><div><div id="ms">Bağlanıyor...</div><div id="ml"></div></div></div>
+  <button class="glass" onclick="rename()"><i class="fa-solid fa-user-pen" style="color:#93c5fd"></i><span id="mn"></span></button>
  </div>
- <div class="bg-black py-5 flex justify-around items-center z-10">
-  <label class="flex flex-col items-center gap-1 text-[10px] text-slate-300 cursor-pointer"><span class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center text-lg"><i class="fa-regular fa-images"></i></span>Galeri<input type="file" accept="image/*,video/*" multiple hidden onchange="pick(this)"></label>
-  <button onclick="shoot()" class="w-20 h-20 rounded-full bg-white p-1.5 active:scale-90 transition"><span class="w-full h-full rounded-full border-2 border-slate-900 flex items-center justify-center"><i class="fa-solid fa-camera text-slate-900 text-xl"></i></span></button>
-  <label class="flex flex-col items-center gap-1 text-[10px] text-blue-300 cursor-pointer"><span class="w-12 h-12 rounded-2xl bg-blue-600/80 flex items-center justify-center text-lg"><i class="fa-solid fa-file-arrow-up"></i></span>Dosya<input type="file" multiple hidden onchange="pick(this)"></label>
+ <div id="mu" class="hidden"><div class="l"><span id="mun"></span><span id="mup"></span></div><div class="pb"><div id="mub" style="width:0;background:linear-gradient(90deg,#3b82f6,#34d399)"></div></div></div>
+ <div class="side"><button id="mt" class="cb" onclick="torch()"><i class="fa-solid fa-bolt"></i></button><button class="cb" onclick="flip()"><i class="fa-solid fa-camera-rotate"></i></button></div>
+ <div id="mh"></div>
+ <div class="mbot">
+  <label class="rb"><span class="c"><i class="fa-regular fa-images"></i></span>Galeri<input type="file" accept="image/*,video/*" multiple onchange="pick(this)"></label>
+  <button class="shut" onclick="shoot()"><i class="fa-solid fa-camera"></i></button>
+  <label class="rb b"><span class="c"><i class="fa-solid fa-file-arrow-up"></i></span>Dosya<input type="file" multiple onchange="pick(this)"></label>
  </div>
- <div id="fl" class="pointer-events-none fixed inset-0 bg-white opacity-0 transition-opacity duration-150 z-50"></div>
+ <div id="fl"></div>
 </div>
 
 <!-- Modallar -->
-<div id="qm" class="md items-center justify-center p-4" onclick="if(event.target===this)show('qm',0)">
- <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 text-center max-w-md w-full">
-  <h3 class="text-lg font-bold mb-3">Telefon Kamerasından Okutun</h3>
-  <div class="bg-white p-5 rounded-2xl inline-block"><div id="qr2"></div></div>
-  <p class="text-[11px] text-slate-400 mt-3">Birden fazla telefon aynı karekodu okutabilir. Her yeni telefon için burada onay vermeniz istenir.</p>
-  <button class="b mt-3" onclick="show('qm',0)">Kapat</button>
+<div id="qm" class="modal center" onclick="if(event.target===this)show('qm',0)">
+ <div class="sheet">
+  <span class="pill"><i class="fa-solid fa-qrcode"></i> Cihaz Bağlantı Noktası</span>
+  <h3>Telefon Kamerasından Okutun</h3>
+  <p>Yeni bir telefon bağlanınca bu pencere kendiliğinden kapanır. Her yeni telefon için onayınız istenir.</p>
+  <div class="qwrap"><div id="qr2"></div></div>
+  <div style="margin-top:18px"><button class="btn" onclick="show('qm',0)"><i class="fa-solid fa-xmark"></i>Kapat</button></div>
  </div>
 </div>
-<div id="edm" class="md">
- <div class="px-5 py-3 bg-slate-900 flex flex-wrap justify-between items-center gap-2">
-  <b class="text-sm"><i class="fa-solid fa-crop-simple text-blue-400"></i> Görsel Düzenleyici</b>
-  <div class="flex gap-2"><button class="b" onclick="closeEd()">İptal</button><button class="b" onclick="saveEd(true)">Kopya Kaydet</button><button class="b p" onclick="saveEd(false)">Üzerine Kaydet</button></div>
- </div>
- <div class="flex-1 overflow-hidden p-5 flex items-center justify-center bg-black/60"><img id="cri" class="max-h-full max-w-full"></div>
- <div class="p-3 bg-slate-900 flex flex-wrap justify-center gap-2">
-  <button class="b" onclick="cr.rotate(-90)">⟲ Sola</button><button class="b" onclick="cr.rotate(90)">⟳ Sağa</button>
-  <button class="b" onclick="cr.setAspectRatio(NaN)">Serbest</button><button class="b" onclick="cr.setAspectRatio(210/297)">Dikey A4</button><button class="b" onclick="cr.setAspectRatio(297/210)">Yatay A4</button>
-  <button class="b" onclick="setEdF('none')">Orijinal</button><button class="b" onclick="setEdF('gray')">Gri</button><button class="b text-amber-300" onclick="setEdF('scan')"><i class="fa-solid fa-wand-magic-sparkles"></i> Net Evrak</button>
+<div id="edm" class="modal">
+ <div class="mh"><div><b><i class="fa-solid fa-crop-simple" style="color:#60a5fa"></i> Görsel Düzenleyici</b><small>Kırpın, döndürün veya net evrak filtresi uygulayın</small></div>
+  <div class="tools"><button class="btn" onclick="closeEd()">İptal</button><button class="btn" onclick="saveEd(true)"><i class="fa-regular fa-clone"></i>Kopya Kaydet</button><button class="btn pri" onclick="saveEd(false)"><i class="fa-solid fa-check"></i>Üzerine Kaydet</button></div></div>
+ <div class="mb ov"><img id="cri" style="max-width:100%;max-height:100%"></div>
+ <div class="mf">
+  <button class="btn sm" onclick="cr.rotate(-90)"><i class="fa-solid fa-rotate-left"></i>Sola</button><button class="btn sm" onclick="cr.rotate(90)"><i class="fa-solid fa-rotate-right"></i>Sağa</button><div class="sep"></div>
+  <button class="btn sm" onclick="cr.setAspectRatio(NaN)">Serbest</button><button class="btn sm" onclick="cr.setAspectRatio(210/297)">Dikey A4</button><button class="btn sm" onclick="cr.setAspectRatio(297/210)">Yatay A4</button><div class="sep"></div>
+  <button class="btn sm" onclick="setEdF('none')">Orijinal</button><button class="btn sm" onclick="setEdF('gray')">Gri</button><button class="btn sm" style="color:#fcd34d;border-color:#f59e0b55" onclick="setEdF('scan')"><i class="fa-solid fa-wand-magic-sparkles"></i>Net Evrak</button>
  </div>
 </div>
-<div id="spm" class="md">
- <div class="px-5 py-3 bg-slate-900 flex flex-wrap justify-between items-center gap-2">
-  <div><b id="spt" class="text-sm">PDF Sayfaları</b><div class="text-[11px] text-slate-400">Silinecek sayfaları işaretleyin.</div></div>
-  <div class="flex gap-2 items-center"><span id="spb" class="text-xs font-mono"></span><button class="b" onclick="spEach()">Sayfaları Ayrı PDF Yap</button><button class="b g" onclick="spSave()">Kalanlarla Yeni PDF</button><button class="b" onclick="show('spm',0)">Kapat</button></div>
- </div>
- <div class="flex-1 overflow-y-auto p-5"><div id="spg" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4"></div></div>
+<div id="spm" class="modal">
+ <div class="mh"><div><b id="spt">PDF Sayfaları</b><small>Silmek istediğiniz sayfaları işaretleyin</small></div>
+  <div class="tools"><span id="spb" class="chip ok"></span><button class="btn" onclick="spEach()"><i class="fa-solid fa-layer-group"></i>Her Sayfayı Ayrı PDF Yap</button><button class="btn ok" onclick="spSave()"><i class="fa-solid fa-file-circle-check"></i>Kalanlarla Yeni PDF</button><button class="btn" onclick="show('spm',0)">Kapat</button></div></div>
+ <div class="mb"><div id="spg" class="pgs"></div></div>
 </div>
-<div id="pvm" class="md">
- <div class="px-5 py-3 flex justify-between items-center border-b border-white/10"><b id="pvt" class="text-sm"></b><button class="b" onclick="show('pvm',0);$('pvb').innerHTML=''">Kapat</button></div>
- <div id="pvb" class="flex-1 p-5 flex items-center justify-center overflow-auto"></div>
+<div id="pvm" class="modal">
+ <div class="mh"><b id="pvt"></b><button class="btn" onclick="show('pvm',0);$('pvb').innerHTML=''"><i class="fa-solid fa-xmark"></i>Kapat</button></div>
+ <div id="pvb" class="mb"></div>
 </div>
-<div id="tt" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-600 text-xs px-4 py-2 rounded-xl z-[60] hidden"></div>
+<div id="tt" class="toast hidden"></div>
 
 <script>
 const FB={apiKey:"AIzaSyC1yFeAKzqziGz_Z0C8RHgSabSRb7Wff_M",authDomain:"tarama-646dc.firebaseapp.com",databaseURL:"https://tarama-646dc-default-rtdb.europe-west1.firebasedatabase.app",projectId:"tarama-646dc",storageBucket:"tarama-646dc.firebasestorage.app",messagingSenderId:"50610490478",appId:"1:50610490478:web:7b6c5e0d731c1942c6aa7f"};
@@ -146,10 +259,10 @@ const u64=u=>b64(u).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 const un64u=s=>unb64(s.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-s.length%4)%4));
 const rid=n=>u64(crypto.getRandomValues(new Uint8Array(n)));
 const toBlob=(c,q)=>new Promise(r=>c.toBlob(r,'image/jpeg',q));
-function toast(m){const t=$('tt');t.textContent=m;t.classList.remove('hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hidden'),3000)}
+function toast(m){const t=$('tt');t.textContent=m;t.classList.remove('hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hidden'),3200)}
 function show(id,on){$(id).classList.toggle('on',!!on)}
 
-let db,room,K,files=[],devs={},rx={},flt='all',cr=null,edF='none',ed=null,sp=null;
+let db,room,K,files=[],sel=[],devs={},rx={},flt='all',cr=null,edF='none',ed=null,sp=null;
 
 /* ---------- Şifreleme (AES-GCM, parça sırası AAD'ye bağlı) ---------- */
 async function initKey(k){K=await crypto.subtle.importKey('raw',un64u(k),'AES-GCM',false,['encrypt','decrypt'])}
@@ -162,7 +275,7 @@ const R=p=>db.ref(`rooms/${room}/${p}`);
 let idb;
 const idbOpen=()=>new Promise((res,rej)=>{const r=indexedDB.open('tonoscan',1);r.onupgradeneeded=()=>r.result.createObjectStore('files',{keyPath:'id'});r.onsuccess=()=>{idb=r.result;res()};r.onerror=()=>rej(r.error)});
 const idbTx=(m,fn)=>new Promise((res,rej)=>{const t=idb.transaction('files',m),s=t.objectStore('files'),q=fn(s);t.oncomplete=()=>res(q&&q.result);t.onerror=()=>rej(t.error)});
-const idbPut=f=>{const{url,selected,...r}=f;return idbTx('readwrite',s=>s.put(r))};
+const idbPut=f=>{const{url,...r}=f;return idbTx('readwrite',s=>s.put(r))};
 const idbDel=id=>idbTx('readwrite',s=>s.delete(id));
 const idbClear=()=>idbTx('readwrite',s=>s.clear());
 const idbAll=()=>idbTx('readonly',s=>s.getAll());
@@ -175,25 +288,25 @@ async function makeThumb(f){
  }catch(e){}
 }
 async function addFile({name,mime,blob,sender,color}){
- const f={id:rid(8),name,mime:mime||blob.type||'application/octet-stream',size:blob.size,blob,sender,color,time:Date.now(),type:'other',selected:true};
+ const f={id:rid(8),name,mime:mime||blob.type||'application/octet-stream',size:blob.size,blob,sender,color,time:Date.now(),type:'other'};
  await makeThumb(f);f.url=URL.createObjectURL(blob);files.unshift(f);await idbPut(f);render();storInfo();return f}
 const get=id=>files.find(f=>f.id===id);
 
 /* ---------- PC ---------- */
 async function pcInit(){
- $('pc').className='flex flex-col h-screen';
+ $('pc').classList.add('on');
  await idbOpen();
- files=(await idbAll()).sort((a,b)=>b.time-a.time).map(r=>({...r,url:URL.createObjectURL(r.blob),selected:false}));
- render();setFlt('all');storInfo();navigator.storage&&navigator.storage.persist&&navigator.storage.persist();
+ files=(await idbAll()).sort((a,b)=>b.time-a.time).map(r=>({...r,url:URL.createObjectURL(r.blob)}));
+ setFlt('all');storInfo();navigator.storage&&navigator.storage.persist&&navigator.storage.persist();
  if(!localStorage.ts_room){localStorage.ts_room=rid(16);localStorage.ts_key=rid(32);localStorage.ts_dev='{}'}
  room=localStorage.ts_room;await initKey(localStorage.ts_key);
  const url=location.origin+location.pathname+'#r='+room+'&k='+localStorage.ts_key;window.joinUrl=url;
  new QRCode($('qr1'),{text:url,width:170,height:170,correctLevel:QRCode.CorrectLevel.M});
  new QRCode($('qr2'),{text:url,width:280,height:280,correctLevel:QRCode.CorrectLevel.M});
- try{await fbInit()}catch(e){$('st').textContent='Firebase hatası: '+e.code;return}
+ try{await fbInit()}catch(e){$('st').className='chip bad';$('st').textContent='Firebase hatası: '+(e.code||e.message);return}
  let conn=false;const meta=R('meta');
  const setMeta=()=>{meta.onDisconnect().remove();meta.set({u:firebase.auth().currentUser.uid,t:firebase.database.ServerValue.TIMESTAMP})};
- db.ref('.info/connected').on('value',s=>{conn=!!s.val();const e=$('st');if(conn){setMeta();e.className='text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400';e.textContent='Şifreli köprü aktif'}else{e.className='text-[11px] px-2 py-0.5 rounded bg-red-500/20 text-red-400';e.textContent='Bağlantı yok'}});
+ db.ref('.info/connected').on('value',s=>{conn=!!s.val();const e=$('st');if(conn){setMeta();e.className='chip ok';e.textContent='Şifreli köprü aktif'}else{e.className='chip bad';e.textContent='Bağlantı yok'}});
  meta.on('value',s=>{if(!s.exists()&&conn)setMeta()});
  R('req').on('child_added',onReq);R('req').on('child_changed',onReq);
  R('req').on('child_removed',s=>{const d=devs[s.key];if(d){d.online=false;renderDevs()}});
@@ -204,13 +317,16 @@ async function pcInit(){
 const apr=()=>JSON.parse(localStorage.ts_dev||'{}');
 async function onReq(s){
  const id=s.key;let i;try{i=JSON.parse(td.decode(await dec(s.val().e,'hello:'+id)))}catch{return}
+ const isNew=!devs[id]||!devs[id].online;
  const d=devs[id]||(devs[id]={id,n:0,color:PAL[Object.keys(devs).length%PAL.length]});Object.assign(d,i,{online:true});
- const a=apr()[id];if(a)R('dev/'+id).set(a);renderDevs();
+ const a=apr()[id];if(a)R('dev/'+id).set(a);
+ if(isNew){show('qm',0);toast('Yeni cihaz bağlandı: '+(d.name||'Telefon')+(a==='ok'?'':' — soldan izin verin'))}
+ renderDevs();
 }
 function decide(id,v){const a=apr();a[id]=v;localStorage.ts_dev=JSON.stringify(a);R('dev/'+id).set(v);renderDevs()}
 function renderDevs(){
  const a=apr(),v=Object.values(devs);$('dc').textContent=v.filter(d=>d.online).length+' aktif';
- $('dl').innerHTML=v.length?v.map(d=>{const s=a[d.id];return`<div class="p-2 rounded-xl bg-slate-950 border border-slate-800 text-xs"><div class="flex justify-between"><span class="font-bold flex items-center gap-1.5 truncate"><span class="w-2 h-2 rounded-full" style="background:${d.online?d.color:'#475569'}"></span>${esc(d.name||'Cihaz')}</span><span class="text-slate-400">${d.n} dosya</span></div><div class="text-[10px] text-slate-400">${esc(d.os||'')} • ${esc(d.model||'')}${d.online?'':' • çevrimdışı'}</div><div class="mt-1.5 flex gap-1.5">${s==='ok'?'':`<button class="b g" onclick="decide('${d.id}','ok')">İzin ver</button>`}${s==='no'?'<span class="r">Engelli</span>':`<button class="b r" onclick="decide('${d.id}','no')">Engelle</button>`}</div></div>`}).join(''):'<div class="text-xs text-slate-500 text-center py-4">Telefondan karekodu okutun.</div>';
+ $('dl').innerHTML=v.length?v.map(d=>{const s=a[d.id];return`<div class="dev"><div class="av" style="background:${d.color}22;color:${d.color}"><i class="fa-solid fa-mobile-screen"></i></div><div style="min-width:0;flex:1"><div class="dr"><b class="nm"><span class="dot" style="background:${d.online?'#34d399':'#475569'}"></span>${esc(d.name||'Cihaz')}</b><span class="mu sm">${d.n} dosya</span></div><div class="mu sm">${esc(d.os||'')} • ${esc(d.model||'')}${d.online?'':' • çevrimdışı'}</div><div class="acts" style="margin-top:8px">${s==='ok'?'<span class="chip ok">İzinli</span>':`<button class="btn sm ok" onclick="decide('${d.id}','ok')">İzin ver</button>`}${s==='no'?'<span class="chip bad">Engelli</span>':`<button class="btn sm dg" onclick="decide('${d.id}','no')">Engelle</button>`}</div></div></div>`}).join(''):'<div class="mu sm" style="text-align:center;padding:14px 0"><i class="fa-solid fa-wifi" style="display:block;font-size:20px;margin-bottom:6px;opacity:.5"></i>Telefondan karekodu okutun.</div>';
 }
 function junk(key){R('inbox/'+key).remove();R('chunks/'+key).remove()}
 async function onInbox(s){
@@ -238,51 +354,64 @@ async function fin(key){
 }
 function abortRx(key){const t=rx[key];if(!t)return;t.ref.off('child_added',t.fn);delete rx[key];$('tr-'+key)?.remove();toast('Aktarım yarıda kesildi: '+t.m.name)}
 function prog(key,name,p,d){
- let r=$('tr-'+key);if(!r){r=document.createElement('div');r.id='tr-'+key;r.className='p-2.5 rounded-xl bg-slate-900 border border-blue-500/30 text-xs';$('inc').appendChild(r)}
- r.innerHTML=`<div class="flex justify-between mb-1"><span class="truncate font-bold">${esc(name)} <span class="font-normal text-slate-400">(${esc(d?d.name:'Telefon')})</span></span><span class="font-mono text-blue-400">${p}%</span></div><div class="h-1.5 bg-slate-800 rounded overflow-hidden"><div class="h-full" style="width:${p}%;background:${d?d.color:PAL[0]}"></div></div>`;
+ let r=$('tr-'+key);if(!r){r=document.createElement('div');r.id='tr-'+key;r.className='tr';$('inc').appendChild(r)}
+ const c=d?d.color:PAL[0];
+ r.innerHTML=`<div class="l"><span class="nm"><i class="fa-solid fa-cloud-arrow-down" style="color:${c}"></i> ${esc(name)} <span class="mu sm">(${esc(d?d.name:'Telefon')})</span></span><b style="color:${c}">${p}%</b></div><div class="pb"><div style="width:${p}%;background:${c}"></div></div>`;
 }
 function newRoom(){
  if(!confirm('Eski karekod geçersiz olur ve bağlı telefonlar ayrılır. Devam edilsin mi?'))return;
  db.ref('rooms/'+room).remove().finally(()=>{['ts_room','ts_key','ts_dev'].forEach(k=>localStorage.removeItem(k));location.reload()});
 }
 function copyLink(){navigator.clipboard.writeText(window.joinUrl);toast('Bağlantı kopyalandı')}
-async function storInfo(){if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();$('stor').textContent=`Yerel depo: ${fmt(e.usage)} / ${fmt(e.quota)}`}}
+async function storInfo(){if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();$('stor').textContent=`Kullanılan: ${fmt(e.usage)} • Tarayıcı üst sınırı: ${fmt(e.quota)}`}}
 
 /* ---------- Gezgin ---------- */
-function setFlt(k){flt=k;['all','image','pdf'].forEach(x=>$('f-'+x).classList.toggle('p',x===k));render()}
+function setFlt(k){flt=k;['all','image','pdf'].forEach(x=>$('f-'+x).classList.toggle('on',x===k));render()}
 function render(){
  const q=$('q').value.toLowerCase();$('cnt').textContent=files.length;
  const l=files.filter(f=>(flt==='all'||f.type===flt)&&(f.name+f.sender).toLowerCase().includes(q));
  $('empty').classList.toggle('hidden',files.length>0);
- $('grid').innerHTML=l.map(f=>`<div class="card flex flex-col ${f.selected?'sel':''}" draggable="true" ondragstart="dragOut(event,'${f.id}')">
- <div class="p-2 flex justify-between items-center"><input type="checkbox" class="accent-blue-500" ${f.selected?'checked':''} onchange="tog('${f.id}')"><span class="text-[10px] px-2 py-0.5 rounded-full truncate max-w-[130px]" style="background:${f.color}33;color:${f.color}">${esc(f.sender)}</span></div>
- <div onclick="prev('${f.id}')" class="aspect-[4/3] mx-2 rounded-xl bg-slate-950 flex items-center justify-center cursor-pointer overflow-hidden relative">${f.thumb?`<img src="${f.thumb}" class="w-full h-full object-contain">`:`<i class="fa-solid fa-file text-3xl text-blue-400"></i>`}${f.type==='pdf'?`<span class="absolute bottom-1 right-1 bg-red-600 text-[10px] px-1.5 rounded">${f.pages||'?'} sf</span>`:''}</div>
- <div class="p-2.5"><div class="text-xs font-semibold truncate" title="${esc(f.name)}">${esc(f.name)}</div><div class="text-[10px] text-slate-400 flex justify-between"><span>${fmt(f.size)}</span><span>${new Date(f.time).toLocaleTimeString('tr-TR')}</span></div>
- <div class="mt-2 flex gap-1">${f.type==='image'?`<button class="b" onclick="edit('${f.id}')">Düzenle</button>`:''}${f.type==='pdf'?`<button class="b" onclick="split('${f.id}')">Sayfalar</button>`:''}<button class="b g ml-auto" onclick="dl('${f.id}')"><i class="fa-solid fa-download"></i></button><button class="b r" onclick="del('${f.id}')"><i class="fa-solid fa-trash"></i></button></div></div></div>`).join('');
+ $('grid').innerHTML=l.map(f=>{
+  const n=sel.indexOf(f.id)+1,ext=(f.name.split('.').pop()||'').slice(0,5).toUpperCase();
+  const lbl=f.type==='pdf'?`PDF · ${f.pages||'?'} sf`:f.type==='video'?'VİDEO':ext;
+  return`<div class="card ${n?'sel':''}" draggable="true" ondragstart="dragOut(event,'${f.id}')">
+  <div class="th" onclick="prev('${f.id}')">${f.thumb?`<img src="${f.thumb}" alt="">`:`<i class="fa-solid ${f.type==='video'?'fa-film':'fa-file-lines'} ico"></i>`}
+   <div class="num" title="Seçim sırası" onclick="event.stopPropagation();tog('${f.id}')">${n||''}</div>
+   <span class="who" style="background:${f.color}33;color:${f.color}" title="${esc(f.sender)}">${esc(f.sender)}</span>
+   <span class="tag ${f.type==='pdf'?'pdf':''}">${esc(lbl)}</span></div>
+  <div class="ci"><div class="nm" title="${esc(f.name)}">${esc(f.name)}</div><div class="meta"><span>${fmt(f.size)}</span><span>${new Date(f.time).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</span></div>
+  <div class="acts">${f.type==='image'?`<button class="btn sm" onclick="edit('${f.id}')"><i class="fa-solid fa-crop-simple"></i>Düzenle</button>`:''}${f.type==='pdf'?`<button class="btn sm" onclick="split('${f.id}')"><i class="fa-solid fa-scissors"></i>Sayfalar</button>`:''}<span class="sp"><button class="btn sm ok" title="İndir" onclick="dl('${f.id}')"><i class="fa-solid fa-download"></i></button><button class="btn sm dg" title="Sil" onclick="del('${f.id}')"><i class="fa-solid fa-trash-can"></i></button></span></div></div></div>`}).join('');
+ renderBar();
+}
+function renderBar(){
+ const it=sel.map(get).filter(Boolean);$('selbar').classList.toggle('on',it.length>0);$('selc').textContent=it.length+' dosya seçili';
+ $('bpdf').disabled=!it.some(f=>f.type==='pdf'||f.type==='image');$('bjpg').disabled=it.filter(f=>f.type==='image').length<2;
 }
 function dragOut(e,id){const f=get(id);e.dataTransfer.setData('DownloadURL',`${f.mime}:${f.name}:${f.url}`)}
-function tog(id){const f=get(id);f.selected=!f.selected;render()}
-function selAll(){const a=files.every(f=>f.selected);files.forEach(f=>f.selected=!a);render()}
+function tog(id){const i=sel.indexOf(id);i>=0?sel.splice(i,1):sel.push(id);render()}
+function selAll(){const all=files.length&&files.every(f=>sel.includes(f.id));sel=all?[]:[...files].reverse().map(f=>f.id);render()}
+function clearSel(){sel=[];render()}
 function dl(id){const f=get(id),a=document.createElement('a');a.href=f.url;a.download=f.name;a.click()}
-function dlSel(){const s=files.filter(f=>f.selected);if(!s.length)return toast('Dosya seçin');s.forEach((f,i)=>setTimeout(()=>dl(f.id),i*300))}
-async function del(id){const f=get(id);URL.revokeObjectURL(f.url);files=files.filter(x=>x.id!==id);await idbDel(id);render();storInfo()}
-async function clearAll(){if(!files.length||!confirm('Bu bilgisayardaki tüm dosyalar kalıcı olarak silinecek. Emin misiniz?'))return;files.forEach(f=>URL.revokeObjectURL(f.url));files=[];await idbClear();render();storInfo()}
+function dlSel(){const s=sel.map(get).filter(Boolean);if(!s.length)return toast('Dosya seçin');s.forEach((f,i)=>setTimeout(()=>dl(f.id),i*300))}
+async function del(id){const f=get(id);URL.revokeObjectURL(f.url);files=files.filter(x=>x.id!==id);sel=sel.filter(x=>x!==id);await idbDel(id);render();storInfo()}
+async function clearAll(){if(!files.length||!confirm('Bu bilgisayardaki tüm dosyalar kalıcı olarak silinecek. Emin misiniz?'))return;files.forEach(f=>URL.revokeObjectURL(f.url));files=[];sel=[];await idbClear();render();storInfo()}
 async function pcFiles(l){for(const f of l)await addFile({name:f.name,mime:f.type,blob:f,sender:'Bu Bilgisayar',color:PAL[1]})}
 function prev(id){
  const f=get(id);$('pvt').textContent=f.name;
- $('pvb').innerHTML=f.type==='image'?`<img src="${f.url}" class="max-h-full max-w-full rounded-xl">`:f.type==='pdf'?`<iframe src="${f.url}" class="w-full h-full rounded-xl bg-white"></iframe>`:f.type==='video'?`<video src="${f.url}" controls class="max-h-full max-w-full"></video>`:`<button class="b p" onclick="dl('${f.id}')">Dosyayı İndir (${fmt(f.size)})</button>`;
+ $('pvb').innerHTML=f.type==='image'?`<img src="${f.url}" style="max-width:100%;max-height:100%;border-radius:12px">`:f.type==='pdf'?`<iframe src="${f.url}" style="width:100%;height:100%;border:0;border-radius:12px;background:#fff"></iframe>`:f.type==='video'?`<video src="${f.url}" controls style="max-width:100%;max-height:100%"></video>`:`<button class="btn pri" onclick="dl('${f.id}')"><i class="fa-solid fa-download"></i>Dosyayı İndir (${fmt(f.size)})</button>`;
  show('pvm',1);
 }
 
-/* ---------- Birleştirme ---------- */
+/* ---------- Birleştirme (seçim sırasına göre) ---------- */
 async function mergeJPG(){
- const s=files.filter(f=>f.selected&&f.type==='image').reverse();if(s.length<2)return toast('En az 2 görsel seçin');
+ const s=sel.map(get).filter(f=>f&&f.type==='image');if(s.length<2)return toast('En az 2 görsel seçin');
  const im=await Promise.all(s.map(f=>createImageBitmap(f.blob))),w=Math.max(...im.map(i=>i.width)),hs=im.map(i=>i.height*w/i.width);
  const c=document.createElement('canvas');c.width=w;c.height=hs.reduce((a,b)=>a+b,0);const x=c.getContext('2d');let y=0;im.forEach((i,k)=>{x.drawImage(i,0,y,w,hs[k]);y+=hs[k]});
  await addFile({name:`Birlesik_Gorsel_${Date.now()}.jpg`,mime:'image/jpeg',blob:await toBlob(c,.92),sender:'Stüdyo',color:PAL[2]});
+ sel=[];render();toast('Görseller alt alta birleştirildi');
 }
 async function mergePDF(){
- const s=files.filter(f=>f.selected&&(f.type==='pdf'||f.type==='image')).reverse();if(!s.length)return toast('PDF veya görsel seçin');
+ const s=sel.map(get).filter(f=>f&&(f.type==='pdf'||f.type==='image'));if(!s.length)return toast('PDF veya görsel seçin');
  toast('PDF birleştiriliyor...');const out=await PDFLib.PDFDocument.create();
  for(const f of s){
   if(f.type==='pdf'){const src=await PDFLib.PDFDocument.load(await f.blob.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(src,src.getPageIndices())).forEach(p=>out.addPage(p))}
@@ -293,7 +422,8 @@ async function mergePDF(){
    const pg=out.addPage([595,842]),k=Math.min(555/img.width,802/img.height),w=img.width*k,h=img.height*k;pg.drawImage(img,{x:(595-w)/2,y:(842-h)/2,width:w,height:h});
   }
  }
- const nf=await addFile({name:`Birlesik_Evrak_${Date.now()}.pdf`,mime:'application/pdf',blob:new Blob([await out.save()],{type:'application/pdf'}),sender:'Stüdyo',color:PAL[2]});dl(nf.id);
+ await addFile({name:`Birlesik_Evrak_${Date.now()}.pdf`,mime:'application/pdf',blob:new Blob([await out.save()],{type:'application/pdf'}),sender:'Stüdyo',color:PAL[2]});
+ sel=[];render();toast('PDF oluşturuldu ve klasöre kaydedildi');
 }
 
 /* ---------- Görsel düzenleyici ---------- */
@@ -313,14 +443,14 @@ function closeEd(){cr&&cr.destroy();cr=null;show('edm',0)}
 
 /* ---------- PDF sayfa stüdyosu (gerçek PDF, kalite kaybı yok) ---------- */
 async function split(id){
- const f=get(id);sp={f,p:[]};$('spt').textContent=f.name;show('spm',1);$('spg').innerHTML='<div class="col-span-full text-center p-10 text-slate-400">Sayfalar hazırlanıyor...</div>';
+ const f=get(id);sp={f,p:[]};$('spt').textContent=f.name;show('spm',1);$('spg').innerHTML='<div class="mu" style="grid-column:1/-1;text-align:center;padding:40px">Sayfalar hazırlanıyor...</div>';
  const d=await pdfjsLib.getDocument({data:new Uint8Array(await f.blob.arrayBuffer())}).promise;
  for(let n=1;n<=d.numPages;n++){const pg=await d.getPage(n),v=pg.getViewport({scale:.45}),c=document.createElement('canvas');c.width=v.width;c.height=v.height;await pg.render({canvasContext:c.getContext('2d'),viewport:v}).promise;sp.p.push({n,t:c.toDataURL('image/jpeg',.7),del:false})}
  spR();
 }
 function spR(){
- $('spb').textContent=sp.p.filter(p=>!p.del).length+' / '+sp.p.length+' sayfa';
- $('spg').innerHTML=sp.p.map((p,i)=>`<div class="rounded-2xl p-2 border ${p.del?'border-red-500/40 opacity-40':'border-slate-800 bg-slate-900'}"><div class="flex justify-between items-center mb-1.5 text-xs"><b>Sayfa ${p.n}</b><button class="b ${p.del?'':'r'}" onclick="sp.p[${i}].del=!sp.p[${i}].del;spR()">${p.del?'Geri Al':'Sil'}</button></div><img src="${p.t}" class="w-full bg-white rounded-lg"></div>`).join('');
+ $('spb').textContent=sp.p.filter(p=>!p.del).length+' / '+sp.p.length+' sayfa aktif';
+ $('spg').innerHTML=sp.p.map((p,i)=>`<div class="pg ${p.del?'del':''}"><div class="h"><b>Sayfa ${p.n}</b><button class="btn sm ${p.del?'':'dg'}" onclick="sp.p[${i}].del=!sp.p[${i}].del;spR()"><i class="fa-solid ${p.del?'fa-rotate-left':'fa-trash-can'}"></i>${p.del?'Geri Al':'Sil'}</button></div><img src="${p.t}" alt=""></div>`).join('');
 }
 const base=()=>sp.f.name.replace(/\.pdf$/i,'');
 async function spSave(){
@@ -337,13 +467,13 @@ async function spEach(){
 }
 
 /* ---------- TELEFON ---------- */
-let dev,pcUp=false,state=null,mName,mInfo,stream,facing='environment',tOn=false,wake=null,queue=Promise.resolve(),sent=0;
+let dev,pcUp=false,state=null,mName,mInfo,stream,facing='environment',tOn=false,wake=null,queue=Promise.resolve();
 function ui(){
  const[c,t]=!pcUp?['#fbbf24','PC bekleniyor...']:state==='ok'?['#34d399',"PC'ye bağlı (şifreli)"]:state==='no'?['#ef4444','Bu cihaz engellendi']:['#fbbf24',"PC'de onay bekleniyor..."];
- $('md').style.background=c;$('ms').textContent=t;
+ $('md').style.background=c;$('md').style.boxShadow=`0 0 0 4px ${c}33`;$('ms').textContent=t;
 }
 async function mobInit(){
- $('mob').className='flex flex-col h-[100dvh] bg-black';
+ $('mob').classList.add('on');
  const h=new URLSearchParams(location.hash.slice(1));let r=h.get('r'),k=h.get('k');
  if(r&&k){localStorage.ts_mr=r;localStorage.ts_mk=k;history.replaceState(null,'',location.pathname)}else{r=localStorage.ts_mr;k=localStorage.ts_mk}
  const ua=navigator.userAgent;let os='Mobil',model='Telefon';
@@ -365,11 +495,11 @@ async function startCam(){
 function flip(){facing=facing==='environment'?'user':'environment';startCam()}
 async function torch(){
  if(!stream)return;const t=stream.getVideoTracks()[0],c=t.getCapabilities?t.getCapabilities():{};if(!c.torch)return toast('Flaş desteklenmiyor');
- tOn=!tOn;await t.applyConstraints({advanced:[{torch:tOn}]});$('mt').classList.toggle('bg-amber-500',tOn);
+ tOn=!tOn;await t.applyConstraints({advanced:[{torch:tOn}]});$('mt').classList.toggle('on',tOn);
 }
 async function shoot(){
  const v=$('mv');if(!v.videoWidth)return toast('Kamera açık değil');
- const f=$('fl');f.classList.remove('opacity-0');setTimeout(()=>f.classList.add('opacity-0'),120);
+ const f=$('fl');f.style.opacity=1;setTimeout(()=>f.style.opacity=0,120);
  const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
  enqueue([new File([await toBlob(c,.9)],'Kamera_'+new Date().toLocaleTimeString('tr-TR').replace(/:/g,'')+'.jpg',{type:'image/jpeg'})]);
 }
@@ -403,7 +533,7 @@ async function send(f){
   ab.off();await Promise.allSettled([ib.remove(),cb.remove(),ab.remove()]);[ib,cb,ab].forEach(x=>x.onDisconnect().cancel());
   wl&&wl.release().catch(()=>{});setTimeout(()=>$('mu').classList.add('hidden'),400);
  }
- sent++;const r=document.createElement('div');r.className='px-2 py-1 rounded bg-black/70 text-emerald-400 truncate';r.textContent='✓ '+f.name;$('mh').prepend(r);while($('mh').children.length>4)$('mh').lastChild.remove();
+ const r=document.createElement('div');r.textContent='✓ '+f.name;$('mh').prepend(r);while($('mh').children.length>4)$('mh').lastChild.remove();
 }
 
 /* ---------- Başlat ---------- */

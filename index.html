@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TonoScan Studio Pro | Kablosuz Belge & Çoklu Cihaz Transfer Merkezi</title>
+    
+    <!-- Favicon 404 Hatasını Önleyen Gömülü İkon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%232563eb%22/><text x=%2250%%22 y=%2255%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2260%22>📷</text></svg>">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,16 +17,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- PeerJS (WebRTC P2P + TURN TCP 443) -->
+    <!-- PeerJS (WSS 443 WebSocket Tunneling) -->
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <!-- QRCode.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Cropper.js (Görsel Kırpma & Evrak Editörü) -->
+    <!-- Cropper.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-    <!-- jsPDF (PDF Oluşturma ve Birleştirme) -->
+    <!-- jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- PDF.js (PDF Okuma, Önizleme ve Sayfalara Ayırma) -->
+    <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
     <script>
@@ -99,9 +102,8 @@
     <!-- ========================================================================= -->
     <div id="pc-app" class="hidden flex-1 flex flex-col h-full overflow-hidden">
         
-        <!-- ÜST KOMUT ŞERİDİ (WINDOWS 11 RIBBON BAR) -->
+        <!-- ÜST KOMUT ŞERİDİ -->
         <header class="mica-panel h-16 px-5 flex items-center justify-between border-b border-slate-800/80 z-20 shrink-0">
-            <!-- Sol: Logo & Başlık -->
             <div class="flex items-center gap-3.5">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 border border-white/10">
                     <i class="fa-solid fa-qrcode text-lg"></i>
@@ -109,19 +111,17 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="font-bold text-base tracking-tight text-white">TonoScan <span class="text-blue-400 font-extrabold">Studio</span></h1>
-                        <!-- Canlı Ağ & Firewall Tünel Rozeti -->
                         <span id="firewall-status-badge" class="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1.5">
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
-                            TCP 443 Tüneli Hazırlanıyor...
+                            WSS 443 Köprüsü Açılıyor...
                         </span>
                     </div>
-                    <p class="text-[11px] text-slate-400">Kurumsal Güvenlik Duvarı Uyumlu (Port 443 TURN) Kablosuz Kamera & Evrak Merkezi</p>
+                    <p class="text-[11px] text-slate-400">Kurumsal Güvenlik Duvarı Uyumlu (Saf WSS 443 WebSocket Tüneli) Evrak & Kamera Stüdyosu</p>
                 </div>
             </div>
 
-            <!-- Orta/Sağ: Hızlı İşlem Araç Çubuğu -->
+            <!-- Hızlı İşlem Araç Çubuğu -->
             <div class="flex items-center gap-2">
-                <!-- PC'den Dosya / PDF Yükle -->
                 <label class="cursor-pointer px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs font-medium text-slate-200 transition flex items-center gap-2" title="Bilgisayardan PDF veya Görsel Ekle">
                     <i class="fa-solid fa-folder-plus text-amber-400"></i>
                     <span>PC'den Ekle</span>
@@ -163,7 +163,7 @@
             <aside class="w-80 mica-panel border-r border-slate-800/80 flex flex-col justify-between p-4 overflow-y-auto shrink-0">
                 <div class="space-y-4">
                     
-                    <!-- KAREKOD KARTI (HER ZAMAN GÖRÜNÜR & BÜYÜTÜLEBİLİR) -->
+                    <!-- KAREKOD KARTI -->
                     <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl">
                         <div class="flex items-center justify-between mb-2.5">
                             <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
@@ -174,7 +174,6 @@
                             </button>
                         </div>
 
-                        <!-- Tıklanabilir QR Alanı -->
                         <div onclick="openQRModal()" class="qr-glow cursor-pointer bg-white p-3.5 rounded-xl flex flex-col items-center justify-center relative group transition">
                             <div id="sidebar-qr"></div>
                             <div class="absolute inset-0 bg-slate-950/80 opacity-0 group-hover:opacity-100 rounded-xl transition flex flex-col items-center justify-center text-white p-2 text-center">
@@ -192,7 +191,7 @@
                         </div>
                     </div>
 
-                    <!-- BAĞLI CİHAZLAR (MULTI-DEVICE) PANELİ -->
+                    <!-- BAĞLI CİHAZLAR PANELİ -->
                     <div class="rounded-2xl bg-slate-900/70 border border-slate-800/90 p-3.5">
                         <div class="flex items-center justify-between mb-3">
                             <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
@@ -201,7 +200,7 @@
                             <span id="device-count-badge" class="text-[11px] font-mono bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full font-bold">0 Aktif</span>
                         </div>
 
-                        <div id="connected-devices-list" class="space-y-2 max-h-52 overflow-y-auto pr-1">
+                        <div id="connected-devices-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
                             <div class="text-center py-5 text-slate-500 text-xs">
                                 <i class="fa-solid fa-wifi text-lg mb-1.5 block opacity-40 animate-pulse"></i>
                                 Telefon kamerasından karekodu okutarak bağlanın. Birden fazla telefon bağlanabilir.
@@ -209,17 +208,17 @@
                         </div>
                     </div>
 
-                    <!-- CANLI KAMERA ÖNİZLEME (Herhangi Bir Telefon Kamera Açtığında Görünür) -->
+                    <!-- CANLI KAMERA ÖNİZLEME (WSS 443 Kare Akışı ile Firewall'a Takılmaz) -->
                     <div id="live-stream-panel" class="hidden rounded-2xl bg-slate-900/90 border border-slate-800 p-3 flex-col gap-2.5">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-semibold text-white flex items-center gap-1.5">
                                 <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-                                Canlı Kamera Yayını
+                                Canlı Kamera Önizleme
                             </span>
                             <span id="stream-device-name" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Cihaz</span>
                         </div>
-                        <div class="relative rounded-xl overflow-hidden bg-black aspect-[4/3] border border-slate-800">
-                            <video id="pc-remote-video" autoplay playsinline muted class="w-full h-full object-cover"></video>
+                        <div class="relative rounded-xl overflow-hidden bg-black aspect-[4/3] border border-slate-800 flex items-center justify-center">
+                            <img id="pc-remote-frame" class="w-full h-full object-contain" alt="Canlı Kamera">
                         </div>
                         <button onclick="requestRemoteCapture()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-lg shadow-blue-600/25">
                             <i class="fa-solid fa-camera"></i> PC'den Uzaktan Fotoğraf Çek
@@ -231,17 +230,15 @@
                 <!-- Alt Bilgi & İmza -->
                 <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
                     <span>Created by <b class="text-slate-300">Tonoz</b></span>
-                    <span class="font-mono text-[10px] text-emerald-400">TCP:443 TURN</span>
+                    <span class="font-mono text-[10px] text-emerald-400">WSS:443 Direct</span>
                 </div>
             </aside>
 
-            <!-- SAĞ ANA ALAN: WINDOWS 11 DOSYA GEZGİNİ (FILE EXPLORER) -->
+            <!-- SAĞ ANA ALAN: WINDOWS 11 DOSYA GEZGİNİ -->
             <main class="flex-1 flex flex-col overflow-hidden bg-slate-950/30" id="explorer-dropzone">
                 
-                <!-- WINDOWS EXPLORER ADRES & FİLTRE ÇUBUĞU -->
+                <!-- ADRES & FİLTRE ÇUBUĞU -->
                 <div class="px-6 py-3 bg-slate-900/50 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
-                    
-                    <!-- Sol: Breadcrumb Yol Çubuğu -->
                     <div class="flex items-center gap-2 bg-slate-950/80 border border-slate-800 px-3.5 py-1.5 rounded-lg text-xs text-slate-300">
                         <i class="fa-brands fa-windows text-blue-400 text-sm"></i>
                         <span class="text-slate-500">Bilgisayarım</span>
@@ -253,7 +250,6 @@
                         </span>
                     </div>
 
-                    <!-- Orta: Gönderen Kişi ve Tür Filtreleri -->
                     <div class="flex items-center gap-1.5 flex-wrap" id="sender-filter-bar">
                         <button onclick="setFilter('all')" id="filter-btn-all" class="px-2.5 py-1 rounded-md text-xs font-medium bg-blue-600 text-white transition">
                             Tümü
@@ -267,7 +263,6 @@
                         <div id="dynamic-sender-filters" class="flex items-center gap-1.5"></div>
                     </div>
 
-                    <!-- Sağ: Arama & Görünüm Değiştirici (Grid / Liste) -->
                     <div class="flex items-center gap-2">
                         <div class="relative">
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
@@ -285,20 +280,19 @@
                     </div>
                 </div>
 
-                <!-- CANLI TRANSFER ANİMASYON ÇUBUĞU (Dosya Gelirken Açılır) -->
+                <!-- CANLI TRANSFER ANİMASYON ÇUBUĞU -->
                 <div id="incoming-transfers-container" class="px-6 pt-3 space-y-2 empty:hidden"></div>
 
                 <!-- DOSYA KLASÖR ALANI -->
                 <div class="flex-1 p-6 overflow-y-auto" id="explorer-content">
                     
-                    <!-- Boş Klasör Durumu -->
                     <div id="empty-explorer" class="h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto">
                         <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 flex items-center justify-center text-4xl text-blue-400 mb-5 shadow-2xl">
                             <i class="fa-solid fa-cloud-arrow-up animate-bounce"></i>
                         </div>
                         <h2 class="text-xl font-bold text-white mb-2">Klasör Henüz Boş</h2>
                         <p class="text-xs text-slate-400 leading-relaxed mb-6">
-                            Sol taraftaki karekodu bir veya birden fazla telefondan okutun. Çektiğiniz fotoğraflar, seçtiğiniz galeri görselleri ve yüklediğiniz PDF/Ofis dosyaları <b>TCP 443 Güvenli Tüneli</b> üzerinden anında bu klasöre düşer.
+                            Sol taraftaki karekodu bir veya birden fazla telefondan okutun. Çektiğiniz fotoğraflar, galeri görselleri ve PDF belgeleri <b>Saf WSS 443 WebSocket Köprüsü</b> üzerinden kurumsal güvenlik duvarına takılmadan anında bu klasöre düşer.
                         </p>
                         <div class="grid grid-cols-3 gap-3 w-full text-left">
                             <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80">
@@ -312,17 +306,15 @@
                                 <p class="text-[10px] text-slate-400 mt-0.5">PDF sayfalarını tek tek ayıklayın, gereksiz sayfaları silin.</p>
                             </div>
                             <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80">
-                                <i class="fa-solid fa-network-wired text-emerald-400 mb-1.5 block"></i>
-                                <div class="text-xs font-semibold text-slate-200">TCP 443 TURN Aktif</div>
-                                <p class="text-[10px] text-slate-400 mt-0.5">UDP kapalı kurumsal ağlarda HTTPS 443 rölesi üzerinden çalışır.</p>
+                                <i class="fa-solid fa-shield-check text-emerald-400 mb-1.5 block"></i>
+                                <div class="text-xs font-semibold text-slate-200">Firewall Uyumlu</div>
+                                <p class="text-[10px] text-slate-400 mt-0.5">UDP/WebRTC kullanmadan doğrudan HTTPS 443 WebSocket üzerinden çalışır.</p>
                             </div>
                         </div>
                     </div>
 
-                    <!-- GRID GÖRÜNÜMÜ (WINDOWS BÜYÜK ÖNİZLEME) -->
                     <div id="files-grid" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"></div>
 
-                    <!-- LİSTE GÖRÜNÜMÜ (WINDOWS DETAYLI TABLO) -->
                     <div id="files-list" class="hidden bg-slate-900/60 border border-slate-800 rounded-xl overflow-hidden">
                         <table class="w-full text-left border-collapse">
                             <thead>
@@ -350,17 +342,15 @@
     <!-- ========================================================================= -->
     <div id="mobile-app" class="hidden flex flex-col bg-slate-950 text-white relative overflow-hidden">
         
-        <!-- Mobil Üst Bilgi & Kişi/Cihaz Kartı -->
         <header class="z-20 px-4 py-3 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 flex items-center justify-between">
             <div class="flex items-center gap-2.5">
                 <span id="mob-conn-dot" class="w-3 h-3 rounded-full bg-amber-400 animate-ping"></span>
                 <div>
-                    <div id="mob-conn-status" class="text-xs font-bold text-white">TCP 443 Tüneli Kuruluyor...</div>
+                    <div id="mob-conn-status" class="text-xs font-bold text-white">WSS 443 Köprüsü Kuruluyor...</div>
                     <div id="mob-device-label" class="text-[10px] text-slate-400">Cihaz algılanıyor...</div>
                 </div>
             </div>
 
-            <!-- Kullanıcı Adı Değiştirme -->
             <button onclick="changeSenderName()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-blue-400 flex items-center gap-1.5">
                 <i class="fa-solid fa-user-pen"></i>
                 <span id="mob-sender-name-btn">İsim Belirle</span>
@@ -376,7 +366,7 @@
                 <span id="mob-upload-percent" class="font-mono font-bold text-white">0%</span>
             </div>
             <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                <div id="mob-upload-progress" class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 transition-all duration-150" style="width: 0%"></div>
+                <div id="mob-upload-progress" class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 transition-all duration-100" style="width: 0%"></div>
             </div>
         </div>
 
@@ -384,7 +374,6 @@
         <div id="mob-tab-camera" class="flex-1 relative bg-black flex flex-col justify-between overflow-hidden">
             <video id="mob-video" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover"></video>
 
-            <!-- Kamera Kılavuz Çerçevesi -->
             <div class="relative z-10 m-6 flex-1 border-2 border-white/25 rounded-2xl pointer-events-none flex flex-col justify-between p-3">
                 <div class="flex justify-between">
                     <div class="w-6 h-6 border-t-2 border-l-2 border-blue-400"></div>
@@ -399,7 +388,6 @@
                 </div>
             </div>
 
-            <!-- Kamera Üst Araçlar -->
             <div class="absolute top-4 right-4 z-20 flex flex-col gap-2.5">
                 <button onclick="toggleMobileTorch()" id="mob-torch-btn" class="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white flex items-center justify-center">
                     <i class="fa-solid fa-bolt"></i>
@@ -409,7 +397,6 @@
                 </button>
             </div>
 
-            <!-- Deklanşör Alt Bar -->
             <div class="relative z-20 px-6 py-5 bg-gradient-to-t from-black via-black/80 to-transparent flex items-center justify-around">
                 <label class="cursor-pointer flex flex-col items-center gap-1">
                     <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-lg">
@@ -443,7 +430,7 @@
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                     </div>
                     <h3 class="font-bold text-base text-white">Telefondan PC'ye Dosya Gönder</h3>
-                    <p class="text-xs text-slate-400 mt-1">Seçtiğiniz tüm fotoğraflar, PDF belgeleri veya dosyalar TCP 443 tünelinden PC ekranındaki klasöre düşer.</p>
+                    <p class="text-xs text-slate-400 mt-1">Seçtiğiniz tüm fotoğraflar, PDF belgeleri veya dosyalar WSS 443 köprüsünden anında PC klasörüne düşer.</p>
 
                     <div class="grid grid-cols-2 gap-3 mt-5">
                         <label class="cursor-pointer py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex flex-col items-center gap-2 shadow-lg shadow-blue-600/25">
@@ -460,7 +447,6 @@
                     </div>
                 </div>
 
-                <!-- Gönderilen Dosya Geçmişi -->
                 <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4">
                     <div class="flex items-center justify-between mb-3">
                         <span class="text-xs font-bold uppercase text-slate-400">Bu Telefondan Gönderilenler</span>
@@ -473,11 +459,10 @@
             </div>
 
             <div class="text-center text-[11px] text-slate-600 pt-4">
-                TonoScan Studio • TCP 443 TURN Şifreli Aktarım
+                TonoScan Studio • Saf WSS 443 WebSocket Köprüsü
             </div>
         </div>
 
-        <!-- Mobil Alt Navigasyon Barı -->
         <nav class="z-20 h-16 bg-slate-900 border-t border-slate-800 grid grid-cols-2">
             <button onclick="switchMobileTab('camera')" id="mob-nav-cam" class="flex flex-col items-center justify-center gap-1 text-blue-400 font-semibold text-xs">
                 <i class="fa-solid fa-camera text-base"></i>
@@ -489,12 +474,11 @@
             </button>
         </nav>
 
-        <!-- Çekim Flaş Efekti -->
         <div id="mob-flash" class="pointer-events-none fixed inset-0 bg-white opacity-0 transition-opacity duration-150 z-50"></div>
     </div>
 
     <!-- ========================================================================= -->
-    <!-- MODAL 1: BÜYÜK KAREKOD (ÇOKLU TELEFON BAĞLANTI EKRANI)                    -->
+    <!-- MODAL 1: BÜYÜK KAREKOD                                                    -->
     <!-- ========================================================================= -->
     <div id="qr-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden items-center justify-center p-4">
         <div class="mica-panel max-w-md w-full rounded-3xl p-6 border border-slate-700/80 shadow-2xl text-center relative">
@@ -619,56 +603,13 @@
     </div>
 
     <canvas id="work-canvas" class="hidden"></canvas>
+    <canvas id="preview-canvas" class="hidden"></canvas>
 
     <!-- ========================================================================= -->
-    <!-- UYGULAMA JAVASCRIPT MOTORU (TCP 443 TURN & FIREWALL BYPASS ENTEGRELİ)     -->
+    <!-- UYGULAMA JAVASCRIPT MOTORU (SAF WSS 443 WEBSOCKET TÜNEL MİMARİSİ)         -->
     <!-- ========================================================================= -->
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        // =========================================================================
-        // KURUMSAL GÜVENLİK DUVARI (BELEDİYE AĞI) AŞMA YAPILANDIRMASI (TCP 443 TURN)
-        // =========================================================================
-        const PEER_FIREWALL_CONFIG = {
-            secure: true,
-            port: 443,
-            config: {
-                iceTransportPolicy: 'all', // UDP engelliyse otomatik TCP 443 TURN'e düşer
-                iceCandidatePoolSize: 10,
-                iceServers: [
-                    // 1. Standart STUN Sunucuları
-                    { urls: "stun:stun.l.google.com:19302" },
-                    { urls: "stun:stun.cloudflare.com:3478" },
-                    // 2. Port 80 (HTTP) ve Port 443 (HTTPS) UDP/TCP TURN Röleleri
-                    {
-                        urls: "turn:openrelay.metered.ca:80",
-                        username: "openrelayproject",
-                        credential: "openrelayproject"
-                    },
-                    {
-                        urls: "turn:openrelay.metered.ca:80?transport=tcp",
-                        username: "openrelayproject",
-                        credential: "openrelayproject"
-                    },
-                    {
-                        urls: "turn:openrelay.metered.ca:443",
-                        username: "openrelayproject",
-                        credential: "openrelayproject"
-                    },
-                    // 3. EN ÖNEMLİ KISIM: Belediye Firewall'unu Aşan Saf TCP 443 ve TLS (TURNS) Tüneli
-                    {
-                        urls: "turn:openrelay.metered.ca:443?transport=tcp",
-                        username: "openrelayproject",
-                        credential: "openrelayproject"
-                    },
-                    {
-                        urls: "turns:openrelay.metered.ca:443?transport=tcp",
-                        username: "openrelayproject",
-                        credential: "openrelayproject"
-                    }
-                ]
-            }
-        };
 
         // --- CİHAZ RENK PALETİ ---
         const DEVICE_PALETTE = [
@@ -680,7 +621,6 @@
             { name: 'Camgöbeği', bg: 'bg-cyan-500/20', border: 'border-cyan-500/40', text: 'text-cyan-400', hex: '#06b6d4' }
         ];
 
-        // --- DURUM DEĞİŞKENLERİ ---
         const urlParams = new URLSearchParams(window.location.search);
         const targetRoomId = urlParams.get('oda');
         const securityToken = urlParams.get('key');
@@ -701,12 +641,15 @@
         let currentEditorFilter = 'none';
         let activeSplitPDF = { fileId: null, fileName: '', pages: [] };
 
-        let mobConn = null;
+        // Mobil Değişkenler
         let mobStream = null;
         let mobFacing = 'environment';
         let mobTorch = false;
         let mobSenderName = localStorage.getItem('tonoscan_sender_name') || '';
         let mobSentCount = 0;
+        let isMobConnected = false;
+        let isUploadingFile = false;
+        const pendingChunkResolvers = new Map();
 
         window.addEventListener('DOMContentLoaded', () => {
             if (targetRoomId) {
@@ -717,7 +660,33 @@
         });
 
         // =========================================================================
-        // BÖLÜM 1: PC ANA MERKEZ (TCP 443 TURN DESTEKLİ ALICI)
+        // SAF WSS 443 WEBSOCKET TÜNEL FONKSİYONU (WebRTC/UDP/TURN KULLANMAZ!)
+        // Belediye ağında yeşil yanan peer.socket (Port 443 WSS) üzerinden paket taşır
+        // =========================================================================
+        function sendViaWssTunnel(targetPeerId, packetObj) {
+            if (!peer || !peer.socket || peer.disconnected) return false;
+            peer.socket.send({
+                type: 'CANDIDATE',
+                dst: targetPeerId,
+                payload: {
+                    connectionId: 'tonoscan-wss-tunnel',
+                    packet: packetObj
+                }
+            });
+            return true;
+        }
+
+        function attachWssTunnelListener(handlerFn) {
+            if (!peer || !peer.socket) return;
+            peer.socket.on('message', (msg) => {
+                if (msg && msg.type === 'CANDIDATE' && msg.payload && msg.payload.connectionId === 'tonoscan-wss-tunnel') {
+                    handlerFn(msg.src, msg.payload.packet);
+                }
+            });
+        }
+
+        // =========================================================================
+        // BÖLÜM 1: PC ANA MERKEZ
         // =========================================================================
         function initPCWorkspace() {
             document.getElementById('pc-app').classList.remove('hidden');
@@ -749,53 +718,38 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
 
-            // PeerJS'i Belediye Firewall Yapılandırmasıyla Başlat
-            peer = new Peer(myRoomId, PEER_FIREWALL_CONFIG);
-
+            peer = new Peer(myRoomId, { secure: true, port: 443 });
             const fwBadge = document.getElementById('firewall-status-badge');
 
-            peer.on('open', (id) => {
+            peer.on('open', () => {
                 fwBadge.className = "text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5";
-                fwBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> TCP 443 TURN Rölesi Aktif`;
+                fwBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> WSS 443 Köprüsü Aktif`;
+
+                // Doğrudan WSS 443 WebSocket Tünelini Dinle
+                attachWssTunnelListener(handleIncomingWssPacketOnPC);
             });
 
             peer.on('error', (err) => {
-                console.error('PeerJS Ağ Hatası:', err);
+                console.error('PeerJS Hatası:', err);
                 fwBadge.className = "text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-red-500/20 text-red-400 border border-red-500/40 flex items-center gap-1.5";
-                fwBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Firewall Sinyal Sunucusunu Engelledi (${err.type})`;
+                fwBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Bağlantı Uyarısı (${err.type})`;
             });
 
-            peer.on('connection', (conn) => {
-                conn.on('open', () => {
-                    if (conn.metadata && conn.metadata.key !== myRoomKey) {
-                        conn.close();
-                        return;
+            // Bağlantısı kopan cihazları otomatik temizle (Son 15 saniye sinyal gelmeyen)
+            setInterval(() => {
+                const now = Date.now();
+                let changed = false;
+                connectedDevices.forEach((dev, peerId) => {
+                    if (now - dev.lastSeen > 18000) {
+                        connectedDevices.delete(peerId);
+                        changed = true;
                     }
                 });
-
-                conn.on('data', (payload) => {
-                    handleIncomingPeerData(conn, payload);
-                });
-
-                conn.on('close', () => {
-                    connectedDevices.delete(conn.peer);
+                if (changed) {
                     renderConnectedDevices();
                     renderSenderFilterPills();
-                });
-            });
-
-            peer.on('call', (call) => {
-                call.answer();
-                call.on('stream', (remoteStream) => {
-                    const videoEl = document.getElementById('pc-remote-video');
-                    videoEl.srcObject = remoteStream;
-                    const dev = connectedDevices.get(call.peer);
-                    document.getElementById('stream-device-name').innerText = dev ? dev.name : 'Mobil Kamera';
-                    const panel = document.getElementById('live-stream-panel');
-                    panel.classList.remove('hidden');
-                    panel.classList.add('flex');
-                });
-            });
+                }
+            }, 5000);
 
             const dropzone = document.getElementById('explorer-dropzone');
             dropzone.addEventListener('dragover', (e) => { e.preventDefault(); });
@@ -807,31 +761,54 @@
             });
         }
 
-        async function handleIncomingPeerData(conn, data) {
+        // PC Tarafında WSS 443 Tünelinden Gelen Paketleri İşle
+        async function handleIncomingWssPacketOnPC(senderPeerId, data) {
+            if (!data) return;
+
+            // Cihazın son görülme zamanını güncelle
+            if (connectedDevices.has(senderPeerId)) {
+                connectedDevices.get(senderPeerId).lastSeen = Date.now();
+            }
+
+            // 1. Yeni Telefon Bağlantı İsteği (Handshake)
             if (data.type === 'device-hello') {
-                const colorObj = DEVICE_PALETTE[connectedDevices.size % DEVICE_PALETTE.length];
-                connectedDevices.set(conn.peer, {
-                    peerId: conn.peer,
-                    conn: conn,
-                    name: data.senderName || data.model || `Cihaz #${connectedDevices.size + 1}`,
-                    model: data.model || 'Akıllı Telefon',
-                    os: data.os || 'Mobil OS',
-                    browser: data.browser || 'Tarayıcı',
-                    battery: data.battery || null,
-                    color: colorObj,
-                    filesSent: 0
-                });
-                renderConnectedDevices();
-                renderSenderFilterPills();
+                if (data.key !== myRoomKey) return;
+
+                if (!connectedDevices.has(senderPeerId)) {
+                    const colorObj = DEVICE_PALETTE[connectedDevices.size % DEVICE_PALETTE.length];
+                    connectedDevices.set(senderPeerId, {
+                        peerId: senderPeerId,
+                        name: data.senderName || data.model || `Cihaz #${connectedDevices.size + 1}`,
+                        model: data.model || 'Akıllı Telefon',
+                        os: data.os || 'Mobil OS',
+                        browser: data.browser || 'Tarayıcı',
+                        battery: data.battery || null,
+                        color: colorObj,
+                        filesSent: 0,
+                        lastSeen: Date.now()
+                    });
+                    renderConnectedDevices();
+                    renderSenderFilterPills();
+                }
+
+                // Telefona Anında "Bağlandın" Onayı (ACK) Gönder
+                sendViaWssTunnel(senderPeerId, { type: 'hello-ack', roomId: myRoomId });
                 return;
             }
 
+            // 2. Heartbeat (Canlılık Kontrolü)
+            if (data.type === 'ping') {
+                sendViaWssTunnel(senderPeerId, { type: 'pong' });
+                return;
+            }
+
+            // 3. Kullanıcı İsim Değişikliği
             if (data.type === 'update-name') {
-                const dev = connectedDevices.get(conn.peer);
+                const dev = connectedDevices.get(senderPeerId);
                 if (dev) {
                     dev.name = data.senderName;
                     workspaceFiles.forEach(f => {
-                        if (f.senderId === conn.peer) f.senderName = data.senderName;
+                        if (f.senderId === senderPeerId) f.senderName = data.senderName;
                     });
                     renderConnectedDevices();
                     renderSenderFilterPills();
@@ -840,28 +817,57 @@
                 return;
             }
 
+            // 4. Canlı Kamera Önizleme Karesi (WSS 443 Üzerinden)
+            if (data.type === 'live-frame') {
+                const imgEl = document.getElementById('pc-remote-frame');
+                imgEl.src = data.frame;
+                const dev = connectedDevices.get(senderPeerId);
+                document.getElementById('stream-device-name').innerText = dev ? dev.name : 'Mobil Kamera';
+                const panel = document.getElementById('live-stream-panel');
+                if (panel.classList.contains('hidden')) {
+                    panel.classList.remove('hidden');
+                    panel.classList.add('flex');
+                }
+                return;
+            }
+
+            // 5. Dosya Transfer Başlangıcı
             if (data.type === 'transfer-start') {
-                const dev = connectedDevices.get(conn.peer);
+                const dev = connectedDevices.get(senderPeerId);
                 incomingChunks.set(data.transferId, {
                     meta: data,
                     sender: dev,
-                    chunks: [],
-                    receivedBytes: 0
+                    chunks: new Array(data.totalChunks),
+                    receivedCount: 0
                 });
                 updateIncomingProgressUI(data.transferId, data.fileName, 0, dev);
+                sendViaWssTunnel(senderPeerId, { type: 'start-ack', transferId: data.transferId });
                 return;
             }
 
+            // 6. Dosya Parçası (Chunk)
             if (data.type === 'transfer-chunk') {
                 const item = incomingChunks.get(data.transferId);
                 if (!item) return;
-                item.chunks.push(data.chunk);
-                item.receivedBytes += data.chunk.length;
-                const percent = Math.min(99, Math.round((item.receivedBytes / item.meta.totalLength) * 100));
+
+                if (item.chunks[data.index] === undefined) {
+                    item.chunks[data.index] = data.chunk;
+                    item.receivedCount++;
+                }
+
+                const percent = Math.min(99, Math.round((item.receivedCount / item.meta.totalChunks) * 100));
                 updateIncomingProgressUI(data.transferId, item.meta.fileName, percent, item.sender);
+
+                // Telefona Parça Onayı (ACK) Gönder
+                sendViaWssTunnel(senderPeerId, {
+                    type: 'chunk-ack',
+                    transferId: data.transferId,
+                    index: data.index
+                });
                 return;
             }
 
+            // 7. Transfer Tamamlandı
             if (data.type === 'transfer-end') {
                 const item = incomingChunks.get(data.transferId);
                 if (!item) return;
@@ -880,7 +886,7 @@
                     mime: item.meta.fileMime,
                     size: item.meta.fileSize,
                     dataUrl: fullDataUrl,
-                    senderId: conn.peer,
+                    senderId: senderPeerId,
                     senderName: item.sender ? item.sender.name : 'Mobil Cihaz',
                     senderColor: item.sender ? item.sender.color : DEVICE_PALETTE[0]
                 });
@@ -969,7 +975,7 @@
                             <span class="font-mono font-bold text-blue-400">${percent}%</span>
                         </div>
                         <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                            <div class="h-full transition-all duration-150" style="width:${percent}%; background:${colorHex}"></div>
+                            <div class="h-full transition-all duration-100" style="width:${percent}%; background:${colorHex}"></div>
                         </div>
                     </div>
                 </div>
@@ -1513,7 +1519,7 @@
         }
 
         // =========================================================================
-        // BÖLÜM 6: MOBİL TELEFON TARAFI (TCP 443 TURN DESTEKLİ GÖNDERİCİ)
+        // BÖLÜM 6: MOBİL TELEFON TARAFI (SAF WSS 443 WEBSOCKET GÖNDERİCİ)
         // =========================================================================
         async function initMobileSender(roomId, key) {
             document.getElementById('mobile-app').classList.remove('hidden');
@@ -1527,45 +1533,83 @@
 
             await startMobileCameraStream();
 
-            // Mobil PeerJS'i Belediye Firewall Yapılandırmasıyla Başlat
-            peer = new Peer(undefined, PEER_FIREWALL_CONFIG);
+            peer = new Peer(undefined, { secure: true, port: 443 });
 
             peer.on('open', () => {
-                // Kurumsal Proxy/Firewall dostu JSON serileştirme ile bağlan
-                mobConn = peer.connect(roomId, {
-                    reliable: true,
-                    serialization: 'json',
-                    metadata: { key: key }
+                // WSS 443 Tünelini Dinle
+                attachWssTunnelListener((srcPeerId, packet) => {
+                    if (!packet) return;
+
+                    // PC'den Bağlantı Onayı (ACK) Geldi!
+                    if (packet.type === 'hello-ack') {
+                        if (!isMobConnected) {
+                            isMobConnected = true;
+                            document.getElementById('mob-conn-dot').className = "w-3 h-3 rounded-full bg-emerald-400";
+                            document.getElementById('mob-conn-status').innerText = "PC Klasörüne Bağlandı (WSS 443)";
+                        }
+                    }
+
+                    // PC'den Parça Onayı (Chunk ACK) Geldi!
+                    if (packet.type === 'chunk-ack') {
+                        const resolverKey = `${packet.transferId}_${packet.index}`;
+                        if (pendingChunkResolvers.has(resolverKey)) {
+                            const resolveFn = pendingChunkResolvers.get(resolverKey);
+                            pendingChunkResolvers.delete(resolverKey);
+                            resolveFn();
+                        }
+                    }
+
+                    // PC'den Uzaktan Çekim Komutu Geldi!
+                    if (packet.command === 'remote-capture') {
+                        captureMobilePhoto();
+                    }
                 });
 
-                mobConn.on('open', () => {
-                    document.getElementById('mob-conn-dot').className = "w-3 h-3 rounded-full bg-emerald-400";
-                    document.getElementById('mob-conn-status').innerText = "PC Klasörüne Bağlandı (TCP 443)";
-
-                    mobConn.send({
+                // İlk Bağlantı Paketi Gönder ve Bağlanana Kadar Tekrarla
+                const sendHello = () => {
+                    if (isMobConnected) return;
+                    sendViaWssTunnel(roomId, {
                         type: 'device-hello',
+                        key: key,
                         senderName: mobSenderName,
                         model: deviceMeta.model,
                         os: deviceMeta.os,
                         browser: deviceMeta.browser,
                         battery: deviceMeta.battery
                     });
+                };
 
-                    if (mobStream) {
-                        peer.call(roomId, mobStream);
+                sendHello();
+                const handshakeTimer = setInterval(() => {
+                    if (isMobConnected) {
+                        clearInterval(handshakeTimer);
+                    } else {
+                        sendHello();
                     }
-                });
+                }, 1200);
 
-                mobConn.on('data', (data) => {
-                    if (data.command === 'remote-capture') {
-                        captureMobilePhoto();
+                // Heartbeat (Canlılık Sinyali)
+                setInterval(() => {
+                    if (isMobConnected) {
+                        sendViaWssTunnel(roomId, { type: 'ping' });
                     }
-                });
+                }, 5000);
 
-                mobConn.on('close', () => {
-                    document.getElementById('mob-conn-dot').className = "w-3 h-3 rounded-full bg-red-500";
-                    document.getElementById('mob-conn-status').innerText = "Bağlantı Kesildi";
-                });
+                // Canlı Kamera Önizlemesini WSS 443 Üzerinden Gönder (Dosya gönderilmiyorken)
+                setInterval(() => {
+                    if (!isMobConnected || isUploadingFile) return;
+                    const video = document.getElementById('mob-video');
+                    const camTab = document.getElementById('mob-tab-camera');
+                    if (!video || !video.videoWidth || camTab.classList.contains('hidden')) return;
+
+                    const pCanvas = document.getElementById('preview-canvas');
+                    pCanvas.width = 280;
+                    pCanvas.height = Math.round((video.videoHeight / video.videoWidth) * 280);
+                    pCanvas.getContext('2d').drawImage(video, 0, 0, pCanvas.width, pCanvas.height);
+
+                    const frameDataUrl = pCanvas.toDataURL('image/jpeg', 0.45);
+                    sendViaWssTunnel(roomId, { type: 'live-frame', frame: frameDataUrl });
+                }, 450);
             });
 
             peer.on('error', (err) => {
@@ -1620,8 +1664,8 @@
                 mobSenderName = newName.trim();
                 localStorage.setItem('tonoscan_sender_name', mobSenderName);
                 document.getElementById('mob-sender-name-btn').innerText = mobSenderName;
-                if (mobConn && mobConn.open) {
-                    mobConn.send({ type: 'update-name', senderName: mobSenderName });
+                if (isMobConnected) {
+                    sendViaWssTunnel(targetRoomId, { type: 'update-name', senderName: mobSenderName });
                 }
             }
         }
@@ -1707,16 +1751,18 @@
             event.target.value = '';
         }
 
-        // TCP 443 TURN Rölesi İçin Optimize Edilmiş 32KB Parçalı Gönderim
+        // WSS 443 WebSocket Köprüsü Üzerinden Onaylı (ACK) 16KB Parçalı Dosya Aktarımı
         async function sendFileInChunks(fileName, fileMime, fileSize, dataUrl) {
-            if (!mobConn || !mobConn.open) {
-                alert('PC bağlantısı henüz aktif değil!');
+            if (!isMobConnected) {
+                alert('PC bağlantısı henüz aktif değil! Lütfen üstteki ışığın yeşile dönmesini bekleyin.');
                 return;
             }
 
+            isUploadingFile = true;
             const transferId = 'tx-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6);
-            const chunkSize = 32 * 1024; // 32 KB (TCP TURN tünelleri için en kararlı boyut)
+            const chunkSize = 16 * 1024; // 16 KB (WSS WebSocket çerçeveleri için en hızlı ve kayıpsız boyut)
             const totalLength = dataUrl.length;
+            const totalChunks = Math.ceil(totalLength / chunkSize);
 
             const bar = document.getElementById('mob-upload-bar');
             const nameEl = document.getElementById('mob-upload-filename');
@@ -1725,34 +1771,48 @@
 
             bar.classList.remove('hidden');
             nameEl.innerText = fileName;
+            pctEl.innerText = '0%';
+            progEl.style.width = '0%';
 
-            mobConn.send({
+            sendViaWssTunnel(targetRoomId, {
                 type: 'transfer-start',
                 transferId,
                 fileName,
                 fileMime,
                 fileSize,
+                totalChunks,
                 totalLength
             });
 
-            for (let offset = 0; offset < totalLength; offset += chunkSize) {
-                const chunk = dataUrl.slice(offset, offset + chunkSize);
-                mobConn.send({
+            for (let i = 0; i < totalChunks; i++) {
+                const chunk = dataUrl.slice(i * chunkSize, (i + 1) * chunkSize);
+                const resolverKey = `${transferId}_${i}`;
+
+                const ackPromise = new Promise(resolve => {
+                    pendingChunkResolvers.set(resolverKey, resolve);
+                    // ACK gelmezse bile maksimum 35ms sonra bir sonraki pakete geç
+                    setTimeout(() => {
+                        pendingChunkResolvers.delete(resolverKey);
+                        resolve();
+                    }, 35);
+                });
+
+                sendViaWssTunnel(targetRoomId, {
                     type: 'transfer-chunk',
                     transferId,
+                    index: i,
                     chunk
                 });
 
-                const pct = Math.min(100, Math.round(((offset + chunk.length) / totalLength) * 100));
+                await ackPromise;
+
+                const pct = Math.min(100, Math.round(((i + 1) / totalChunks) * 100));
                 pctEl.innerText = `${pct}%`;
                 progEl.style.width = `${pct}%`;
-
-                if (offset % (chunkSize * 3) === 0) {
-                    await new Promise(r => setTimeout(r, 10));
-                }
             }
 
-            mobConn.send({ type: 'transfer-end', transferId });
+            sendViaWssTunnel(targetRoomId, { type: 'transfer-end', transferId });
+            isUploadingFile = false;
 
             mobSentCount++;
             document.getElementById('mob-sent-badge').innerText = `${mobSentCount} Dosya`;
@@ -1763,7 +1823,7 @@
             row.innerHTML = `<span class="truncate text-white font-medium max-w-[200px]">${fileName}</span><span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check"></i> İletildi</span>`;
             hist.prepend(row);
 
-            setTimeout(() => bar.classList.add('hidden'), 500);
+            setTimeout(() => bar.classList.add('hidden'), 400);
         }
 
         // =========================================================================
@@ -1790,10 +1850,8 @@
         }
 
         function requestRemoteCapture() {
-            connectedDevices.forEach(dev => {
-                if (dev.conn && dev.conn.open) {
-                    dev.conn.send({ command: 'remote-capture' });
-                }
+            connectedDevices.forEach((dev, peerId) => {
+                sendViaWssTunnel(peerId, { command: 'remote-capture' });
             });
         }
 

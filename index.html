@@ -1,926 +1,416 @@
 <!DOCTYPE html>
 <html lang="tr" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TonoScan Studio Pro | Güvenli Dosya & Evrak Köprüsü</title>
-    
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%232563eb%22/><text x=%2250%%22 y=%2255%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2260%22>📁</text></svg>">
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Firebase SDK (v10 Modular) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, remove, off } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        window.firebaseDB = { initializeApp, getDatabase, ref, set, onValue, remove, off };
-    </script>
-    <!-- QRCode.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <!-- Cropper.js -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-    <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- PDF.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        :root {
-            --bg-primary: #060913;
-            --bg-glass: rgba(15, 23, 42, 0.78);
-            --border-glass: rgba(255, 255, 255, 0.08);
-        }
-        body {
-            background-color: var(--bg-primary);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.14) 0px, transparent 45%),
-                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.12) 0px, transparent 45%),
-                radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
-            color: #f8fafc;
-            overflow: hidden;
-            user-select: none;
-        }
-        .mica-panel {
-            background: var(--bg-glass);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--border-glass);
-        }
-        .win-card {
-            background: rgba(30, 41, 59, 0.45);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .win-card:hover {
-            background: rgba(30, 41, 59, 0.82);
-            border-color: rgba(59, 130, 246, 0.45);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.6), 0 0 15px -3px rgba(59, 130, 246, 0.2);
-        }
-        .win-card.selected {
-            background: rgba(37, 99, 235, 0.18);
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 1px #3b82f6;
-        }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 9999px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.4); }
-
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-        }
-        .qr-glow:hover { animation: pulse-ring 2s infinite; }
-        #mobile-app { height: 100dvh; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>TonoScan Studio | Kablosuz Evrak Aktarım Merkezi</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%232563eb%22/><text x=%2250%%22 y=%2255%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2260%22>📷</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#060913;background-image:radial-gradient(at 0 0,#2563eb24,transparent 45%),radial-gradient(at 100% 0,#8b5cf61f,transparent 45%);color:#f8fafc;overflow:hidden}
+.b{padding:.4rem .7rem;border-radius:.5rem;background:#1e293b;border:1px solid #334155;font-size:.75rem;display:inline-flex;gap:.4rem;align-items:center;cursor:pointer}
+.b:hover{background:#334155}.p{background:#2563eb;border-color:#2563eb}.g{background:#059669;border-color:#059669}.r{color:#f87171}
+.card{background:#1e293b80;border:1px solid #ffffff14;border-radius:1rem;overflow:hidden;transition:.2s}.card:hover{border-color:#3b82f673}.card.sel{border-color:#3b82f6;background:#2563eb2e}
+.md{position:fixed;inset:0;background:#020617f2;z-index:50;display:none;flex-direction:column}.md.on{display:flex}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#94a3b833;border-radius:9px}
+</style>
 </head>
-<body class="h-screen w-screen flex flex-col">
+<body>
 
-    <!-- ========================================================================= -->
-    <!-- 1. PC WORKSPACE (WINDOWS 11 EXPLORER)                                     -->
-    <!-- ========================================================================= -->
-    <div id="pc-app" class="hidden flex-1 flex flex-col h-full overflow-hidden">
-        
-        <!-- ÜST KOMUT ŞERİDİ -->
-        <header class="mica-panel h-16 px-5 flex items-center justify-between border-b border-slate-800/80 z-20 shrink-0">
-            <div class="flex items-center gap-3.5">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 border border-white/10">
-                    <i class="fa-solid fa-cloud text-lg"></i>
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h1 class="font-bold text-base tracking-tight text-white">TonoScan <span class="text-blue-400 font-extrabold">Studio</span></h1>
-                        <span class="text-[10px] font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                            Firebase Cloud Köprüsü Aktif
-                        </span>
-                    </div>
-                    <p class="text-[11px] text-slate-400">Belediye Firewall Uyumlu (250 MB Limit & IndexedDB Kalıcı Hafıza)</p>
-                </div>
-            </div>
-
-            <!-- Araç Çubuğu -->
-            <div class="flex items-center gap-2">
-                <label class="cursor-pointer px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs font-medium text-slate-200 transition flex items-center gap-2" title="Bilgisayardan Dosya Ekle">
-                    <i class="fa-solid fa-folder-plus text-amber-400"></i>
-                    <span>PC'den Ekle</span>
-                    <input type="file" multiple class="hidden" onchange="handleLocalPCFiles(event)">
-                </label>
-
-                <div class="h-6 w-px bg-slate-800 mx-1"></div>
-
-                <button onclick="selectAllItems()" class="px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs font-medium text-slate-200 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-check-double text-blue-400"></i>
-                    <span>Tümünü Seç</span>
-                </button>
-
-                <button onclick="mergeSelectedVerticalJPG()" class="px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs font-medium text-slate-200 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-arrows-up-down text-purple-400"></i>
-                    <span>Alt Alta Birleştir</span>
-                </button>
-
-                <button onclick="exportSelectedToPDF()" class="px-3.5 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-xs font-semibold text-white shadow-lg shadow-emerald-600/20 transition flex items-center gap-2">
-                    <i class="fa-solid fa-file-pdf"></i>
-                    <span>Seçilileri PDF Birleştir</span>
-                </button>
-
-                <button onclick="downloadSelectedFiles()" class="px-3.5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-xs font-semibold text-white shadow-lg shadow-blue-600/20 transition flex items-center gap-2">
-                    <i class="fa-solid fa-download"></i>
-                    <span>Seçilileri İndir</span>
-                </button>
-
-                <button onclick="clearAllWorkspace()" class="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs transition" title="Tüm Klasörü Temizle">
-                    <i class="fa-solid fa-trash-can"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- ANA GÖVDE -->
-        <div class="flex-1 flex overflow-hidden">
-            
-            <!-- SOL PANEL: KAREKOD & BAĞLI CİHAZLAR -->
-            <aside class="w-80 mica-panel border-r border-slate-800/80 flex flex-col justify-between p-4 overflow-y-auto shrink-0">
-                <div class="space-y-4">
-                    
-                    <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl">
-                        <div class="flex items-center justify-between mb-2.5">
-                            <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                                <i class="fa-solid fa-shield-halved text-emerald-400"></i> Güvenli Oda Karekodu
-                            </span>
-                            <button onclick="openQRModal()" class="text-[11px] bg-blue-500/15 hover:bg-blue-500/25 text-blue-400 px-2 py-0.5 rounded-md font-medium transition flex items-center gap-1">
-                                <i class="fa-solid fa-expand"></i> Büyüt
-                            </button>
-                        </div>
-
-                        <div onclick="openQRModal()" class="qr-glow cursor-pointer bg-white p-3.5 rounded-xl flex flex-col items-center justify-center relative group transition">
-                            <div id="sidebar-qr"></div>
-                            <div class="absolute inset-0 bg-slate-950/80 opacity-0 group-hover:opacity-100 rounded-xl transition flex flex-col items-center justify-center text-white p-2 text-center">
-                                <i class="fa-solid fa-magnifying-glass-plus text-2xl text-blue-400 mb-1"></i>
-                                <span class="text-xs font-bold">Tam Ekran Büyüt</span>
-                                <span class="text-[10px] text-slate-300">Yeni telefon eklemek için tıklayın</span>
-                            </div>
-                        </div>
-
-                        <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-400">
-                            <span>Oda Kodu: <b id="room-code-text" class="text-slate-200 font-mono">...</b></span>
-                            <button onclick="copyRoomLink()" class="hover:text-blue-400 transition flex items-center gap-1">
-                                <i class="fa-regular fa-copy"></i> Kopyala
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="rounded-2xl bg-slate-900/70 border border-slate-800/90 p-3.5">
-                        <div class="flex items-center justify-between mb-3">
-                            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                                <i class="fa-solid fa-mobile-screen-button text-blue-400"></i> Bağlanan Cihazlar
-                            </h2>
-                            <span id="device-count-badge" class="text-[11px] font-mono bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full font-bold">0 Aktif</span>
-                        </div>
-
-                        <div id="connected-devices-list" class="space-y-2 max-h-56 overflow-y-auto pr-1">
-                            <div class="text-center py-5 text-slate-500 text-xs">
-                                <i class="fa-solid fa-wifi text-lg mb-1.5 block opacity-40 animate-pulse"></i>
-                                Telefon kamerasından karekodu okutarak bağlanın.
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
-                    <span>Created by <b class="text-slate-300">Tonoz</b></span>
-                    <span class="font-mono text-[10px] text-emerald-400">IndexedDB Persist</span>
-                </div>
-            </aside>
-
-            <!-- SAĞ ANA ALAN: DOSYA GEZGİNİ -->
-            <main class="flex-1 flex flex-col overflow-hidden bg-slate-950/30" id="explorer-dropzone">
-                
-                <div class="px-6 py-3 bg-slate-900/50 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
-                    <div class="flex items-center gap-2 bg-slate-950/80 border border-slate-800 px-3.5 py-1.5 rounded-lg text-xs text-slate-300">
-                        <i class="fa-brands fa-windows text-blue-400 text-sm"></i>
-                        <span class="text-slate-500">Bilgisayarım</span>
-                        <i class="fa-solid fa-chevron-right text-[9px] text-slate-600"></i>
-                        <span class="text-slate-400">TonoScan Hub</span>
-                        <i class="fa-solid fa-chevron-right text-[9px] text-slate-600"></i>
-                        <span class="font-semibold text-white flex items-center gap-1.5">
-                            <i class="fa-solid fa-folder-open text-amber-400"></i> Gelen Evraklar (<span id="total-files-count">0</span>)
-                        </span>
-                    </div>
-
-                    <div class="flex items-center gap-1.5 flex-wrap" id="sender-filter-bar">
-                        <button onclick="setFilter('all')" id="filter-btn-all" class="px-2.5 py-1 rounded-md text-xs font-medium bg-blue-600 text-white transition">Tümü</button>
-                        <button onclick="setFilter('image')" id="filter-btn-image" class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300 transition">Görseller</button>
-                        <button onclick="setFilter('pdf')" id="filter-btn-pdf" class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300 transition">PDF</button>
-                        <div id="dynamic-sender-filters" class="flex items-center gap-1.5"></div>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <div class="relative">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-                            <input type="text" id="search-input" oninput="renderExplorer()" placeholder="Dosya ara..." class="bg-slate-950/90 border border-slate-800 focus:border-blue-500 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 outline-none w-48 transition">
-                        </div>
-
-                        <div class="flex bg-slate-900 border border-slate-800 rounded-lg p-0.5">
-                            <button onclick="setViewMode('grid')" id="view-grid-btn" class="px-2.5 py-1 rounded-md text-xs bg-blue-600 text-white transition"><i class="fa-solid fa-grip"></i></button>
-                            <button onclick="setViewMode('list')" id="view-list-btn" class="px-2.5 py-1 rounded-md text-xs text-slate-400 hover:text-white transition"><i class="fa-solid fa-list"></i></button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CANLI İNDİRME / AKTARIM ÇUBUĞU -->
-                <div id="incoming-transfers-container" class="px-6 pt-3 space-y-2 empty:hidden"></div>
-
-                <div class="flex-1 p-6 overflow-y-auto" id="explorer-content">
-                    <div id="empty-explorer" class="h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto">
-                        <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 flex items-center justify-center text-4xl text-blue-400 mb-5 shadow-2xl">
-                            <i class="fa-solid fa-cloud-arrow-up animate-bounce"></i>
-                        </div>
-                        <h2 class="text-xl font-bold text-white mb-2">Klasör Henüz Boş</h2>
-                        <p class="text-xs text-slate-400 leading-relaxed mb-6">
-                            Karekodu telefondan okutun. <b>250 MB sınırlı</b> her türlü fotoğraf, PDF, CAD veya büyük arşivi güvenle gönderin. Sayfayı yenileseniz bile dosyalar kalıcı hafızada saklanır.
-                        </p>
-                    </div>
-
-                    <div id="files-grid" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"></div>
-
-                    <div id="files-list" class="hidden bg-slate-900/60 border border-slate-800 rounded-xl overflow-hidden">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400 bg-slate-950/60">
-                                    <th class="py-3 px-4 w-10"><input type="checkbox" onchange="selectAllItems()" class="accent-blue-500 rounded cursor-pointer"></th>
-                                    <th class="py-3 px-4">Dosya Adı</th>
-                                    <th class="py-3 px-4">Gönderen Kişi</th>
-                                    <th class="py-3 px-4">Tür</th>
-                                    <th class="py-3 px-4">Boyut</th>
-                                    <th class="py-3 px-4">Saat</th>
-                                    <th class="py-3 px-4 text-right">İşlemler</th>
-                                </tr>
-                            </thead>
-                            <tbody id="files-list-body" class="divide-y divide-slate-800/60 text-xs"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </main>
-        </div>
+<!-- PC -->
+<div id="pc" class="hidden h-screen">
+ <header class="h-14 px-4 flex items-center justify-between border-b border-slate-800 shrink-0 gap-2">
+  <div class="flex items-center gap-3"><b class="text-base">TonoScan <span class="text-blue-400">Studio</span></b><span id="st" class="text-[11px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-400">Bağlanıyor...</span></div>
+  <div class="flex gap-2 flex-wrap">
+   <label class="b"><i class="fa-solid fa-folder-plus text-amber-400"></i>PC'den Ekle<input type="file" multiple hidden onchange="pcFiles(this.files);this.value=''"></label>
+   <button class="b" onclick="selAll()"><i class="fa-solid fa-check-double text-blue-400"></i>Tümünü Seç</button>
+   <button class="b" onclick="mergeJPG()"><i class="fa-solid fa-arrows-up-down text-purple-400"></i>Alt Alta JPG</button>
+   <button class="b g" onclick="mergePDF()"><i class="fa-solid fa-file-pdf"></i>Seçilileri PDF Birleştir</button>
+   <button class="b p" onclick="dlSel()"><i class="fa-solid fa-download"></i>Seçilileri İndir</button>
+   <button class="b r" onclick="clearAll()" title="Tüm dosyaları sil"><i class="fa-solid fa-trash-can"></i>Temizle</button>
+  </div>
+ </header>
+ <div class="flex" style="height:calc(100vh - 3.5rem)">
+  <aside class="w-72 shrink-0 border-r border-slate-800 p-4 overflow-y-auto flex flex-col justify-between gap-4">
+   <div class="space-y-4">
+    <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800">
+     <div class="flex justify-between items-center mb-2 text-xs"><span class="font-semibold"><i class="fa-solid fa-shield-halved text-emerald-400"></i> Uçtan Uca Şifreli Karekod</span><button class="text-blue-400" onclick="show('qm',1)">Büyüt</button></div>
+     <div class="bg-white p-3 rounded-xl flex justify-center cursor-pointer" onclick="show('qm',1)"><div id="qr1"></div></div>
+     <div class="flex justify-between mt-2 text-[11px] text-slate-400"><button onclick="copyLink()"><i class="fa-regular fa-copy"></i> Linki Kopyala</button><button class="text-amber-400" onclick="newRoom()"><i class="fa-solid fa-rotate"></i> QR'ı Yenile</button></div>
     </div>
-
-    <!-- ========================================================================= -->
-    <!-- 2. MOBİL UYGULAMA EKRANI (GÖNDERİCİ)                                      -->
-    <!-- ========================================================================= -->
-    <div id="mobile-app" class="hidden flex flex-col bg-slate-950 text-white relative overflow-hidden h-screen">
-        <header class="z-20 px-4 py-3 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-                <span id="mob-conn-dot" class="w-3 h-3 rounded-full bg-amber-400 animate-ping"></span>
-                <div>
-                    <div id="mob-conn-status" class="text-xs font-bold text-white">Firebase Köprüsü Bağlanıyor...</div>
-                    <div id="mob-device-label" class="text-[10px] text-slate-400">Cihaz hazır</div>
-                </div>
-            </div>
-            <button onclick="changeSenderName()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-blue-400 flex items-center gap-1.5">
-                <i class="fa-solid fa-user-pen"></i>
-                <span id="mob-sender-name-btn">İsim Belirle</span>
-            </button>
-        </header>
-
-        <!-- Yükleme Barı -->
-        <div id="mob-upload-bar" class="hidden z-30 bg-blue-950/90 border-b border-blue-500/30 px-4 py-2.5">
-            <div class="flex items-center justify-between text-xs mb-1">
-                <span class="font-semibold text-blue-300 truncate max-w-[220px]">
-                    <i class="fa-solid fa-bolt animate-pulse"></i> <span id="mob-upload-filename">Gönderiliyor...</span>
-                </span>
-                <span id="mob-upload-percent" class="font-mono font-bold text-white">0%</span>
-            </div>
-            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                <div id="mob-upload-progress" class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 transition-all duration-100" style="width: 0%"></div>
-            </div>
-        </div>
-
-        <div class="flex-1 p-6 overflow-y-auto flex flex-col justify-between bg-slate-950">
-            <div class="space-y-4">
-                <div class="p-6 rounded-3xl bg-gradient-to-br from-blue-600/20 to-indigo-600/10 border border-blue-500/30 text-center shadow-2xl">
-                    <div class="w-16 h-16 rounded-2xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-3xl text-blue-400 mx-auto mb-3">
-                        <i class="fa-solid fa-cloud-arrow-up"></i>
-                    </div>
-                    <h3 class="font-bold text-base text-white">Dosya & Evrak Gönderim Merkezi</h3>
-                    <p class="text-xs text-slate-400 mt-1">Fotoğraf, PDF, CAD veya belgelerinizi seçin (Maksimum 250 MB).</p>
-
-                    <label class="cursor-pointer mt-5 py-4 px-6 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xl shadow-blue-600/30 transition">
-                        <i class="fa-solid fa-folder-plus text-lg"></i>
-                        <span>Dosya veya Fotoğraf Seç (Maks 250 MB)</span>
-                        <input type="file" multiple class="hidden" onchange="handleMobileFilesSelected(event)">
-                    </label>
-                </div>
-
-                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="text-xs font-bold uppercase text-slate-400">Bu Telefondan Gönderilenler</span>
-                        <span id="mob-sent-badge" class="text-xs font-mono bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-md font-bold">0 Dosya</span>
-                    </div>
-                    <div id="mob-sent-history" class="space-y-2 max-h-64 overflow-y-auto text-xs text-slate-400">
-                        <div class="text-center py-4 text-slate-600">Henüz dosya gönderilmedi</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center text-[11px] text-slate-600 pt-4">
-                TonoScan Studio • Güvenli Firebase Köprüsü
-            </div>
-        </div>
+    <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800">
+     <div class="flex justify-between mb-2"><h2 class="text-xs font-bold uppercase text-slate-400"><i class="fa-solid fa-mobile-screen-button text-blue-400"></i> Cihazlar</h2><span id="dc" class="text-[11px] text-blue-400">0 aktif</span></div>
+     <div id="dl" class="space-y-2 max-h-72 overflow-y-auto"></div>
     </div>
-
-    <!-- MODALLAR -->
-    <div id="qr-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden items-center justify-center p-4">
-        <div class="mica-panel max-w-md w-full rounded-3xl p-6 border border-slate-700/80 shadow-2xl text-center relative">
-            <button onclick="closeQRModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-xl font-bold text-white mb-1">Telefon Kamerasından Okutun</h3>
-            <p class="text-xs text-slate-400 mb-5">Aynı karekodu birden fazla telefon okutarak dosya gönderebilir.</p>
-            <div class="bg-white p-6 rounded-3xl inline-block shadow-2xl border-4 border-blue-500/30 mx-auto">
-                <div id="modal-qr"></div>
-            </div>
-            <div class="mt-5 p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
-                <span id="modal-qr-url" class="font-mono text-slate-300 truncate pr-2">...</span>
-                <button onclick="copyRoomLink()" class="px-3 py-2 bg-blue-600 rounded-lg text-white font-semibold">Kopyala</button>
-            </div>
-        </div>
+   </div>
+   <div class="text-[11px] text-slate-500 border-t border-slate-800 pt-3"><div id="stor">Depolama...</div><div>Created by <b class="text-slate-300">Tonoz</b></div></div>
+  </aside>
+  <main class="flex-1 flex flex-col overflow-hidden" id="drop">
+   <div class="px-5 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+    <div class="text-xs"><i class="fa-solid fa-folder-open text-amber-400"></i> Gelen Evraklar (<span id="cnt">0</span>)</div>
+    <div class="flex gap-1.5">
+     <button class="b" id="f-all" onclick="setFlt('all')">Tümü</button><button class="b" id="f-image" onclick="setFlt('image')">Görseller</button><button class="b" id="f-pdf" onclick="setFlt('pdf')">PDF</button>
+     <input id="q" oninput="render()" placeholder="Ara..." class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 text-xs outline-none w-44">
     </div>
-
-    <div id="image-editor-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden flex-col">
-        <div class="px-6 py-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
-            <h3 class="font-bold text-sm text-white">Görsel Düzenleyici & Tarayıcı</h3>
-            <div class="flex gap-2">
-                <button onclick="closeImageEditor()" class="px-4 py-2 bg-slate-800 rounded-lg text-xs">İptal</button>
-                <button onclick="saveEditedImage(false)" class="px-5 py-2 bg-blue-600 rounded-lg text-xs font-bold text-white">Kaydet</button>
-            </div>
-        </div>
-        <div class="flex-1 p-6 flex items-center justify-center bg-black/60"><img id="cropper-target-img" class="max-h-full max-w-full"></div>
+   </div>
+   <div id="inc" class="px-5 pt-3 space-y-2 empty:hidden"></div>
+   <div class="flex-1 p-5 overflow-y-auto">
+    <div id="empty" class="h-full flex flex-col items-center justify-center text-center max-w-md mx-auto text-slate-400 text-xs">
+     <i class="fa-solid fa-cloud-arrow-up text-5xl text-blue-400 mb-4"></i><h2 class="text-lg font-bold text-white mb-1">Klasör boş</h2>
+     Karekodu telefondan okutun. Fotoğraf ve dosyalar şifrelenerek gelir, bu bilgisayarda saklanır; sayfayı yenileseniz de kalır. Dosyaları sürükleyip masaüstüne atabilirsiniz.
     </div>
-
-    <div id="pdf-splitter-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden flex-col">
-        <div class="px-6 py-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
-            <h3 class="font-bold text-sm text-white" id="pdf-modal-title">PDF Sayfa Ayıklama</h3>
-            <div class="flex gap-2">
-                <button onclick="downloadCleanedPDF()" class="px-4 py-2 bg-emerald-600 rounded-lg text-xs font-bold text-white">Kalanları PDF İndir</button>
-                <button onclick="closePDFSplitter()" class="px-3 py-2 bg-slate-800 rounded-lg text-xs">Kapat</button>
-            </div>
-        </div>
-        <div class="flex-1 p-6 overflow-y-auto"><div id="pdf-pages-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5"></div></div>
-    </div>
-
-    <div id="preview-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 hidden flex-col">
-        <div class="px-6 py-4 flex items-center justify-between border-b border-white/10">
-            <span id="preview-title" class="font-bold text-sm text-white">Önizleme</span>
-            <button onclick="closePreviewModal()" class="w-9 h-9 rounded-full bg-white/10 text-white flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="flex-1 p-6 flex items-center justify-center overflow-auto" id="preview-body"></div>
-    </div>
-
-    <canvas id="work-canvas" class="hidden"></canvas>
-
-    <!-- ========================================================================= -->
-    <!-- UYGULAMA JS MİMARİSİ (FIREBASE + INDEXEDDB + 250MB CHUNK)                -->
-    <!-- ========================================================================= -->
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-        // Girdiğin Firebase Bilgileri
-        const firebaseConfig = {
-            apiKey: "AIzaSyC1yFeAKzqziGz_Z0C8RHgSabSRb7Wff_M",
-            authDomain: "tarama-646dc.firebaseapp.com",
-            databaseURL: "https://tarama-646dc-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "tarama-646dc",
-            storageBucket: "tarama-646dc.firebasestorage.app",
-            messagingSenderId: "50610490478",
-            appId: "1:50610490478:web:7b6c5e0d731c1942c6aa7f",
-            measurementId: "G-5Q8P9S09ZZ"
-        };
-
-        const DEVICE_PALETTE = [
-            { name: 'Mavi', bg: 'bg-blue-500/20', border: 'border-blue-500/40', text: 'text-blue-400', hex: '#3b82f6' },
-            { name: 'Zümrüt', bg: 'bg-emerald-500/20', border: 'border-emerald-500/40', text: 'text-emerald-400', hex: '#10b981' },
-            { name: 'Mor', bg: 'bg-purple-500/20', border: 'border-purple-500/40', text: 'text-purple-400', hex: '#a855f7' },
-            { name: 'Kehribar', bg: 'bg-amber-500/20', border: 'border-amber-500/40', text: 'text-amber-400', hex: '#f59e0b' }
-        ];
-
-        const MAX_FILE_SIZE = 250 * 1024 * 1024; // 250 MB Limit
-        const CHUNK_SIZE = 256 * 1024;           // 256 KB Dilimler
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const targetRoomId = urlParams.get('oda');
-        const securityToken = urlParams.get('key');
-
-        let db = null;
-        let myRoomId = null;
-        let myRoomKey = null;
-
-        const connectedDevices = new Map();
-        const incomingTransfers = new Map();
-        let workspaceFiles = [];
-        let currentFilter = 'all';
-        let currentViewMode = 'grid';
-
-        let cropperInstance = null;
-        let editingFileId = null;
-        let activeSplitPDF = { fileId: null, fileName: '', pages: [] };
-
-        let mobSenderName = localStorage.getItem('tonoscan_sender_name') || 'Mobil Kullanıcı';
-        let mobSentCount = 0;
-        let dbRef = null;
-
-        // --- INDEXEDDB (KALICI KLASÖR HAFIZASI) MİMARİSİ ---
-        let idb = null;
-        function initIndexedDB() {
-            return new Promise((resolve) => {
-                const request = indexedDB.open('TonoScanStorage', 1);
-                request.onupgradeneeded = (e) => {
-                    const dbInstance = e.target.result;
-                    if (!dbInstance.objectStoreNames.contains('files')) {
-                        dbInstance.createObjectStore('files', { keyPath: 'id' });
-                    }
-                };
-                request.onsuccess = (e) => {
-                    idb = e.target.result;
-                    resolve(idb);
-                };
-                request.onerror = () => resolve(null);
-            });
-        }
-
-        function saveFileToIDB(fileObj) {
-            if (!idb) return;
-            const tx = idb.transaction('files', 'readwrite');
-            tx.objectStore('files').put(fileObj);
-        }
-
-        function deleteFileFromIDB(fileId) {
-            if (!idb) return;
-            const tx = idb.transaction('files', 'readwrite');
-            tx.objectStore('files').delete(fileId);
-        }
-
-        function clearAllIDB() {
-            if (!idb) return;
-            const tx = idb.transaction('files', 'readwrite');
-            tx.objectStore('files').clear();
-        }
-
-        function loadAllFilesFromIDB() {
-            return new Promise((resolve) => {
-                if (!idb) return resolve([]);
-                const tx = idb.transaction('files', 'readonly');
-                const req = tx.objectStore('files').getAll();
-                req.onsuccess = () => resolve(req.result || []);
-                req.onerror = () => resolve([]);
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', async () => {
-            await initIndexedDB();
-            const fList = await loadAllFilesFromIDB();
-            workspaceFiles = fList.reverse(); // En yeni en üstte
-
-            if (targetRoomId) {
-                initMobileSender(targetRoomId, securityToken);
-            } else {
-                initPCWorkspace();
-            }
-        });
-
-        // =========================================================================
-        // PC TARAFı: FIREBASE KÖPRÜSÜ VE ALICI
-        // =========================================================================
-        async function initPCWorkspace() {
-            document.getElementById('pc-app').classList.remove('hidden');
-
-            const app = window.firebaseDB.initializeApp(firebaseConfig);
-            db = window.firebaseDB.getDatabase(app);
-
-            // localStorage ile F5 atılsa bile Oda Kodu değişmez
-            myRoomId = localStorage.getItem('tonoscan_room_id');
-            myRoomKey = localStorage.getItem('tonoscan_room_key');
-
-            if (!myRoomId || !myRoomKey) {
-                const randomPart = Math.random().toString(36).substring(2, 8);
-                myRoomId = `oda_${randomPart}`;
-                myRoomKey = Math.random().toString(36).substring(2, 10);
-                localStorage.setItem('tonoscan_room_id', myRoomId);
-                localStorage.setItem('tonoscan_room_key', myRoomKey);
-            }
-
-            document.getElementById('room-code-text').innerText = myRoomId.toUpperCase();
-            const joinUrl = `${window.location.origin}${window.location.pathname}?oda=${myRoomId}&key=${myRoomKey}`;
-            document.getElementById('modal-qr-url').innerText = joinUrl;
-
-            new QRCode(document.getElementById('sidebar-qr'), { text: joinUrl, width: 175, height: 175, colorDark: "#060913", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
-            new QRCode(document.getElementById('modal-qr'), { text: joinUrl, width: 300, height: 300, colorDark: "#060913", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
-
-            dbRef = window.firebaseDB.ref(db, `rooms/${myRoomId}`);
-
-            // Firebase'i Dinle
-            window.firebaseDB.onValue(dbRef, (snapshot) => {
-                const data = snapshot.val();
-                if (!data) return;
-
-                // 1. Cihaz Handshake
-                if (data.devices) {
-                    connectedDevices.clear();
-                    Object.keys(data.devices).forEach(devId => {
-                        const dInfo = data.devices[devId];
-                        const colorObj = DEVICE_PALETTE[connectedDevices.size % DEVICE_PALETTE.length];
-                        connectedDevices.set(devId, { ...dInfo, color: colorObj, peerId: devId });
-                    });
-                    renderConnectedDevices();
-                    renderSenderFilterPills();
-                }
-
-                // 2. Parçalı Dosya Aktarımı (Chunk)
-                if (data.transfers) {
-                    Object.keys(data.transfers).forEach(txId => {
-                        const tx = data.transfers[txId];
-                        if (!tx || !tx.chunks) return;
-
-                        if (!incomingTransfers.has(txId)) {
-                            incomingTransfers.set(txId, {
-                                meta: tx,
-                                chunks: new Array(tx.totalChunks),
-                                received: 0
-                            });
-                        }
-
-                        const item = incomingTransfers.get(txId);
-                        let gotNew = false;
-                        Object.keys(tx.chunks).forEach(idx => {
-                            const chunkIdx = parseInt(idx);
-                            if (item.chunks[chunkIdx] === undefined) {
-                                item.chunks[chunkIdx] = tx.chunks[chunkIdx];
-                                item.received++;
-                                gotNew = true;
-                            }
-                        });
-
-                        const percent = Math.min(100, Math.round((item.received / tx.totalChunks) * 100));
-                        const devObj = connectedDevices.get(tx.senderId);
-                        updateIncomingProgressUI(txId, tx.fileName, percent, devObj);
-
-                        // Tüm parçalar geldiyse birleştir ve Firebase'den sil
-                        if (item.received >= tx.totalChunks) {
-                            const fullDataUrl = item.chunks.join('');
-                            incomingTransfers.delete(txId);
-                            removeIncomingProgressUI(txId);
-
-                            // Firebase'den anında sil (Depolama asla dolmaz)
-                            window.firebaseDB.remove(window.firebaseDB.ref(db, `rooms/${myRoomId}/transfers/${txId}`));
-
-                            addFileToWorkspace({
-                                name: tx.fileName,
-                                mime: tx.fileMime,
-                                size: tx.fileSize,
-                                dataUrl: fullDataUrl,
-                                senderId: tx.senderId,
-                                senderName: devObj ? devObj.name : 'Mobil Cihaz',
-                                senderColor: devObj ? devObj.color : DEVICE_PALETTE[0]
-                            });
-                        }
-                    });
-                }
-            });
-
-            renderExplorer();
-        }
-
-        function renderConnectedDevices() {
-            const container = document.getElementById('connected-devices-list');
-            document.getElementById('device-count-badge').innerText = `${connectedDevices.size} Aktif`;
-            if (connectedDevices.size === 0) {
-                container.innerHTML = `<div class="text-center py-5 text-slate-500 text-xs">Telefon kamerasından karekodu okutarak bağlanın.</div>`;
-                return;
-            }
-            container.innerHTML = '';
-            connectedDevices.forEach((dev) => {
-                container.innerHTML += `
-                    <div class="p-2.5 rounded-xl bg-slate-950/80 border ${dev.color.border} flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full" style="background:${dev.color.hex}"></span>
-                            <span class="text-xs font-bold text-white">${dev.name}</span>
-                        </div>
-                        <span class="text-[10px] text-slate-400">${dev.model}</span>
-                    </div>`;
-            });
-        }
-
-        function renderSenderFilterPills() {
-            const holder = document.getElementById('dynamic-sender-filters');
-            holder.innerHTML = '';
-            connectedDevices.forEach((dev) => {
-                const btn = document.createElement('button');
-                const isActive = currentFilter === dev.peerId;
-                btn.onclick = () => setFilter(dev.peerId);
-                btn.className = `px-2.5 py-1 rounded-md text-xs font-medium transition border ${isActive ? `${dev.color.bg} ${dev.color.text} ${dev.color.border}` : 'bg-slate-900 border-slate-800 text-slate-300'}`;
-                btn.innerHTML = `<span class="w-1.5 h-1.5 rounded-full" style="background:${dev.color.hex}"></span> ${dev.name}`;
-                holder.appendChild(btn);
-            });
-        }
-
-        function updateIncomingProgressUI(transferId, fileName, percent, sender) {
-            const container = document.getElementById('incoming-transfers-container');
-            let row = document.getElementById(`trans-${transferId}`);
-            if (!row) {
-                row = document.createElement('div');
-                row.id = `trans-${transferId}`;
-                row.className = "p-3 rounded-xl bg-slate-900 border border-blue-500/30 shadow-lg flex items-center justify-between gap-4";
-                container.appendChild(row);
-            }
-            row.innerHTML = `
-                <div class="flex items-center gap-3 flex-1">
-                    <i class="fa-solid fa-cloud-arrow-down text-blue-400 animate-bounce"></i>
-                    <div class="flex-1">
-                        <div class="flex justify-between text-xs mb-1">
-                            <span class="font-bold text-white truncate">${fileName}</span>
-                            <span class="font-mono text-blue-400">${percent}%</span>
-                        </div>
-                        <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                            <div class="h-full bg-blue-500 transition-all duration-100" style="width:${percent}%"></div>
-                        </div>
-                    </div>
-                </div>`;
-        }
-
-        function removeIncomingProgressUI(transferId) {
-            const row = document.getElementById(`trans-${transferId}`);
-            if (row) row.remove();
-        }
-
-        // =========================================================================
-        // DOSYA İŞLEME VE WINDOWS EXPLORER
-        // =========================================================================
-        function dataURLtoBlob(dataurl) {
-            const arr = dataurl.split(',');
-            const mimeMatch = arr[0].match(/:(.*?);/);
-            const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
-            const bstr = atob(arr[1]);
-            let n = bstr.length;
-            const u8arr = new Uint8Array(n);
-            while (n--) u8arr[n] = bstr.charCodeAt(n);
-            return new Blob([u8arr], { type: mime });
-        }
-
-        function formatBytes(bytes) {
-            if (!bytes || bytes === 0) return '0 KB';
-            const k = 1024, sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-        }
-
-        async function addFileToWorkspace({ name, mime, size, dataUrl, senderId, senderName, senderColor }) {
-            const id = 'file-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
-            const blob = dataURLtoBlob(dataUrl);
-            const blobUrl = URL.createObjectURL(blob);
-            const actualSize = size || blob.size;
-
-            let fileCategory = 'other', thumbnail = null, pageCount = null;
-            if (mime.startsWith('image/')) {
-                fileCategory = 'image';
-                thumbnail = dataUrl;
-            } else if (mime === 'application/pdf' || name.toLowerCase().endsWith('.pdf')) {
-                fileCategory = 'pdf';
-                try {
-                    const prev = await generatePDFThumbnail(dataUrl);
-                    thumbnail = prev.thumbDataUrl;
-                    pageCount = prev.numPages;
-                } catch (e) {}
-            }
-
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-
-            const fileObj = {
-                id, name, type: fileCategory, mime, size: actualSize,
-                dataUrl, blobUrl, thumbnail, pageCount, senderId,
-                senderName, senderColor: senderColor || DEVICE_PALETTE[0],
-                time: timeStr, selected: true
-            };
-
-            workspaceFiles.unshift(fileObj);
-            saveFileToIDB(fileObj); // IndexedDB Kalıcı Hafızaya Kaydet
-            renderExplorer();
-        }
-
-        async function generatePDFThumbnail(pdfDataUrl) {
-            const base64 = pdfDataUrl.split(',')[1];
-            const binary = atob(base64);
-            const uint8 = new Uint8Array(binary.length);
-            for (let i = 0; i < binary.length; i++) uint8[i] = binary.charCodeAt(i);
-            const pdfDoc = await pdfjsLib.getDocument({ data: uint8 }).promise;
-            const page = await pdfDoc.getPage(1);
-            const viewport = page.getViewport({ scale: 0.8 });
-            const canvas = document.createElement('canvas');
-            canvas.width = viewport.width; canvas.height = viewport.height;
-            await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-            return { thumbDataUrl: canvas.toDataURL('image/jpeg', 0.85), numPages: pdfDoc.numPages };
-        }
-
-        function renderExplorer() {
-            const totalCountEl = document.getElementById('total-files-count');
-            const emptyState = document.getElementById('empty-explorer');
-            const gridContainer = document.getElementById('files-grid');
-            const searchQuery = (document.getElementById('search-input').value || '').toLowerCase();
-
-            totalCountEl.innerText = workspaceFiles.length;
-            const filtered = workspaceFiles.filter(f => f.name.toLowerCase().includes(searchQuery));
-
-            if (workspaceFiles.length === 0) {
-                emptyState.classList.remove('hidden');
-                gridContainer.classList.add('hidden');
-                return;
-            }
-            emptyState.classList.add('hidden');
-            gridContainer.classList.remove('hidden');
-            gridContainer.innerHTML = '';
-
-            filtered.forEach(file => {
-                const card = document.createElement('div');
-                card.className = `win-card rounded-2xl overflow-hidden flex flex-col justify-between relative group cursor-grab ${file.selected ? 'selected' : ''}`;
-                
-                card.setAttribute('draggable', 'true');
-                card.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('DownloadURL', `${file.mime}:${file.name}:${file.blobUrl}`);
-                });
-
-                let previewHTML = file.thumbnail ? `<img src="${file.thumbnail}" class="w-full h-full object-contain p-2">` : `<i class="fa-solid fa-file-lines text-4xl text-blue-400"></i>`;
-
-                card.innerHTML = `
-                    <div>
-                        <div class="p-2.5 flex items-center justify-between z-10">
-                            <input type="checkbox" ${file.selected ? 'checked' : ''} onchange="toggleFileSelect('${file.id}')" class="w-3.5 h-3.5 accent-blue-500 rounded">
-                            <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border ${file.senderColor.bg} ${file.senderColor.text} ${file.senderColor.border}">${file.senderName}</span>
-                        </div>
-                        <div onclick="openPreviewModal('${file.id}')" class="aspect-[4/3] bg-slate-950/70 mx-2.5 rounded-xl overflow-hidden flex items-center justify-center cursor-pointer border border-white/5">
-                            ${previewHTML}
-                        </div>
-                    </div>
-                    <div class="p-3">
-                        <div class="text-xs font-semibold text-slate-200 truncate">${file.name}</div>
-                        <div class="flex justify-between text-[10px] text-slate-400 mt-0.5 mb-2">
-                            <span>${formatBytes(file.size)}</span>
-                            <span>${file.time}</span>
-                        </div>
-                        <div class="pt-2 border-t border-slate-800 flex justify-end gap-1">
-                            <button onclick="downloadSingleFile('${file.id}')" class="p-1.5 rounded bg-emerald-500/15 text-emerald-400 text-xs"><i class="fa-solid fa-download"></i></button>
-                            <button onclick="deleteSingleFile('${file.id}')" class="p-1.5 rounded bg-red-500/15 text-red-400 text-xs"><i class="fa-solid fa-trash-can"></i></button>
-                        </div>
-                    </div>`;
-                gridContainer.appendChild(card);
-            });
-        }
-
-        // =========================================================================
-        // MOBİL TARAFı: GÖNDERİCİ VE 250 MB LİMİTLİ CHUNK MOTORU
-        // =========================================================================
-        async function initMobileSender(roomId, key) {
-            document.getElementById('mobile-app').classList.remove('hidden');
-            const app = window.firebaseDB.initializeApp(firebaseConfig);
-            db = window.firebaseDB.getDatabase(app);
-
-            const deviceId = 'mob_' + Math.random().toString(36).substring(2, 9);
-            const myDevRef = window.firebaseDB.ref(db, `rooms/${roomId}/devices/${deviceId}`);
-
-            window.firebaseDB.set(myDevRef, {
-                name: mobSenderName,
-                model: /iPhone/.test(navigator.userAgent) ? 'iPhone' : 'Android Cihaz',
-                time: Date.now()
-            });
-
-            window.setInterval(() => {
-                window.firebaseDB.set(myDevRef, { name: mobSenderName, time: Date.now() });
-            }, 8000);
-
-            window.mobRoomId = roomId;
-            window.mobDeviceId = deviceId;
-        }
-
-        async function handleMobileFilesSelected(event) {
-            const files = Array.from(event.target.files);
-            if (!files.length) return;
-
-            for (const file of files) {
-                // 250 MB Sınır Kontrolü
-                if (file.size > MAX_FILE_SIZE) {
-                    alert(`"${file.name}" dosyası 250 MB sınırını aşıyor! (${formatBytes(file.size)})`);
-                    continue;
-                }
-
-                const dataUrl = await new Promise(res => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => res(e.target.result);
-                    reader.readAsDataURL(file);
-                });
-
-                await sendFileInChunks(file.name, file.type || 'application/octet-stream', file.size, dataUrl);
-            }
-            event.target.value = '';
-        }
-
-        async function sendFileInChunks(fileName, fileMime, fileSize, dataUrl) {
-            const transferId = 'tx_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
-            const totalLength = dataUrl.length;
-            const totalChunks = Math.ceil(totalLength / CHUNK_SIZE);
-
-            const bar = document.getElementById('mob-upload-bar');
-            document.getElementById('mob-upload-filename').innerText = fileName;
-            bar.classList.remove('hidden');
-
-            const txRef = window.firebaseDB.ref(db, `rooms/${window.mobRoomId}/transfers/${transferId}`);
-            
-            // Meta bilgileri gönder
-            await window.firebaseDB.set(txRef, {
-                fileName, fileMime, fileSize, totalChunks,
-                senderId: window.mobDeviceId
-            });
-
-            // Parça parça (Chunk) yükle
-            for (let i = 0; i < totalChunks; i++) {
-                const chunkData = dataUrl.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
-                await window.firebaseDB.set(window.firebaseDB.ref(db, `rooms/${window.mobRoomId}/transfers/${transferId}/chunks/${i}`), chunkData);
-
-                const pct = Math.min(100, Math.round(((i + 1) / totalChunks) * 100));
-                document.getElementById('mob-upload-percent').innerText = `${pct}%`;
-                document.getElementById('mob-upload-progress').style.width = `${pct}%`;
-            }
-
-            bar.classList.add('hidden');
-            mobSentCount++;
-            document.getElementById('mob-sent-badge').innerText = `${mobSentCount} Dosya`;
-            const hist = document.getElementById('mob-sent-history');
-            if (mobSentCount === 1) hist.innerHTML = '';
-            hist.prepend(`<div class="p-2 rounded-lg bg-slate-950 border border-slate-800 flex justify-between"><span class="truncate text-white">${fileName}</span><span class="text-emerald-400">İletildi</span></div>`);
-        }
-
-        // =========================================================================
-        // YARDIMCI ARAÇLAR
-        // =========================================================================
-        async function handleLocalPCFiles(event) {
-            const files = Array.from(event.target.files);
-            for (const file of files) {
-                if (file.size > MAX_FILE_SIZE) { alert('Dosya 250 MB sınırından büyük!'); continue; }
-                const dataUrl = await new Promise(res => {
-                    const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(file);
-                });
-                await addFileToWorkspace({ name: file.name, mime: file.type || 'application/octet-stream', size: file.size, dataUrl, senderId: 'pc', senderName: 'Bu Bilgisayar', senderColor: DEVICE_PALETTE[1] });
-            }
-        }
-
-        function changeSenderName() {
-            const name = prompt('İsminiz:', mobSenderName);
-            if (name) { mobSenderName = name.trim(); localStorage.setItem('tonoscan_sender_name', mobSenderName); document.getElementById('mob-sender-name-btn').innerText = mobSenderName; }
-        }
-
-        function openQRModal() { document.getElementById('qr-modal').classList.remove('hidden'); document.getElementById('qr-modal').classList.add('flex'); }
-        function closeQRModal() { document.getElementById('qr-modal').classList.add('hidden'); }
-        function copyRoomLink() { navigator.clipboard.writeText(document.getElementById('modal-qr-url').innerText); alert('Link kopyalandı!'); }
-        function setFilter(k) { currentFilter = k; renderExplorer(); }
-        function setViewMode(m) { currentViewMode = m; renderExplorer(); }
-        function toggleFileSelect(id) { const f = workspaceFiles.find(x => x.id === id); if (f) f.selected = !f.selected; renderExplorer(); }
-        function selectAllItems() { const all = workspaceFiles.every(f => f.selected); workspaceFiles.forEach(f => f.selected = !all); renderExplorer(); }
-        function downloadSingleFile(id) { const f = workspaceFiles.find(x => x.id === id); if (f) { const a = document.createElement('a'); a.href = f.blobUrl; a.download = f.name; a.click(); } }
-        function deleteSingleFile(id) { workspaceFiles = workspaceFiles.filter(f => f.id !== id); deleteFileFromIDB(id); renderExplorer(); }
-        function clearAllWorkspace() { if (confirm('Tüm klasör temizlensin mi?')) { workspaceFiles = []; clearAllIDB(); renderExplorer(); } }
-        function openPreviewModal(id) {
-            const f = workspaceFiles.find(x => x.id === id);
-            if (!f) return;
-            document.getElementById('preview-title').innerText = f.name;
-            document.getElementById('preview-body').innerHTML = f.type === 'image' ? `<img src="${f.dataUrl}" class="max-h-full max-w-full rounded-xl">` : `<iframe src="${f.blobUrl}" class="w-full h-full rounded-xl bg-white"></iframe>`;
-            document.getElementById('preview-modal').classList.remove('hidden'); document.getElementById('preview-modal').classList.add('flex');
-        }
-        function closePreviewModal() { document.getElementById('preview-modal').classList.add('hidden'); }
-        function openImageEditor(id) { /* Editör entegrasyonu */ }
-        function closeImageEditor() { document.getElementById('image-editor-modal').classList.add('hidden'); }
-        function closePDFSplitter() { document.getElementById('pdf-splitter-modal').classList.add('hidden'); }
-        function exportSelectedToPDF() { /* PDF Birleştirme */ }
-        function mergeSelectedVerticalJPG() { /* JPG Birleştirme */ }
-        function downloadCleanedPDF() { /* Temiz PDF */ }
-    </script>
+    <div id="grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4"></div>
+   </div>
+  </main>
+ </div>
+</div>
+
+<!-- MOBİL -->
+<div id="mob" class="hidden h-[100dvh] bg-black">
+ <header class="px-4 py-3 bg-slate-900 flex justify-between items-center z-10">
+  <div class="flex items-center gap-2.5"><span id="md" class="w-3 h-3 rounded-full bg-amber-400"></span><div><div id="ms" class="text-xs font-bold">Bağlanıyor...</div><div id="ml" class="text-[10px] text-slate-400"></div></div></div>
+  <button class="b" onclick="rename()"><i class="fa-solid fa-user-pen text-blue-400"></i><span id="mn"></span></button>
+ </header>
+ <div id="mu" class="hidden bg-blue-950 px-4 py-2 text-xs z-10"><div class="flex justify-between"><span id="mun" class="truncate"></span><span id="mup" class="font-mono font-bold"></span></div><div class="h-1.5 bg-slate-800 rounded mt-1 overflow-hidden"><div id="mub" class="h-full bg-blue-500" style="width:0"></div></div></div>
+ <div class="flex-1 relative overflow-hidden">
+  <video id="mv" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover"></video>
+  <div class="absolute inset-6 border-2 border-white/25 rounded-2xl pointer-events-none"></div>
+  <div class="absolute top-3 right-3 flex flex-col gap-2">
+   <button onclick="torch()" id="mt" class="w-10 h-10 rounded-full bg-black/60 border border-white/15"><i class="fa-solid fa-bolt"></i></button>
+   <button onclick="flip()" class="w-10 h-10 rounded-full bg-black/60 border border-white/15"><i class="fa-solid fa-camera-rotate"></i></button>
+  </div>
+  <div id="mh" class="absolute bottom-2 left-3 right-3 space-y-1 text-[11px]"></div>
+ </div>
+ <div class="bg-black py-5 flex justify-around items-center z-10">
+  <label class="flex flex-col items-center gap-1 text-[10px] text-slate-300 cursor-pointer"><span class="w-12 h-12 rounded-2xl bg-white/15 flex items-center justify-center text-lg"><i class="fa-regular fa-images"></i></span>Galeri<input type="file" accept="image/*,video/*" multiple hidden onchange="pick(this)"></label>
+  <button onclick="shoot()" class="w-20 h-20 rounded-full bg-white p-1.5 active:scale-90 transition"><span class="w-full h-full rounded-full border-2 border-slate-900 flex items-center justify-center"><i class="fa-solid fa-camera text-slate-900 text-xl"></i></span></button>
+  <label class="flex flex-col items-center gap-1 text-[10px] text-blue-300 cursor-pointer"><span class="w-12 h-12 rounded-2xl bg-blue-600/80 flex items-center justify-center text-lg"><i class="fa-solid fa-file-arrow-up"></i></span>Dosya<input type="file" multiple hidden onchange="pick(this)"></label>
+ </div>
+ <div id="fl" class="pointer-events-none fixed inset-0 bg-white opacity-0 transition-opacity duration-150 z-50"></div>
+</div>
+
+<!-- Modallar -->
+<div id="qm" class="md items-center justify-center p-4" onclick="if(event.target===this)show('qm',0)">
+ <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 text-center max-w-md w-full">
+  <h3 class="text-lg font-bold mb-3">Telefon Kamerasından Okutun</h3>
+  <div class="bg-white p-5 rounded-2xl inline-block"><div id="qr2"></div></div>
+  <p class="text-[11px] text-slate-400 mt-3">Birden fazla telefon aynı karekodu okutabilir. Her yeni telefon için burada onay vermeniz istenir.</p>
+  <button class="b mt-3" onclick="show('qm',0)">Kapat</button>
+ </div>
+</div>
+<div id="edm" class="md">
+ <div class="px-5 py-3 bg-slate-900 flex flex-wrap justify-between items-center gap-2">
+  <b class="text-sm"><i class="fa-solid fa-crop-simple text-blue-400"></i> Görsel Düzenleyici</b>
+  <div class="flex gap-2"><button class="b" onclick="closeEd()">İptal</button><button class="b" onclick="saveEd(true)">Kopya Kaydet</button><button class="b p" onclick="saveEd(false)">Üzerine Kaydet</button></div>
+ </div>
+ <div class="flex-1 overflow-hidden p-5 flex items-center justify-center bg-black/60"><img id="cri" class="max-h-full max-w-full"></div>
+ <div class="p-3 bg-slate-900 flex flex-wrap justify-center gap-2">
+  <button class="b" onclick="cr.rotate(-90)">⟲ Sola</button><button class="b" onclick="cr.rotate(90)">⟳ Sağa</button>
+  <button class="b" onclick="cr.setAspectRatio(NaN)">Serbest</button><button class="b" onclick="cr.setAspectRatio(210/297)">Dikey A4</button><button class="b" onclick="cr.setAspectRatio(297/210)">Yatay A4</button>
+  <button class="b" onclick="setEdF('none')">Orijinal</button><button class="b" onclick="setEdF('gray')">Gri</button><button class="b text-amber-300" onclick="setEdF('scan')"><i class="fa-solid fa-wand-magic-sparkles"></i> Net Evrak</button>
+ </div>
+</div>
+<div id="spm" class="md">
+ <div class="px-5 py-3 bg-slate-900 flex flex-wrap justify-between items-center gap-2">
+  <div><b id="spt" class="text-sm">PDF Sayfaları</b><div class="text-[11px] text-slate-400">Silinecek sayfaları işaretleyin.</div></div>
+  <div class="flex gap-2 items-center"><span id="spb" class="text-xs font-mono"></span><button class="b" onclick="spEach()">Sayfaları Ayrı PDF Yap</button><button class="b g" onclick="spSave()">Kalanlarla Yeni PDF</button><button class="b" onclick="show('spm',0)">Kapat</button></div>
+ </div>
+ <div class="flex-1 overflow-y-auto p-5"><div id="spg" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4"></div></div>
+</div>
+<div id="pvm" class="md">
+ <div class="px-5 py-3 flex justify-between items-center border-b border-white/10"><b id="pvt" class="text-sm"></b><button class="b" onclick="show('pvm',0);$('pvb').innerHTML=''">Kapat</button></div>
+ <div id="pvb" class="flex-1 p-5 flex items-center justify-center overflow-auto"></div>
+</div>
+<div id="tt" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-600 text-xs px-4 py-2 rounded-xl z-[60] hidden"></div>
+
+<script>
+const FB={apiKey:"AIzaSyC1yFeAKzqziGz_Z0C8RHgSabSRb7Wff_M",authDomain:"tarama-646dc.firebaseapp.com",databaseURL:"https://tarama-646dc-default-rtdb.europe-west1.firebasedatabase.app",projectId:"tarama-646dc",storageBucket:"tarama-646dc.firebasestorage.app",messagingSenderId:"50610490478",appId:"1:50610490478:web:7b6c5e0d731c1942c6aa7f"};
+const MAX=250*1024*1024,CH=192*1024,WIN=4,PAL=['#3b82f6','#10b981','#a855f7','#f59e0b','#f43f5e','#06b6d4'];
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const $=id=>document.getElementById(id),te=new TextEncoder(),td=new TextDecoder();
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=b=>{if(!b)return'0 B';const i=Math.min(3,Math.floor(Math.log(b)/Math.log(1024)));return(b/1024**i).toFixed(i?1:0)+' '+['B','KB','MB','GB'][i]};
+const b64=u=>{let s='';for(let i=0;i<u.length;i+=32768)s+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return btoa(s)};
+const unb64=s=>{const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u};
+const u64=u=>b64(u).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const un64u=s=>unb64(s.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-s.length%4)%4));
+const rid=n=>u64(crypto.getRandomValues(new Uint8Array(n)));
+const toBlob=(c,q)=>new Promise(r=>c.toBlob(r,'image/jpeg',q));
+function toast(m){const t=$('tt');t.textContent=m;t.classList.remove('hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hidden'),3000)}
+function show(id,on){$(id).classList.toggle('on',!!on)}
+
+let db,room,K,files=[],devs={},rx={},flt='all',cr=null,edF='none',ed=null,sp=null;
+
+/* ---------- Şifreleme (AES-GCM, parça sırası AAD'ye bağlı) ---------- */
+async function initKey(k){K=await crypto.subtle.importKey('raw',un64u(k),'AES-GCM',false,['encrypt','decrypt'])}
+async function enc(d,aad){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:te.encode(aad)},K,typeof d==='string'?te.encode(d):d));const o=new Uint8Array(12+ct.length);o.set(iv);o.set(ct,12);return b64(o)}
+async function dec(s,aad){const u=unb64(s);return crypto.subtle.decrypt({name:'AES-GCM',iv:u.subarray(0,12),additionalData:te.encode(aad)},K,u.subarray(12))}
+async function fbInit(){firebase.initializeApp(FB);await firebase.auth().signInAnonymously();db=firebase.database()}
+const R=p=>db.ref(`rooms/${room}/${p}`);
+
+/* ---------- Yerel depo (IndexedDB) ---------- */
+let idb;
+const idbOpen=()=>new Promise((res,rej)=>{const r=indexedDB.open('tonoscan',1);r.onupgradeneeded=()=>r.result.createObjectStore('files',{keyPath:'id'});r.onsuccess=()=>{idb=r.result;res()};r.onerror=()=>rej(r.error)});
+const idbTx=(m,fn)=>new Promise((res,rej)=>{const t=idb.transaction('files',m),s=t.objectStore('files'),q=fn(s);t.oncomplete=()=>res(q&&q.result);t.onerror=()=>rej(t.error)});
+const idbPut=f=>{const{url,selected,...r}=f;return idbTx('readwrite',s=>s.put(r))};
+const idbDel=id=>idbTx('readwrite',s=>s.delete(id));
+const idbClear=()=>idbTx('readwrite',s=>s.clear());
+const idbAll=()=>idbTx('readonly',s=>s.getAll());
+
+async function makeThumb(f){
+ try{
+  if(f.mime.startsWith('image/')){f.type='image';const b=await createImageBitmap(f.blob),s=Math.min(1,400/Math.max(b.width,b.height)),c=document.createElement('canvas');c.width=b.width*s;c.height=b.height*s;c.getContext('2d').drawImage(b,0,0,c.width,c.height);f.thumb=c.toDataURL('image/jpeg',.7)}
+  else if(f.mime==='application/pdf'||/\.pdf$/i.test(f.name)){f.type='pdf';const d=await pdfjsLib.getDocument({data:new Uint8Array(await f.blob.arrayBuffer())}).promise;f.pages=d.numPages;const pg=await d.getPage(1),v=pg.getViewport({scale:.5}),c=document.createElement('canvas');c.width=v.width;c.height=v.height;await pg.render({canvasContext:c.getContext('2d'),viewport:v}).promise;f.thumb=c.toDataURL('image/jpeg',.7)}
+  else if(f.mime.startsWith('video/'))f.type='video';
+ }catch(e){}
+}
+async function addFile({name,mime,blob,sender,color}){
+ const f={id:rid(8),name,mime:mime||blob.type||'application/octet-stream',size:blob.size,blob,sender,color,time:Date.now(),type:'other',selected:true};
+ await makeThumb(f);f.url=URL.createObjectURL(blob);files.unshift(f);await idbPut(f);render();storInfo();return f}
+const get=id=>files.find(f=>f.id===id);
+
+/* ---------- PC ---------- */
+async function pcInit(){
+ $('pc').className='flex flex-col h-screen';
+ await idbOpen();
+ files=(await idbAll()).sort((a,b)=>b.time-a.time).map(r=>({...r,url:URL.createObjectURL(r.blob),selected:false}));
+ render();setFlt('all');storInfo();navigator.storage&&navigator.storage.persist&&navigator.storage.persist();
+ if(!localStorage.ts_room){localStorage.ts_room=rid(16);localStorage.ts_key=rid(32);localStorage.ts_dev='{}'}
+ room=localStorage.ts_room;await initKey(localStorage.ts_key);
+ const url=location.origin+location.pathname+'#r='+room+'&k='+localStorage.ts_key;window.joinUrl=url;
+ new QRCode($('qr1'),{text:url,width:170,height:170,correctLevel:QRCode.CorrectLevel.M});
+ new QRCode($('qr2'),{text:url,width:280,height:280,correctLevel:QRCode.CorrectLevel.M});
+ try{await fbInit()}catch(e){$('st').textContent='Firebase hatası: '+e.code;return}
+ let conn=false;const meta=R('meta');
+ const setMeta=()=>{meta.onDisconnect().remove();meta.set({u:firebase.auth().currentUser.uid,t:firebase.database.ServerValue.TIMESTAMP})};
+ db.ref('.info/connected').on('value',s=>{conn=!!s.val();const e=$('st');if(conn){setMeta();e.className='text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400';e.textContent='Şifreli köprü aktif'}else{e.className='text-[11px] px-2 py-0.5 rounded bg-red-500/20 text-red-400';e.textContent='Bağlantı yok'}});
+ meta.on('value',s=>{if(!s.exists()&&conn)setMeta()});
+ R('req').on('child_added',onReq);R('req').on('child_changed',onReq);
+ R('req').on('child_removed',s=>{const d=devs[s.key];if(d){d.online=false;renderDevs()}});
+ R('inbox').on('child_added',onInbox);R('inbox').on('child_removed',s=>abortRx(s.key));
+ const dz=$('drop');dz.ondragover=e=>e.preventDefault();dz.ondrop=e=>{e.preventDefault();if(e.dataTransfer.files.length)pcFiles(e.dataTransfer.files)};
+ renderDevs();
+}
+const apr=()=>JSON.parse(localStorage.ts_dev||'{}');
+async function onReq(s){
+ const id=s.key;let i;try{i=JSON.parse(td.decode(await dec(s.val().e,'hello:'+id)))}catch{return}
+ const d=devs[id]||(devs[id]={id,n:0,color:PAL[Object.keys(devs).length%PAL.length]});Object.assign(d,i,{online:true});
+ const a=apr()[id];if(a)R('dev/'+id).set(a);renderDevs();
+}
+function decide(id,v){const a=apr();a[id]=v;localStorage.ts_dev=JSON.stringify(a);R('dev/'+id).set(v);renderDevs()}
+function renderDevs(){
+ const a=apr(),v=Object.values(devs);$('dc').textContent=v.filter(d=>d.online).length+' aktif';
+ $('dl').innerHTML=v.length?v.map(d=>{const s=a[d.id];return`<div class="p-2 rounded-xl bg-slate-950 border border-slate-800 text-xs"><div class="flex justify-between"><span class="font-bold flex items-center gap-1.5 truncate"><span class="w-2 h-2 rounded-full" style="background:${d.online?d.color:'#475569'}"></span>${esc(d.name||'Cihaz')}</span><span class="text-slate-400">${d.n} dosya</span></div><div class="text-[10px] text-slate-400">${esc(d.os||'')} • ${esc(d.model||'')}${d.online?'':' • çevrimdışı'}</div><div class="mt-1.5 flex gap-1.5">${s==='ok'?'':`<button class="b g" onclick="decide('${d.id}','ok')">İzin ver</button>`}${s==='no'?'<span class="r">Engelli</span>':`<button class="b r" onclick="decide('${d.id}','no')">Engelle</button>`}</div></div>`}).join(''):'<div class="text-xs text-slate-500 text-center py-4">Telefondan karekodu okutun.</div>';
+}
+function junk(key){R('inbox/'+key).remove();R('chunks/'+key).remove()}
+async function onInbox(s){
+ const key=s.key,id=key.split('~')[0],v=s.val();
+ if(rx[key])return;if(apr()[id]!=='ok'){junk(key);return}
+ let m;try{m=JSON.parse(td.decode(await dec(v.m,'m:'+key)))}catch{junk(key);return}
+ if(!(m.size<=MAX)||!(v.n>=1&&v.n<=1400)){junk(key);return}
+ const t=rx[key]={m,n:v.n,parts:[],c:0,id,ref:R('chunks/'+key)},d=devs[id];
+ prog(key,m.name,0,d);
+ t.fn=t.ref.on('child_added',async cs=>{
+  const i=+cs.key;if(!rx[key]||t.parts[i])return;let b;
+  try{b=await dec(cs.val(),key+':'+i)}catch{cs.ref.remove();return}
+  if(t.parts[i])return;t.parts[i]=b;t.c++;cs.ref.remove();R('acks/'+key).set(t.c);
+  prog(key,m.name,Math.floor(t.c/t.n*100),d);
+  if(t.c===t.n)await fin(key);
+ });
+}
+async function fin(key){
+ const t=rx[key];delete rx[key];t.ref.off('child_added',t.fn);R('inbox/'+key).remove();
+ const blob=new Blob(t.parts,{type:t.m.mime});t.parts=null;
+ if(blob.size!==t.m.size){toast('Dosya doğrulanamadı: '+t.m.name);$('tr-'+key)?.remove();return}
+ const d=devs[t.id];if(d)d.n++;
+ await addFile({name:t.m.name,mime:t.m.mime,blob,sender:d?d.name:'Telefon',color:d?d.color:PAL[0]});
+ setTimeout(()=>$('tr-'+key)?.remove(),400);renderDevs();
+}
+function abortRx(key){const t=rx[key];if(!t)return;t.ref.off('child_added',t.fn);delete rx[key];$('tr-'+key)?.remove();toast('Aktarım yarıda kesildi: '+t.m.name)}
+function prog(key,name,p,d){
+ let r=$('tr-'+key);if(!r){r=document.createElement('div');r.id='tr-'+key;r.className='p-2.5 rounded-xl bg-slate-900 border border-blue-500/30 text-xs';$('inc').appendChild(r)}
+ r.innerHTML=`<div class="flex justify-between mb-1"><span class="truncate font-bold">${esc(name)} <span class="font-normal text-slate-400">(${esc(d?d.name:'Telefon')})</span></span><span class="font-mono text-blue-400">${p}%</span></div><div class="h-1.5 bg-slate-800 rounded overflow-hidden"><div class="h-full" style="width:${p}%;background:${d?d.color:PAL[0]}"></div></div>`;
+}
+function newRoom(){
+ if(!confirm('Eski karekod geçersiz olur ve bağlı telefonlar ayrılır. Devam edilsin mi?'))return;
+ db.ref('rooms/'+room).remove().finally(()=>{['ts_room','ts_key','ts_dev'].forEach(k=>localStorage.removeItem(k));location.reload()});
+}
+function copyLink(){navigator.clipboard.writeText(window.joinUrl);toast('Bağlantı kopyalandı')}
+async function storInfo(){if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();$('stor').textContent=`Yerel depo: ${fmt(e.usage)} / ${fmt(e.quota)}`}}
+
+/* ---------- Gezgin ---------- */
+function setFlt(k){flt=k;['all','image','pdf'].forEach(x=>$('f-'+x).classList.toggle('p',x===k));render()}
+function render(){
+ const q=$('q').value.toLowerCase();$('cnt').textContent=files.length;
+ const l=files.filter(f=>(flt==='all'||f.type===flt)&&(f.name+f.sender).toLowerCase().includes(q));
+ $('empty').classList.toggle('hidden',files.length>0);
+ $('grid').innerHTML=l.map(f=>`<div class="card flex flex-col ${f.selected?'sel':''}" draggable="true" ondragstart="dragOut(event,'${f.id}')">
+ <div class="p-2 flex justify-between items-center"><input type="checkbox" class="accent-blue-500" ${f.selected?'checked':''} onchange="tog('${f.id}')"><span class="text-[10px] px-2 py-0.5 rounded-full truncate max-w-[130px]" style="background:${f.color}33;color:${f.color}">${esc(f.sender)}</span></div>
+ <div onclick="prev('${f.id}')" class="aspect-[4/3] mx-2 rounded-xl bg-slate-950 flex items-center justify-center cursor-pointer overflow-hidden relative">${f.thumb?`<img src="${f.thumb}" class="w-full h-full object-contain">`:`<i class="fa-solid fa-file text-3xl text-blue-400"></i>`}${f.type==='pdf'?`<span class="absolute bottom-1 right-1 bg-red-600 text-[10px] px-1.5 rounded">${f.pages||'?'} sf</span>`:''}</div>
+ <div class="p-2.5"><div class="text-xs font-semibold truncate" title="${esc(f.name)}">${esc(f.name)}</div><div class="text-[10px] text-slate-400 flex justify-between"><span>${fmt(f.size)}</span><span>${new Date(f.time).toLocaleTimeString('tr-TR')}</span></div>
+ <div class="mt-2 flex gap-1">${f.type==='image'?`<button class="b" onclick="edit('${f.id}')">Düzenle</button>`:''}${f.type==='pdf'?`<button class="b" onclick="split('${f.id}')">Sayfalar</button>`:''}<button class="b g ml-auto" onclick="dl('${f.id}')"><i class="fa-solid fa-download"></i></button><button class="b r" onclick="del('${f.id}')"><i class="fa-solid fa-trash"></i></button></div></div></div>`).join('');
+}
+function dragOut(e,id){const f=get(id);e.dataTransfer.setData('DownloadURL',`${f.mime}:${f.name}:${f.url}`)}
+function tog(id){const f=get(id);f.selected=!f.selected;render()}
+function selAll(){const a=files.every(f=>f.selected);files.forEach(f=>f.selected=!a);render()}
+function dl(id){const f=get(id),a=document.createElement('a');a.href=f.url;a.download=f.name;a.click()}
+function dlSel(){const s=files.filter(f=>f.selected);if(!s.length)return toast('Dosya seçin');s.forEach((f,i)=>setTimeout(()=>dl(f.id),i*300))}
+async function del(id){const f=get(id);URL.revokeObjectURL(f.url);files=files.filter(x=>x.id!==id);await idbDel(id);render();storInfo()}
+async function clearAll(){if(!files.length||!confirm('Bu bilgisayardaki tüm dosyalar kalıcı olarak silinecek. Emin misiniz?'))return;files.forEach(f=>URL.revokeObjectURL(f.url));files=[];await idbClear();render();storInfo()}
+async function pcFiles(l){for(const f of l)await addFile({name:f.name,mime:f.type,blob:f,sender:'Bu Bilgisayar',color:PAL[1]})}
+function prev(id){
+ const f=get(id);$('pvt').textContent=f.name;
+ $('pvb').innerHTML=f.type==='image'?`<img src="${f.url}" class="max-h-full max-w-full rounded-xl">`:f.type==='pdf'?`<iframe src="${f.url}" class="w-full h-full rounded-xl bg-white"></iframe>`:f.type==='video'?`<video src="${f.url}" controls class="max-h-full max-w-full"></video>`:`<button class="b p" onclick="dl('${f.id}')">Dosyayı İndir (${fmt(f.size)})</button>`;
+ show('pvm',1);
+}
+
+/* ---------- Birleştirme ---------- */
+async function mergeJPG(){
+ const s=files.filter(f=>f.selected&&f.type==='image').reverse();if(s.length<2)return toast('En az 2 görsel seçin');
+ const im=await Promise.all(s.map(f=>createImageBitmap(f.blob))),w=Math.max(...im.map(i=>i.width)),hs=im.map(i=>i.height*w/i.width);
+ const c=document.createElement('canvas');c.width=w;c.height=hs.reduce((a,b)=>a+b,0);const x=c.getContext('2d');let y=0;im.forEach((i,k)=>{x.drawImage(i,0,y,w,hs[k]);y+=hs[k]});
+ await addFile({name:`Birlesik_Gorsel_${Date.now()}.jpg`,mime:'image/jpeg',blob:await toBlob(c,.92),sender:'Stüdyo',color:PAL[2]});
+}
+async function mergePDF(){
+ const s=files.filter(f=>f.selected&&(f.type==='pdf'||f.type==='image')).reverse();if(!s.length)return toast('PDF veya görsel seçin');
+ toast('PDF birleştiriliyor...');const out=await PDFLib.PDFDocument.create();
+ for(const f of s){
+  if(f.type==='pdf'){const src=await PDFLib.PDFDocument.load(await f.blob.arrayBuffer(),{ignoreEncryption:true});(await out.copyPages(src,src.getPageIndices())).forEach(p=>out.addPage(p))}
+  else{
+   let img;const by=await f.blob.arrayBuffer();
+   if(f.mime==='image/jpeg')img=await out.embedJpg(by);else if(f.mime==='image/png')img=await out.embedPng(by);
+   else{const b=await createImageBitmap(f.blob),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);img=await out.embedJpg(await(await toBlob(c,.92)).arrayBuffer())}
+   const pg=out.addPage([595,842]),k=Math.min(555/img.width,802/img.height),w=img.width*k,h=img.height*k;pg.drawImage(img,{x:(595-w)/2,y:(842-h)/2,width:w,height:h});
+  }
+ }
+ const nf=await addFile({name:`Birlesik_Evrak_${Date.now()}.pdf`,mime:'application/pdf',blob:new Blob([await out.save()],{type:'application/pdf'}),sender:'Stüdyo',color:PAL[2]});dl(nf.id);
+}
+
+/* ---------- Görsel düzenleyici ---------- */
+function edit(id){
+ ed=get(id);edF='none';$('cri').src=ed.url;show('edm',1);cr&&cr.destroy();cr=new Cropper($('cri'),{viewMode:1,autoCropArea:.95});
+}
+function setEdF(k){edF=k;const b=document.querySelector('.cropper-container');if(b)b.style.filter=k==='gray'?'grayscale(1)':k==='scan'?'grayscale(1) contrast(1.85) brightness(1.12)':'none'}
+async function saveEd(copy){
+ if(!cr||!ed)return;const s=cr.getCroppedCanvas({maxWidth:4000,maxHeight:4000}),c=document.createElement('canvas');c.width=s.width;c.height=s.height;
+ const x=c.getContext('2d');x.filter=edF==='gray'?'grayscale(1)':edF==='scan'?'grayscale(1) contrast(1.85) brightness(1.12)':'none';x.drawImage(s,0,0);
+ const nb=await toBlob(c,.92),nn=ed.name.replace(/\.\w+$/,'')+'.jpg';
+ if(copy)await addFile({name:'Duzenlenen_'+nn,mime:'image/jpeg',blob:nb,sender:ed.sender,color:ed.color});
+ else{URL.revokeObjectURL(ed.url);Object.assign(ed,{blob:nb,size:nb.size,mime:'image/jpeg',name:nn,url:URL.createObjectURL(nb)});await makeThumb(ed);await idbPut(ed);render();storInfo()}
+ closeEd();
+}
+function closeEd(){cr&&cr.destroy();cr=null;show('edm',0)}
+
+/* ---------- PDF sayfa stüdyosu (gerçek PDF, kalite kaybı yok) ---------- */
+async function split(id){
+ const f=get(id);sp={f,p:[]};$('spt').textContent=f.name;show('spm',1);$('spg').innerHTML='<div class="col-span-full text-center p-10 text-slate-400">Sayfalar hazırlanıyor...</div>';
+ const d=await pdfjsLib.getDocument({data:new Uint8Array(await f.blob.arrayBuffer())}).promise;
+ for(let n=1;n<=d.numPages;n++){const pg=await d.getPage(n),v=pg.getViewport({scale:.45}),c=document.createElement('canvas');c.width=v.width;c.height=v.height;await pg.render({canvasContext:c.getContext('2d'),viewport:v}).promise;sp.p.push({n,t:c.toDataURL('image/jpeg',.7),del:false})}
+ spR();
+}
+function spR(){
+ $('spb').textContent=sp.p.filter(p=>!p.del).length+' / '+sp.p.length+' sayfa';
+ $('spg').innerHTML=sp.p.map((p,i)=>`<div class="rounded-2xl p-2 border ${p.del?'border-red-500/40 opacity-40':'border-slate-800 bg-slate-900'}"><div class="flex justify-between items-center mb-1.5 text-xs"><b>Sayfa ${p.n}</b><button class="b ${p.del?'':'r'}" onclick="sp.p[${i}].del=!sp.p[${i}].del;spR()">${p.del?'Geri Al':'Sil'}</button></div><img src="${p.t}" class="w-full bg-white rounded-lg"></div>`).join('');
+}
+const base=()=>sp.f.name.replace(/\.pdf$/i,'');
+async function spSave(){
+ const a=sp.p.filter(p=>!p.del);if(!a.length)return toast('En az 1 sayfa kalmalı');
+ const src=await PDFLib.PDFDocument.load(await sp.f.blob.arrayBuffer(),{ignoreEncryption:true}),out=await PDFLib.PDFDocument.create();
+ (await out.copyPages(src,a.map(p=>p.n-1))).forEach(p=>out.addPage(p));
+ await addFile({name:base()+'_Duzenlenmis.pdf',mime:'application/pdf',blob:new Blob([await out.save()],{type:'application/pdf'}),sender:sp.f.sender,color:sp.f.color});show('spm',0);
+}
+async function spEach(){
+ const a=sp.p.filter(p=>!p.del);if(!a.length)return toast('Aktif sayfa yok');
+ const src=await PDFLib.PDFDocument.load(await sp.f.blob.arrayBuffer(),{ignoreEncryption:true});
+ for(const p of a){const out=await PDFLib.PDFDocument.create();(await out.copyPages(src,[p.n-1])).forEach(x=>out.addPage(x));await addFile({name:`${base()}_Sayfa_${p.n}.pdf`,mime:'application/pdf',blob:new Blob([await out.save()],{type:'application/pdf'}),sender:sp.f.sender,color:sp.f.color})}
+ show('spm',0);
+}
+
+/* ---------- TELEFON ---------- */
+let dev,pcUp=false,state=null,mName,mInfo,stream,facing='environment',tOn=false,wake=null,queue=Promise.resolve(),sent=0;
+function ui(){
+ const[c,t]=!pcUp?['#fbbf24','PC bekleniyor...']:state==='ok'?['#34d399',"PC'ye bağlı (şifreli)"]:state==='no'?['#ef4444','Bu cihaz engellendi']:['#fbbf24',"PC'de onay bekleniyor..."];
+ $('md').style.background=c;$('ms').textContent=t;
+}
+async function mobInit(){
+ $('mob').className='flex flex-col h-[100dvh] bg-black';
+ const h=new URLSearchParams(location.hash.slice(1));let r=h.get('r'),k=h.get('k');
+ if(r&&k){localStorage.ts_mr=r;localStorage.ts_mk=k;history.replaceState(null,'',location.pathname)}else{r=localStorage.ts_mr;k=localStorage.ts_mk}
+ const ua=navigator.userAgent;let os='Mobil',model='Telefon';
+ if(/iPhone/.test(ua)){os='iOS';model='iPhone'}else if(/iPad/.test(ua)){os='iPadOS';model='iPad'}else if(/Android/.test(ua)){os='Android';const m=ua.match(/Android\s[0-9.]+;\s([^;)]+)/);model=m?m[1].replace(/Build\/.*/,'').trim():'Android'}
+ mInfo={os,model};mName=localStorage.ts_name||model;$('mn').textContent=mName;$('ml').textContent=os+' • '+model;
+ startCam();
+ try{room=r;await initKey(k);await fbInit()}catch(e){$('ms').textContent='Karekodu yeniden okutun';return}
+ dev=localStorage.ts_did||(localStorage.ts_did=rid(8));
+ R('meta').on('value',s=>{pcUp=s.exists();ui();if(pcUp)hello()});
+ R('dev/'+dev).on('value',s=>{state=s.val();ui()});
+ ui();
+}
+async function hello(){const q=R('req/'+dev);q.onDisconnect().remove();await q.set({e:await enc(JSON.stringify({name:mName,...mInfo}),'hello:'+dev)})}
+function rename(){const n=prompt('PC ekranında görünecek isminiz:',mName);if(n&&n.trim()){mName=n.trim().slice(0,30);localStorage.ts_name=mName;$('mn').textContent=mName;if(pcUp)hello()}}
+async function startCam(){
+ stream&&stream.getTracks().forEach(t=>t.stop());
+ try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}},audio:false});$('mv').srcObject=stream}catch(e){}
+}
+function flip(){facing=facing==='environment'?'user':'environment';startCam()}
+async function torch(){
+ if(!stream)return;const t=stream.getVideoTracks()[0],c=t.getCapabilities?t.getCapabilities():{};if(!c.torch)return toast('Flaş desteklenmiyor');
+ tOn=!tOn;await t.applyConstraints({advanced:[{torch:tOn}]});$('mt').classList.toggle('bg-amber-500',tOn);
+}
+async function shoot(){
+ const v=$('mv');if(!v.videoWidth)return toast('Kamera açık değil');
+ const f=$('fl');f.classList.remove('opacity-0');setTimeout(()=>f.classList.add('opacity-0'),120);
+ const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
+ enqueue([new File([await toBlob(c,.9)],'Kamera_'+new Date().toLocaleTimeString('tr-TR').replace(/:/g,'')+'.jpg',{type:'image/jpeg'})]);
+}
+function pick(i){enqueue(Array.from(i.files));i.value=''}
+function enqueue(l){
+ for(const f of l){
+  if(f.size>MAX){toast(`${f.name} 250 MB sınırını aşıyor`);continue}
+  queue=queue.then(()=>send(f)).catch(e=>{toast('Gönderilemedi: '+(e.message||e));$('mu').classList.add('hidden')});
+ }
+}
+const waitAck=()=>new Promise(r=>{wake=r;setTimeout(r,2000)});
+async function send(f){
+ if(!pcUp||state!=='ok')throw new Error(!pcUp?'PC bağlı değil':'PC onayı gerekli');
+ const key=dev+'~'+rid(6),n=Math.max(1,Math.ceil(f.size/CH)),ib=R('inbox/'+key),cb=R('chunks/'+key),ab=R('acks/'+key);
+ let acked=0,last=Date.now(),wl=null;
+ try{wl=await navigator.wakeLock.request('screen')}catch{}
+ [ib,cb,ab].forEach(x=>x.onDisconnect().remove());
+ ab.on('value',s=>{const v=s.val()||0;if(v>acked){acked=v;last=Date.now()}wake&&wake()});
+ const chk=()=>{if(!pcUp||Date.now()-last>60000)throw new Error('PC yanıt vermiyor')};
+ $('mu').classList.remove('hidden');$('mun').textContent=f.name;
+ const setP=p=>{$('mup').textContent=p+'%';$('mub').style.width=p+'%'};setP(0);
+ try{
+  await ib.set({n,m:await enc(JSON.stringify({name:f.name,mime:f.type||'application/octet-stream',size:f.size}),'m:'+key)});
+  for(let i=0;i<n;i++){
+   while(i-acked>=WIN){chk();await waitAck()}
+   await cb.child(i).set(await enc(await f.slice(i*CH,(i+1)*CH).arrayBuffer(),key+':'+i));
+   setP(Math.floor((i+1)/n*100));
+  }
+  while(acked<n){chk();await waitAck()}
+ }finally{
+  ab.off();await Promise.allSettled([ib.remove(),cb.remove(),ab.remove()]);[ib,cb,ab].forEach(x=>x.onDisconnect().cancel());
+  wl&&wl.release().catch(()=>{});setTimeout(()=>$('mu').classList.add('hidden'),400);
+ }
+ sent++;const r=document.createElement('div');r.className='px-2 py-1 rounded bg-black/70 text-emerald-400 truncate';r.textContent='✓ '+f.name;$('mh').prepend(r);while($('mh').children.length>4)$('mh').lastChild.remove();
+}
+
+/* ---------- Başlat ---------- */
+addEventListener('DOMContentLoaded',()=>{
+ const h=new URLSearchParams(location.hash.slice(1));
+ (h.get('r')&&h.get('k'))||(localStorage.ts_mr&&!localStorage.ts_room)?mobInit():pcInit();
+});
+</script>
 </body>
 </html>

@@ -1,335 +1,1912 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Canlı Pano Kontrol Merkezi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <style>
-    :root { 
-      --primary: #4f46e5; 
-      --primary-hover: #4338ca; 
-      --bg-color: #f3f4f6; 
-      --card-bg: #ffffff; 
-      --text-main: #1f2937; 
-      --text-muted: #6b7280; 
-    }
-    
-    body { 
-      font-family: 'Inter', sans-serif; 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      min-height: 100vh; 
-      background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%); 
-      margin: 0; 
-      padding: 20px; 
-      box-sizing: border-box; 
-    }
-    
-    .main-wrapper { 
-      display: flex; 
-      gap: 30px; 
-      width: 100%; 
-      max-width: 900px; 
-      flex-wrap: wrap; 
-    }
-    
-    .card { 
-      background: var(--card-bg); 
-      padding: 40px; 
-      border-radius: 24px; 
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08); 
-      flex: 1; 
-      min-width: 280px; /* Mobilde taşmaması için 300'den 280'e çekildi */
-      text-align: center; 
-      display: flex; 
-      flex-direction: column;
-      box-sizing: border-box;
-    }
-    
-    h2 { margin: 0 0 8px 0; color: var(--text-main); font-weight: 800; font-size: 24px; }
-    p.subtitle { color: var(--text-muted); margin: 0 0 30px 0; font-size: 14px; }
-    
-    .upload-area { 
-      border: 2px dashed #cbd5e1; 
-      border-radius: 16px; 
-      padding: 40px 20px; 
-      cursor: pointer; 
-      background: #f8fafc; 
-      position: relative; 
-      margin-bottom: 24px; 
-      transition: all 0.3s; 
-    }
-    .upload-area:hover { border-color: var(--primary); background: #eef2ff; }
-    .upload-icon { width: 48px; height: 48px; fill: #9ca3af; margin-bottom: 12px; }
-    .upload-text { color: var(--text-main); font-weight: 600; font-size: 15px; }
-    .upload-subtext { color: var(--text-muted); font-size: 12px; }
-    
-    input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
-    
-    #preview-container { display: none; margin-bottom: 20px; }
-    #preview { max-width: 100%; max-height: 180px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    
-    .btn { 
-      color: white; 
-      border: none; 
-      padding: 16px 24px; 
-      border-radius: 12px; 
-      cursor: pointer; 
-      font-size: 16px; 
-      font-weight: 600; 
-      width: 100%; 
-      box-shadow: 0 10px 20px rgba(0,0,0,0.15); 
-      transition: all 0.2s ease; 
-      font-family: 'Inter', sans-serif; 
-    }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(0,0,0,0.2); }
-    .btn:disabled { background: #9ca3af !important; cursor: not-allowed; transform: none; box-shadow: none; }
-    
-    .btn-send { background: linear-gradient(135deg, var(--primary), var(--primary-hover)); }
-    .btn-stop { background: linear-gradient(135deg, #ef4444, #dc2626); margin-top: auto; }
-    .btn-start { background: linear-gradient(135deg, #10b981, #059669); margin-top: auto; display: none; }
-    
-    .live-screen-box { 
-      margin-top: 20px; 
-      background: #111827; 
-      border-radius: 12px; 
-      padding: 10px; 
-      height: 200px; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      position: relative; 
-      overflow: hidden; 
-      box-shadow: inset 0 4px 10px rgba(0,0,0,0.5); 
-      margin-bottom: 20px; 
-    }
-    .live-screen-box::before { content: "Yükleniyor..."; color: #4b5563; position: absolute; font-size: 14px; z-index: 1; }
-    #live-screen-img { max-width: 100%; max-height: 100%; z-index: 2; border-radius: 8px; display: none; transition: opacity 0.3s ease; }
-    
-    .status-dot { 
-      display: inline-block; 
-      width: 10px; 
-      height: 10px; 
-      background: #10b981; 
-      border-radius: 50%; 
-      margin-right: 8px; 
-      box-shadow: 0 0 8px #10b981; 
-      animation: pulse 2s infinite; 
-    }
-    .status-dot.offline { background: #ef4444; box-shadow: 0 0 8px #ef4444; animation: none; }
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TonoScan Studio Pro | Kablosuz Belge & Çoklu Cihaz Transfer Merkezi</title>
 
-    /* ========================================= */
-    /* 📱 MOBİL UYUM (Medya Sorguları)           */
-    /* ========================================= */
-    @media (max-width: 768px) {
-      body {
-        padding: 15px; /* Mobilde kenar boşluklarını daralt */
-        align-items: flex-start; /* Mobilde ortalamak yerine yukarıdan başlat */
-      }
-      
-      .main-wrapper {
-        gap: 15px; /* Kartlar arası boşluğu azalt */
-      }
-      
-      .card {
-        padding: 25px 20px; /* İç boşlukları mobilde daraltarak yer kazandır */
-        min-width: 100%; /* Tam genişlik kaplamasını sağla */
-        border-radius: 20px;
-      }
-      
-      h2 {
-        font-size: 20px; /* Başlıkları küçült */
-      }
-      
-      p.subtitle {
-        font-size: 13px;
-        margin-bottom: 20px;
-      }
-      
-      .upload-area {
-        padding: 30px 15px;
-        margin-bottom: 20px;
-      }
-      
-      .upload-icon {
-        width: 40px;
-        height: 40px;
-      }
-      
-      .upload-text {
-        font-size: 14px;
-      }
-      
-      .btn {
-        padding: 14px 20px;
-        font-size: 15px;
-      }
-      
-      .live-screen-box {
-        height: 160px; /* Canlı önizleme kutusunu mobilde biraz daralt */
-      }
-    }
-  </style>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- PeerJS (WebRTC P2P) -->
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Cropper.js (Görsel Kırpma & Evrak Editörü) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <!-- jsPDF (PDF Oluşturma ve Birleştirme) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- PDF.js (PDF Okuma, Önizleme ve Sayfalara Ayırma) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-primary: #060913;
+            --bg-glass: rgba(15, 23, 42, 0.72);
+            --border-glass: rgba(255, 255, 255, 0.08);
+        }
+        body {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.14) 0px, transparent 45%),
+                radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.12) 0px, transparent 45%),
+                radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+            color: #f8fafc;
+            overflow: hidden;
+            user-select: none;
+        }
+        .mica-panel {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--border-glass);
+        }
+        .win-card {
+            background: rgba(30, 41, 59, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .win-card:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(59, 130, 246, 0.45);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.6), 0 0 15px -3px rgba(59, 130, 246, 0.2);
+        }
+        .win-card.selected {
+            background: rgba(37, 99, 235, 0.18);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        /* Özel Kaydırma Çubuğu */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.4); }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .qr-glow:hover { animation: pulse-ring 2s infinite; }
+
+        /* Mobil Görünüm Ayarları */
+        #mobile-app { height: 100dvh; }
+    </style>
 </head>
-<body>
+<body class="h-screen w-screen flex flex-col">
 
-  <div class="main-wrapper">
-    <div class="card">
-      <h2>Yayın Merkezi</h2>
-      <p class="subtitle">Seçilen görsel anında tüm ekranlara iletilecek.</p>
-      
-      <div class="upload-area">
-        <svg class="upload-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.36 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
-        </svg>
-        <div class="upload-text" id="uploadText">Görsel Seçmek İçin Tıkla</div>
-        <div class="upload-subtext" id="uploadSubtext">veya sürükleyip bırak (Max 5MB)</div>
-        <input type="file" id="imageInput" accept="image/png, image/jpeg, image/jpg, image/gif" onchange="resmiOnizle()" />
-      </div>
-
-      <div id="preview-container">
-        <img id="preview" alt="Önizleme" />
-      </div>
-      
-      <button onclick="resmiGonder()" class="btn btn-send" id="sendBtn">Yeni Resmi Yayınla 🚀</button>
-    </div>
-
-    <div class="card">
-      <h2><span class="status-dot" id="statusDot"></span><span id="statusTitle">Canlı Ekran</span></h2>
-      <p class="subtitle" id="last-update-text">Şu an ekranda bu görsel var.</p>
-      
-      <div class="live-screen-box">
-        <img id="live-screen-img" alt="Canlı Ekran" />
-      </div>
-
-      <button onclick="yayinDurumunuDegistir(false)" class="btn btn-stop" id="stopBtn">🛑 Yayını Herkesten Gizle (Kapat)</button>
-      <button onclick="yayinDurumunuDegistir(true)" class="btn btn-start" id="startBtn">✅ Resmi Yeniden Göster (Aç)</button>
-    </div>
-  </div>
-
-  <script>
-    const firebaseUrl = "https://ekranpanosu-da617-default-rtdb.firebaseio.com/current_image.json";
-
-    // Panel açıldığında veritabanındaki son durumu ÇEK
-    window.addEventListener('DOMContentLoaded', () => {
-      fetch(firebaseUrl + "?t=" + new Date().getTime())
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.imageUrl) {
-            document.getElementById("live-screen-img").src = data.imageUrl;
-            document.getElementById("live-screen-img").style.display = "block";
-            arayuzuGuncelle(data.isActive, data.time);
-          }
-        })
-        .catch(err => console.error("Firebase bağlantı hatası", err));
-    });
-
-    // Butonları ve metinleri duruma göre değiştiren yardımcı fonksiyon
-    function arayuzuGuncelle(isActive, time) {
-      const isOnline = (isActive !== false); // Tanımsızsa da true kabul et
-      
-      document.getElementById("stopBtn").style.display = isOnline ? "block" : "none";
-      document.getElementById("startBtn").style.display = isOnline ? "none" : "block";
-      
-      const dot = document.getElementById("statusDot");
-      const title = document.getElementById("statusTitle");
-      
-      if (isOnline) {
-        dot.className = "status-dot";
-        title.innerText = "Canlı Ekran (Aktif)";
-        document.getElementById("live-screen-img").style.opacity = "1";
-      } else {
-        dot.className = "status-dot offline";
-        title.innerText = "Yayın Kapalı";
-        document.getElementById("live-screen-img").style.opacity = "0.3"; // Gizliyken resmi soluk göster
-      }
-
-      if (time) {
-        const tarih = new Date(time);
-        document.getElementById("last-update-text").innerText = "Son işlem: " + tarih.toLocaleTimeString();
-      }
-    }
-
-    // Yayını Aç/Kapat Butonlarının Görevi
-    function yayinDurumunuDegistir(durum) {
-      const yeniZaman = Date.now();
-      
-      fetch(firebaseUrl, {
-        method: "PATCH", 
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive: durum, time: yeniZaman })
-      })
-      .then(response => {
-        if (response.ok) {
-          arayuzuGuncelle(durum, yeniZaman);
-        }
-      });
-    }
-
-    function resmiOnizle() {
-      const fileInput = document.getElementById("imageInput");
-      const previewContainer = document.getElementById("preview-container");
-      
-      if (fileInput.files && fileInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          document.getElementById("preview").src = e.target.result;
-          previewContainer.style.display = "block";
-          document.getElementById("uploadText").innerText = "Farklı bir görsel seç";
-          document.getElementById("uploadSubtext").innerText = fileInput.files[0].name;
-        }
-        reader.readAsDataURL(fileInput.files[0]);
-      }
-    }
-
-    function resmiGonder() {
-      const fileInput = document.getElementById("imageInput");
-      const sendBtn = document.getElementById("sendBtn");
-
-      if (fileInput.files.length === 0) {
-        alert("Lütfen önce bir resim seçin!");
-        return;
-      }
-      
-      sendBtn.innerText = "Gönderiliyor... ⏳";
-      sendBtn.disabled = true;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const base64Image = e.target.result;
-        const suAnkiZaman = Date.now();
+    <!-- ========================================================================= -->
+    <!-- 1. PC WORKSPACE (WINDOWS 11 EXPLORER & STUDIO ARAYÜZÜ)                    -->
+    <!-- ========================================================================= -->
+    <div id="pc-app" class="hidden flex-1 flex flex-col h-full overflow-hidden">
         
-        fetch(firebaseUrl, {
-          method: "PUT", 
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            imageUrl: base64Image,
-            time: suAnkiZaman,
-            isActive: true 
-          })
-        })
-        .then(response => {
-          if (response.ok) {
-            document.getElementById("live-screen-img").src = base64Image;
-            document.getElementById("live-screen-img").style.display = "block";
+        <!-- ÜST KOMUT ŞERİDİ (WINDOWS 11 RIBBON BAR) -->
+        <header class="mica-panel h-16 px-5 flex items-center justify-between border-b border-slate-800/80 z-20 shrink-0">
+            <!-- Sol: Logo & Başlık -->
+            <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25 border border-white/10">
+                    <i class="fa-solid fa-qrcode text-lg"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-bold text-base tracking-tight text-white">TonoScan <span class="text-blue-400 font-extrabold">Studio</span></h1>
+                        <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">P2P Şifreli Hub</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400">Çoklu Cihaz Kablosuz Kamera, Evrak Tarama ve PDF Ayıklama Sistemi</p>
+                </div>
+            </div>
+
+            <!-- Orta/Sağ: Hızlı İşlem Araç Çubuğu -->
+            <div class="flex items-center gap-2">
+                <!-- PC'den Dosya / PDF Yükle -->
+                <label class="cursor-pointer px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs font-medium text-slate-200 transition flex items-center gap-2" title="Bilgisayardan PDF veya Görsel Ekle">
+                    <i class="fa-solid fa-folder-plus text-amber-400"></i>
+                    <span>PC'den Ekle</span>
+                    <input type="file" multiple accept="image/*,.pdf" class="hidden" onchange="handleLocalPCFiles(event)">
+                </label>
+
+                <div class="h-6 w-px bg-slate-800 mx-1"></div>
+
+                <button onclick="selectAllItems()" class="px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs font-medium text-slate-200 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-check-double text-blue-400"></i>
+                    <span>Tümünü Seç</span>
+                </button>
+
+                <button onclick="mergeSelectedVerticalJPG()" class="px-3 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-xs font-medium text-slate-200 transition flex items-center gap-1.5" title="Seçili görselleri alt alta tek bir uzun JPG yapar">
+                    <i class="fa-solid fa-arrows-up-down text-purple-400"></i>
+                    <span>Alt Alta Birleştir</span>
+                </button>
+
+                <button onclick="exportSelectedToPDF()" class="px-3.5 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-xs font-semibold text-white shadow-lg shadow-emerald-600/20 transition flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>Seçilileri PDF Birleştir</span>
+                </button>
+
+                <button onclick="downloadSelectedFiles()" class="px-3.5 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-xs font-semibold text-white shadow-lg shadow-blue-600/20 transition flex items-center gap-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Seçilileri İndir</span>
+                </button>
+
+                <button onclick="clearAllWorkspace()" class="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs transition" title="Tüm Klasörü Temizle">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- ANA GÖVDE -->
+        <div class="flex-1 flex overflow-hidden">
             
-            arayuzuGuncelle(true, suAnkiZaman);
-            
-            fileInput.value = "";
-            document.getElementById("preview-container").style.display = "none";
-            document.getElementById("uploadText").innerText = "Görsel Seçmek İçin Tıkla";
-          }
-        })
-        .finally(() => {
-          sendBtn.innerText = "Yeni Resmi Yayınla 🚀";
-          sendBtn.disabled = false;
+            <!-- SOL PANEL: KAREKOD MERKEZİ & BAĞLI TELEFONLAR LİSTESİ -->
+            <aside class="w-80 mica-panel border-r border-slate-800/80 flex flex-col justify-between p-4 overflow-y-auto shrink-0">
+                <div class="space-y-4">
+                    
+                    <!-- KAREKOD KARTI (HER ZAMAN GÖRÜNÜR & BÜYÜTÜLEBİLİR) -->
+                    <div class="p-3.5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-shield-halved text-emerald-400"></i> Güvenli Oda Karekodu
+                            </span>
+                            <button onclick="openQRModal()" class="text-[11px] bg-blue-500/15 hover:bg-blue-500/25 text-blue-400 px-2 py-0.5 rounded-md font-medium transition flex items-center gap-1">
+                                <i class="fa-solid fa-expand"></i> Büyüt
+                            </button>
+                        </div>
+
+                        <!-- Tıklanabilir QR Alanı -->
+                        <div onclick="openQRModal()" class="qr-glow cursor-pointer bg-white p-3.5 rounded-xl flex flex-col items-center justify-center relative group transition">
+                            <div id="sidebar-qr"></div>
+                            <div class=" inset-0 bg-slate-950/75 opacity-0 group-hover:opacity-100 rounded-xl transition flex flex-col items-center justify-center text-white p-2 text-center">
+                                <i class="fa-solid fa-magnifying-glass-plus text-2xl text-blue-400 mb-1"></i>
+                                <span class="text-xs font-bold">Tam Ekran Büyüt</span>
+                                <span class="text-[10px] text-slate-300">Yeni telefon eklemek için tıklayın</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-400">
+                            <span>Oda Kodu: <b id="room-code-text" class="text-slate-200 font-mono">...</b></span>
+                            <button onclick="copyRoomLink()" class="hover:text-blue-400 transition flex items-center gap-1" title="Bağlantı Linkini Kopyala">
+                                <i class="fa-regular fa-copy"></i> Linki Kopyala
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- BAĞLI CİHAZLAR (MULTI-DEVICE) PANELİ -->
+                    <div class="rounded-2xl bg-slate-900/70 border border-slate-800/90 p-3.5">
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-mobile-screen-button text-blue-400"></i> Bağlanan Cihazlar
+                            </h2>
+                            <span id="device-count-badge" class="text-[11px] font-mono bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full font-bold">0 Aktif</span>
+                        </div>
+
+                        <div id="connected-devices-list" class="space-y-2 max-h-52 overflow-y-auto pr-1">
+                            <div class="text-center py-5 text-slate-500 text-xs">
+                                <i class="fa-solid fa-wifi text-lg mb-1.5 block opacity-40 animate-pulse"></i>
+                                Telefon kamerasından karekodu okutarak bağlanın. Birden fazla telefon bağlanabilir.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CANLI KAMERA ÖNİZLEME (Herhangi Bir Telefon Kamera Açtığında Görünür) -->
+                    <div id="live-stream-panel" class="hidden rounded-2xl bg-slate-900/90 border border-slate-800 p-3 flex-col gap-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold text-white flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                                Canlı Kamera Yayını
+                            </span>
+                            <span id="stream-device-name" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Cihaz</span>
+                        </div>
+                        <div class="relative rounded-xl overflow-hidden bg-black aspect-[4/3] border border-slate-800">
+                            <video id="pc-remote-video" autoplay playsinline muted class="w-full h-full object-cover"></video>
+                        </div>
+                        <button onclick="requestRemoteCapture()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-lg shadow-blue-600/25">
+                            <i class="fa-solid fa-camera"></i> PC'den Uzaktan Fotoğraf Çek
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Alt Bilgi & İmza -->
+                <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                    <span>Created by <b class="text-slate-300">Tonoz</b></span>
+                    <span class="font-mono text-[10px] text-slate-600">v2.5 Studio</span>
+                </div>
+            </aside>
+
+            <!-- SAĞ ANA ALAN: WINDOWS 11 DOSYA GEZGİNİ (FILE EXPLORER) -->
+            <main class="flex-1 flex flex-col overflow-hidden bg-slate-950/30" id="explorer-dropzone">
+                
+                <!-- WINDOWS EXPLORER ADRES & FİLTRE ÇUBUĞU -->
+                <div class="px-6 py-3 bg-slate-900/50 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-3">
+                    
+                    <!-- Sol: Breadcrumb Yol Çubuğu -->
+                    <div class="flex items-center gap-2 bg-slate-950/80 border border-slate-800 px-3.5 py-1.5 rounded-lg text-xs text-slate-300">
+                        <i class="fa-brands fa-windows text-blue-400 text-sm"></i>
+                        <span class="text-slate-500">Bilgisayarım</span>
+                        <i class="fa-solid fa-chevron-right text-[9px] text-slate-600"></i>
+                        <span class="text-slate-400">TonoScan Hub</span>
+                        <i class="fa-solid fa-chevron-right text-[9px] text-slate-600"></i>
+                        <span class="font-semibold text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-folder-open text-amber-400"></i> Gelen Evraklar (<span id="total-files-count">0</span>)
+                        </span>
+                    </div>
+
+                    <!-- Orta: Gönderen Kişi ve Tür Filtreleri -->
+                    <div class="flex items-center gap-1.5 flex-wrap" id="sender-filter-bar">
+                        <button onclick="setFilter('all')" id="filter-btn-all" class="px-2.5 py-1 rounded-md text-xs font-medium bg-blue-600 text-white transition">
+                            Tümü
+                        </button>
+                        <button onclick="setFilter('image')" id="filter-btn-image" class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1">
+                            <i class="fa-regular fa-image text-emerald-400"></i> Görseller
+                        </button>
+                        <button onclick="setFilter('pdf')" id="filter-btn-pdf" class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1">
+                            <i class="fa-regular fa-file-pdf text-red-400"></i> PDF Belgeleri
+                        </button>
+                        <!-- Bağlanan cihazların renkli filtre butonları dinamik olarak buraya eklenir -->
+                        <div id="dynamic-sender-filters" class="flex items-center gap-1.5"></div>
+                    </div>
+
+                    <!-- Sağ: Arama & Görünüm Değiştirici (Grid / Liste) -->
+                    <div class="flex items-center gap-2">
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+                            <input type="text" id="search-input" oninput="renderExplorer()" placeholder="Dosya veya gönderen ara..." class="bg-slate-950/90 border border-slate-800 focus:border-blue-500 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 outline-none w-48 transition">
+                        </div>
+
+                        <div class="flex bg-slate-900 border border-slate-800 rounded-lg p-0.5">
+                            <button onclick="setViewMode('grid')" id="view-grid-btn" class="px-2.5 py-1 rounded-md text-xs bg-blue-600 text-white transition" title="Büyük Simge Görünümü">
+                                <i class="fa-solid fa-grip"></i>
+                            </button>
+                            <button onclick="setViewMode('list')" id="view-list-btn" class="px-2.5 py-1 rounded-md text-xs text-slate-400 hover:text-white transition" title="Detaylı Liste Görünümü">
+                                <i class="fa-solid fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CANLI TRANSFER ANİMASYON ÇUBUĞU (Dosya Gelirken Açılır) -->
+                <div id="incoming-transfers-container" class="px-6 pt-3 space-y-2 empty:hidden"></div>
+
+                <!-- DOSYA KLASÖR ALANI -->
+                <div class="flex-1 p-6 overflow-y-auto" id="explorer-content">
+                    
+                    <!-- Boş Klasör Durumu -->
+                    <div id="empty-explorer" class="h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto">
+                        <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 flex items-center justify-center text-4xl text-blue-400 mb-5 shadow-2xl">
+                            <i class="fa-solid fa-cloud-arrow-up animate-bounce"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-white mb-2">Klasör Henüz Boş</h2>
+                        <p class="text-xs text-slate-400 leading-relaxed mb-6">
+                            Sol taraftaki karekodu bir veya birden fazla telefondan okutun. Çektiğiniz fotoğraflar, seçtiğiniz galeri görselleri ve yüklediğiniz PDF/Ofis dosyaları <b>kimden geldiği renkli etiketlerle</b> anında bu klasöre düşer.
+                        </p>
+                        <div class="grid grid-cols-3 gap-3 w-full text-left">
+                            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80">
+                                <i class="fa-solid fa-hand-pointer text-blue-400 mb-1.5 block"></i>
+                                <div class="text-xs font-semibold text-slate-200">Masaüstüne Sürükle</div>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Gelen dosyayı fareyle tutup direkt Windows Masaüstüne atın.</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80">
+                                <i class="fa-solid fa-file-pdf text-red-400 mb-1.5 block"></i>
+                                <div class="text-xs font-semibold text-slate-200">PDF Ayır & Birleştir</div>
+                                <p class="text-[10px] text-slate-400 mt-0.5">PDF sayfalarını tek tek ayıklayın, gereksiz sayfaları silin.</p>
+                            </div>
+                            <div class="p-3 rounded-xl bg-slate-900/70 border border-slate-800/80">
+                                <i class="fa-solid fa-users-viewfinder text-emerald-400 mb-1.5 block"></i>
+                                <div class="text-xs font-semibold text-slate-200">Çoklu Telefon</div>
+                                <p class="text-[10px] text-slate-400 mt-0.5">Birden fazla kişi bağlanıp aynı anda evrak gönderebilir.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GRID GÖRÜNÜMÜ (WINDOWS BÜYÜK ÖNİZLEME) -->
+                    <div id="files-grid" class="hidden grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"></div>
+
+                    <!-- LİSTE GÖRÜNÜMÜ (WINDOWS DETAYLI TABLO) -->
+                    <div id="files-list" class="hidden bg-slate-900/60 border border-slate-800 rounded-xl overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-800 text-[11px] uppercase tracking-wider text-slate-400 bg-slate-950/60">
+                                    <th class="py-3 px-4 w-10"><input type="checkbox" onchange="selectAllItems()" class="accent-blue-500 rounded cursor-pointer"></th>
+                                    <th class="py-3 px-4">Dosya Adı</th>
+                                    <th class="py-3 px-4">Gönderen Cihaz / Kişi</th>
+                                    <th class="py-3 px-4">Tür & Detay</th>
+                                    <th class="py-3 px-4">Boyut</th>
+                                    <th class="py-3 px-4">Saat</th>
+                                    <th class="py-3 px-4 text-right">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="files-list-body" class="divide-y divide-slate-800/60 text-xs"></tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 2. MOBİL UYGULAMA EKRANI (KAMERA + GALERİ + DOSYA GÖNDERİCİ)              -->
+    <!-- ========================================================================= -->
+    <div id="mobile-app" class="hidden flex flex-col bg-slate-950 text-white relative overflow-hidden">
+        
+        <!-- Mobil Üst Bilgi & Kişi/Cihaz Kartı -->
+        <header class="z-20 px-4 py-3 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <span id="mob-conn-dot" class="w-3 h-3 rounded-full bg-amber-400 animate-ping"></span>
+                <div>
+                    <div id="mob-conn-status" class="text-xs font-bold text-white">PC'ye Bağlanıyor...</div>
+                    <div id="mob-device-label" class="text-[10px] text-slate-400">Cihaz algılanıyor...</div>
+                </div>
+            </div>
+
+            <!-- Kullanıcı Adı Değiştirme (PC'de kimin gönderdiği net görünsün diye) -->
+            <button onclick="changeSenderName()" class="px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-xs font-medium text-blue-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-user-pen"></i>
+                <span id="mob-sender-name-btn">İsim Belirle</span>
+            </button>
+        </header>
+
+        <!-- Aktif Yükleme Animasyon Kutusu (Mobilde Dosya Giderken) -->
+        <div id="mob-upload-bar" class="hidden z-30 bg-blue-950/90 border-b border-blue-500/30 px-4 py-2.5">
+            <div class="flex items-center justify-between text-xs mb-1">
+                <span class="font-semibold text-blue-300 flex items-center gap-1.5">
+                    <i class="fa-solid fa-bolt animate-pulse"></i> <span id="mob-upload-filename">Gönderiliyor...</span>
+                </span>
+                <span id="mob-upload-percent" class="font-mono font-bold text-white">0%</span>
+            </div>
+            <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <div id="mob-upload-progress" class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 transition-all duration-150" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- SEKME 1: CANLI KAMERA TARAYICI -->
+        <div id="mob-tab-camera" class="flex-1 relative bg-black flex flex-col justify-between overflow-hidden">
+            <video id="mob-video" autoplay playsinline muted class="absolute inset-0 w-full h-full object-cover"></video>
+
+            <!-- Kamera Kılavuz Çerçevesi -->
+            <div class="relative z-10 m-6 flex-1 border-2 border-white/25 rounded-2xl pointer-events-none flex flex-col justify-between p-3">
+                <div class="flex justify-between">
+                    <div class="w-6 h-6 border-t-2 border-l-2 border-blue-400"></div>
+                    <div class="w-6 h-6 border-t-2 border-r-2 border-blue-400"></div>
+                </div>
+                <div class="text-center">
+                    <span class="px-3 py-1 rounded-full bg-black/50 text-[11px] text-slate-300 backdrop-blur-sm">Evrak veya nesneyi çerçeveye hizalayın</span>
+                </div>
+                <div class="flex justify-between">
+                    <div class="w-6 h-6 border-b-2 border-l-2 border-blue-400"></div>
+                    <div class="w-6 h-6 border-b-2 border-r-2 border-blue-400"></div>
+                </div>
+            </div>
+
+            <!-- Kamera Üst Araçlar -->
+            <div class="absolute top-4 right-4 z-20 flex flex-col gap-2.5">
+                <button onclick="toggleMobileTorch()" id="mob-torch-btn" class="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white flex items-center justify-center">
+                    <i class="fa-solid fa-bolt"></i>
+                </button>
+                <button onclick="switchMobileCamera()" class="w-10 h-10 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white flex items-center justify-center">
+                    <i class="fa-solid fa-camera-rotate"></i>
+                </button>
+            </div>
+
+            <!-- Deklanşör Alt Bar -->
+            <div class="relative z-20 px-6 py-5 bg-gradient-to-t from-black via-black/80 to-transparent flex items-center justify-around">
+                <!-- Hızlı Galeri Seçimi -->
+                <label class="cursor-pointer flex flex-col items-center gap-1">
+                    <div class="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-lg">
+                        <i class="fa-regular fa-images"></i>
+                    </div>
+                    <span class="text-[10px] text-slate-300">Galeriden</span>
+                    <input type="file" accept="image/*" multiple class="hidden" onchange="handleMobileFilesSelected(event)">
+                </label>
+
+                <!-- Ana Fotoğraf Çekme Deklanşörü -->
+                <button onclick="captureMobilePhoto()" class="w-20 h-20 rounded-full bg-white p-1.5 shadow-[0_0_0_6px_rgba(255,255,255,0.25)] active:scale-90 transition flex items-center justify-center">
+                    <div class="w-full h-full rounded-full border-2 border-slate-900 flex items-center justify-center">
+                        <i class="fa-solid fa-camera text-slate-900 text-xl"></i>
+                    </div>
+                </button>
+
+                <!-- Hızlı PDF / Dosya Seçimi -->
+                <label class="cursor-pointer flex flex-col items-center gap-1">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-600/80 backdrop-blur-md border border-blue-400/40 flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-file-arrow-up"></i>
+                    </div>
+                    <span class="text-[10px] text-blue-300 font-medium">PDF / Dosya</span>
+                    <input type="file" accept=".pdf,image/*,.doc,.docx,.xls,.xlsx,.zip" multiple class="hidden" onchange="handleMobileFilesSelected(event)">
+                </label>
+            </div>
+        </div>
+
+        <!-- SEKME 2: DOSYA & BELGE YÜKLEME MERKEZİ -->
+        <div id="mob-tab-files" class="hidden flex-1 p-5 overflow-y-auto flex-col justify-between bg-slate-950">
+            <div class="space-y-4">
+                <div class="p-5 rounded-2xl bg-gradient-to-br from-blue-600/20 to-indigo-600/10 border border-blue-500/30 text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-3xl text-blue-400 mx-auto mb-3">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <h3 class="font-bold text-base text-white">Telefondan PC'ye Dosya Gönder</h3>
+                    <p class="text-xs text-slate-400 mt-1">Seçtiğiniz tüm fotoğraflar, PDF belgeleri veya dosyalar anında PC ekranındaki klasöre düşer.</p>
+
+                    <div class="grid grid-cols-2 gap-3 mt-5">
+                        <label class="cursor-pointer py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs flex flex-col items-center gap-2 shadow-lg shadow-blue-600/25">
+                            <i class="fa-solid fa-images text-xl"></i>
+                            <span>Galeriden Çoklu Resim</span>
+                            <input type="file" accept="image/*" multiple class="hidden" onchange="handleMobileFilesSelected(event)">
+                        </label>
+
+                        <label class="cursor-pointer py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex flex-col items-center gap-2 shadow-lg shadow-emerald-600/25">
+                            <i class="fa-solid fa-file-pdf text-xl"></i>
+                            <span>PDF / Belge Seç</span>
+                            <input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.txt,image/*" multiple class="hidden" onchange="handleMobileFilesSelected(event)">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Gönderilen Dosya Geçmişi -->
+                <div class="rounded-2xl bg-slate-900 border border-slate-800 p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold uppercase text-slate-400">Bu Telefondan Gönderilenler</span>
+                        <span id="mob-sent-badge" class="text-xs font-mono bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-md font-bold">0 Dosya</span>
+                    </div>
+                    <div id="mob-sent-history" class="space-y-2 max-h-60 overflow-y-auto text-xs text-slate-400">
+                        <div class="text-center py-4 text-slate-600">Henüz dosya gönderilmedi</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center text-[11px] text-slate-600 pt-4">
+                TonoScan Studio • Uçtan Uca Şifreli Aktarım
+            </div>
+        </div>
+
+        <!-- Mobil Alt Navigasyon Barı -->
+        <nav class="z-20 h-16 bg-slate-900 border-t border-slate-800 grid grid-cols-2">
+            <button onclick="switchMobileTab('camera')" id="mob-nav-cam" class="flex flex-col items-center justify-center gap-1 text-blue-400 font-semibold text-xs">
+                <i class="fa-solid fa-camera text-base"></i>
+                <span>Canlı Kamera</span>
+            </button>
+            <button onclick="switchMobileTab('files')" id="mob-nav-files" class="flex flex-col items-center justify-center gap-1 text-slate-400 font-semibold text-xs">
+                <i class="fa-solid fa-folder-open text-base"></i>
+                <span>Dosya & PDF Yükle</span>
+            </button>
+        </nav>
+
+        <!-- Çekim Flaş Efekti -->
+        <div id="mob-flash" class="pointer-events-none fixed inset-0 bg-white opacity-0 transition-opacity duration-150 z-50"></div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 1: BÜYÜK KAREKOD (ÇOKLU TELEFON BAĞLANTI EKRANI)                    -->
+    <!-- ========================================================================= -->
+    <div id="qr-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+        <div class="mica-panel max-w-md w-full rounded-3xl p-6 border border-slate-700/80 shadow-2xl text-center relative animate-fade-in">
+            <button onclick="closeQRModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-semibold mb-3">
+                <i class="fa-solid fa-qrcode"></i> Çoklu Cihaz Bağlantı Noktası
+            </div>
+            <h3 class="text-xl font-bold text-white">Telefon Kamerasından Okutun</h3>
+            <p class="text-xs text-slate-400 mt-1 mb-5">Aynı karekodu birden fazla telefon okutarak aynı anda bu ekrana fotoğraf veya PDF gönderebilir.</p>
+
+            <!-- Büyük ve Yüksek Kontrastlı QR Kod -->
+            <div class="bg-white p-6 rounded-3xl inline-block shadow-2xl border-4 border-blue-500/30 mx-auto">
+                <div id="modal-qr"></div>
+            </div>
+
+            <div class="mt-5 p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs">
+                <div class="text-left truncate pr-2">
+                    <div class="text-[10px] text-slate-500">Doğrudan Bağlantı Adresi:</div>
+                    <div id="modal-qr-url" class="font-mono text-slate-300 truncate">...</div>
+                </div>
+                <button onclick="copyRoomLink()" class="shrink-0 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition">
+                    Kopyala
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 2: GÖRSEL KIRPMA & EVRAK NETLEŞTİRME EDİTÖRÜ                        -->
+    <!-- ========================================================================= -->
+    <div id="image-editor-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden flex-col">
+        <div class="px-6 py-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <i class="fa-solid fa-crop-simple text-blue-400 text-lg"></i>
+                <div>
+                    <h3 class="font-bold text-sm text-white" id="editor-title">Görsel Düzenleyici & Evrak Tarayıcı</h3>
+                    <p class="text-[11px] text-slate-400">Kırpın, döndürün veya fotokopi/tarayıcı netliği uygulayın</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="closeImageEditor()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300">İptal</button>
+                <button onclick="saveEditedImage(true)" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white">Kopya Olarak Kaydet</button>
+                <button onclick="saveEditedImage(false)" class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow-lg shadow-blue-600/25">Üzerine Kaydet</button>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-hidden p-6 flex items-center justify-center relative bg-black/60">
+            <img id="cropper-target-img" class="max-h-full max-w-full">
+        </div>
+
+        <div class="p-4 bg-slate-900 border-t border-slate-800 flex flex-wrap items-center justify-center gap-2">
+            <button onclick="cropperInstance.rotate(-90)" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-rotate-left"></i> Sola 90°
+            </button>
+            <button onclick="cropperInstance.rotate(90)" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs flex items-center gap-1.5">
+                <i class="fa-solid fa-rotate-right"></i> Sağa 90°
+            </button>
+            <div class="h-5 w-px bg-slate-700 mx-1"></div>
+            <button onclick="cropperInstance.setAspectRatio(NaN)" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs">Serbest Kırpma</button>
+            <button onclick="cropperInstance.setAspectRatio(210/297)" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs">Dikey A4</button>
+            <button onclick="cropperInstance.setAspectRatio(297/210)" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs">Yatay A4</button>
+            <div class="h-5 w-px bg-slate-700 mx-1"></div>
+            <button onclick="setEditorFilter('none')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs text-blue-400 font-medium">Orijinal Renk</button>
+            <button onclick="setEditorFilter('grayscale')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs">Gri Tonlama</button>
+            <button onclick="setEditorFilter('scanner')" class="px-3.5 py-2 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Net Evrak / Fotokopi Modu
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 3: PDF SAYFALARINA AYIRMA & GEREKSİZ SAYFALARI SİLME STÜDYOSU       -->
+    <!-- ========================================================================= -->
+    <div id="pdf-splitter-modal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 hidden flex-col">
+        <!-- Üst Bar -->
+        <div class="px-6 py-4 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-sm text-white" id="pdf-modal-title">PDF Sayfa Ayıklama ve Düzenleme Stüdyosu</h3>
+                    <p class="text-[11px] text-slate-400">Gereksiz sayfaları çöp kutusuna basarak silin, kalanları tek PDF yapın veya tüm sayfaları klasöre tek tek ayırın.</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2.5">
+                <span id="pdf-remaining-badge" class="text-xs font-mono bg-slate-800 px-3 py-1.5 rounded-lg text-slate-300">0 Sayfa Aktif</span>
+                
+                <button onclick="extractAllPDFPagesToWorkspace()" class="px-3.5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition flex items-center gap-1.5" title="Kalan sayfaları ana klasöre tek tek resim olarak çıkartır">
+                    <i class="fa-solid fa-layer-group"></i> Sayfaları Klasöre Tek Tek Ayır
+                </button>
+
+                <button onclick="downloadCleanedPDF()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow-lg shadow-emerald-600/25 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-download"></i> Kalan Sayfaları Yeni PDF İndir
+                </button>
+
+                <button onclick="closePDFSplitter()" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300">Kapat</button>
+            </div>
+        </div>
+
+        <!-- Sayfa Önizleme Grid -->
+        <div class="flex-1 p-6 overflow-y-auto">
+            <div id="pdf-pages-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5"></div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 4: BÜYÜK ÖNİZLEME (LIGHTBOX)                                        -->
+    <!-- ========================================================================= -->
+    <div id="preview-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex-col">
+        <div class="px-6 py-4 flex items-center justify-between border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <span id="preview-title" class="font-bold text-sm text-white">Dosya Önizleme</span>
+                <span id="preview-sender-badge" class="text-xs px-2.5 py-0.5 rounded-full"></span>
+            </div>
+            <button onclick="closePreviewModal()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="flex-1 p-6 flex items-center justify-center overflow-auto" id="preview-body"></div>
+    </div>
+
+    <!-- Gizli İşlem Canvas'ı -->
+    <canvas id="work-canvas" class="hidden"></canvas>
+
+    <!-- ========================================================================= -->
+    <!-- UYGULAMA JAVASCRIPT MOTORU                                                -->
+    <!-- ========================================================================= -->
+    <script>
+        // PDF.js Worker Ayarı
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // --- CİHAZ RENK PALETİ (Her bağlanan telefona özel renk) ---
+        const DEVICE_PALETTE = [
+            { name: 'Mavi', bg: 'bg-blue-500/20', border: 'border-blue-500/40', text: 'text-blue-400', hex: '#3b82f6' },
+            { name: 'Zümrüt', bg: 'bg-emerald-500/20', border: 'border-emerald-500/40', text: 'text-emerald-400', hex: '#10b981' },
+            { name: 'Mor', bg: 'bg-purple-500/20', border: 'border-purple-500/40', text: 'text-purple-400', hex: '#a855f7' },
+            { name: 'Kehribar', bg: 'bg-amber-500/20', border: 'border-amber-500/40', text: 'text-amber-400', hex: '#f59e0b' },
+            { name: 'Pembe', bg: 'bg-rose-500/20', border: 'border-rose-500/40', text: 'text-rose-400', hex: '#f43f5e' },
+            { name: 'Camgöbeği', bg: 'bg-cyan-500/20', border: 'border-cyan-500/40', text: 'text-cyan-400', hex: '#06b6d4' }
+        ];
+
+        // --- DURUM DEĞİŞKENLERİ ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetRoomId = urlParams.get('oda');
+        const securityToken = urlParams.get('key');
+
+        let peer = null;
+        let myRoomId = null;
+        let myRoomKey = null;
+
+        // PC Tarafı: Bağlı Telefonlar ve Dosya Listesi
+        const connectedDevices = new Map(); // peerId -> { conn, name, model, os, battery, color, filesSent }
+        const incomingChunks = new Map();   // transferId -> { meta, chunks:[], receivedBytes, startTime }
+        let workspaceFiles = [];            // { id, name, type ('image'|'pdf'|'other'), mime, size, dataUrl, blobUrl, thumbnail, pageCount, senderId, senderName, senderColor, time, selected }
+        
+        let currentFilter = 'all';          // 'all' | 'image' | 'pdf' | peerId
+        let currentViewMode = 'grid';       // 'grid' | 'list'
+
+        // Editör & PDF Ayırıcı Değişkenleri
+        let cropperInstance = null;
+        let editingFileId = null;
+        let currentEditorFilter = 'none';
+        let activeSplitPDF = { fileId: null, fileName: '', pages: [] }; // pages: [{ pageNum, dataUrl, width, height, deleted, rotation }]
+
+        // Mobil Tarafı Değişkenleri
+        let mobConn = null;
+        let mobStream = null;
+        let mobFacing = 'environment';
+        let mobTorch = false;
+        let mobSenderName = localStorage.getItem('tonoscan_sender_name') || '';
+        let mobSentCount = 0;
+
+        // --- BAŞLATICI ---
+        window.addEventListener('DOMContentLoaded', () => {
+            if (targetRoomId) {
+                initMobileSender(targetRoomId, securityToken);
+            } else {
+                initPCWorkspace();
+            }
         });
-      };
-      reader.readAsDataURL(fileInput.files[0]);
-    }
-  </script>
+
+        // =========================================================================
+        // BÖLÜM 1: PC ANA MERKEZ (MULTI-DEVICE RECEIVER & WINDOWS EXPLORER)
+        // =========================================================================
+        function initPCWorkspace() {
+            document.getElementById('pc-app').classList.remove('hidden');
+
+            // Güvenli Benzersiz Oda Kodu ve Anahtar Üret
+            const randomPart = Math.random().toString(36).substring(2, 8);
+            myRoomId = `tonoscan-${randomPart}`;
+            myRoomKey = Math.random().toString(36).substring(2, 10);
+
+            document.getElementById('room-code-text').innerText = randomPart.toUpperCase();
+
+            const joinUrl = `${window.location.origin}${window.location.pathname}?oda=${myRoomId}&key=${myRoomKey}`;
+            document.getElementById('modal-qr-url').innerText = joinUrl;
+
+            // 1. Sol Menüdeki Sabit Karekodu Üret
+            new QRCode(document.getElementById('sidebar-qr'), {
+                text: joinUrl,
+                width: 175,
+                height: 175,
+                colorDark: "#060913",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+
+            // 2. Büyütülmüş Modal İçindeki Dev Karekodu Üret
+            new QRCode(document.getElementById('modal-qr'), {
+                text: joinUrl,
+                width: 300,
+                height: 300,
+                colorDark: "#060913",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // PeerJS Sunucusunu Başlat
+            peer = new Peer(myRoomId);
+
+            peer.on('open', (id) => {
+                console.log('TonoScan Hub Aktif:', id);
+            });
+
+            // Yeni Bir Telefon Bağlandığında
+            peer.on('connection', (conn) => {
+                conn.on('open', () => {
+                    // Güvenlik Anahtarı Doğrulaması
+                    if (conn.metadata && conn.metadata.key !== myRoomKey) {
+                        conn.close();
+                        return;
+                    }
+                });
+
+                conn.on('data', (payload) => {
+                    handleIncomingPeerData(conn, payload);
+                });
+
+                conn.on('close', () => {
+                    connectedDevices.delete(conn.peer);
+                    renderConnectedDevices();
+                    renderSenderFilterPills();
+                });
+            });
+
+            // Herhangi Bir Telefondan Canlı Kamera Yayını Geldiğinde
+            peer.on('call', (call) => {
+                call.answer();
+                call.on('stream', (remoteStream) => {
+                    const videoEl = document.getElementById('pc-remote-video');
+                    videoEl.srcObject = remoteStream;
+                    const dev = connectedDevices.get(call.peer);
+                    document.getElementById('stream-device-name').innerText = dev ? dev.name : 'Mobil Kamera';
+                    const panel = document.getElementById('live-stream-panel');
+                    panel.classList.remove('hidden');
+                    panel.classList.add('flex');
+                });
+            });
+
+            // PC Üzerinde Sürükle-Bırak İle Dosya Ekleme Desteği
+            const dropzone = document.getElementById('explorer-dropzone');
+            dropzone.addEventListener('dragover', (e) => { e.preventDefault(); });
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    handleLocalPCFiles({ target: { files: e.dataTransfer.files } });
+                }
+            });
+        }
+
+        // Telefondan Gelen Veri Paketlerini İşle (Cihaz Bilgisi & Parçalı Dosya Transferi)
+        async function handleIncomingPeerData(conn, data) {
+            // 1. Cihaz Tanıtım Paketi
+            if (data.type === 'device-hello') {
+                const colorObj = DEVICE_PALETTE[connectedDevices.size % DEVICE_PALETTE.length];
+                connectedDevices.set(conn.peer, {
+                    peerId: conn.peer,
+                    conn: conn,
+                    name: data.senderName || data.model || `Cihaz #${connectedDevices.size + 1}`,
+                    model: data.model || 'Akıllı Telefon',
+                    os: data.os || 'Mobil OS',
+                    browser: data.browser || 'Tarayıcı',
+                    battery: data.battery || null,
+                    color: colorObj,
+                    filesSent: 0
+                });
+                renderConnectedDevices();
+                renderSenderFilterPills();
+                // Eğer büyük QR modalı açıksa ilk bağlantıda kullanıcı görsün diye bildirim sesi/efekti
+                return;
+            }
+
+            // 2. Kullanıcı İsim Güncellemesi
+            if (data.type === 'update-name') {
+                const dev = connectedDevices.get(conn.peer);
+                if (dev) {
+                    dev.name = data.senderName;
+                    // Önceki gönderdiği dosyaların da etiketini güncelle
+                    workspaceFiles.forEach(f => {
+                        if (f.senderId === conn.peer) f.senderName = data.senderName;
+                    });
+                    renderConnectedDevices();
+                    renderSenderFilterPills();
+                    renderExplorer();
+                }
+                return;
+            }
+
+            // 3. Parçalı Dosya Transfer Başlangıcı (Chunked Transfer Start)
+            if (data.type === 'transfer-start') {
+                const dev = connectedDevices.get(conn.peer);
+                incomingChunks.set(data.transferId, {
+                    meta: data,
+                    sender: dev,
+                    chunks: [],
+                    receivedBytes: 0
+                });
+                updateIncomingProgressUI(data.transferId, data.fileName, 0, dev);
+                return;
+            }
+
+            // 4. Dosya Parçası (Chunk)
+            if (data.type === 'transfer-chunk') {
+                const item = incomingChunks.get(data.transferId);
+                if (!item) return;
+                item.chunks.push(data.chunk);
+                item.receivedBytes += data.chunk.length;
+                const percent = Math.min(99, Math.round((item.receivedBytes / item.meta.totalLength) * 100));
+                updateIncomingProgressUI(data.transferId, item.meta.fileName, percent, item.sender);
+                return;
+            }
+
+            // 5. Transfer Tamamlandı (Chunk Birleştirme)
+            if (data.type === 'transfer-end') {
+                const item = incomingChunks.get(data.transferId);
+                if (!item) return;
+
+                updateIncomingProgressUI(data.transferId, item.meta.fileName, 100, item.sender);
+                const fullDataUrl = item.chunks.join('');
+                incomingChunks.delete(data.transferId);
+
+                if (item.sender) {
+                    item.sender.filesSent++;
+                    renderConnectedDevices();
+                }
+
+                await addFileToWorkspace({
+                    name: item.meta.fileName,
+                    mime: item.meta.fileMime,
+                    size: item.meta.fileSize,
+                    dataUrl: fullDataUrl,
+                    senderId: conn.peer,
+                    senderName: item.sender ? item.sender.name : 'Mobil Cihaz',
+                    senderColor: item.sender ? item.sender.color : DEVICE_PALETTE[0]
+                });
+
+                setTimeout(() => removeIncomingProgressUI(data.transferId), 400);
+            }
+        }
+
+        // Bağlanan Telefonların Listesini Sol Panelde Göster
+        function renderConnectedDevices() {
+            const container = document.getElementById('connected-devices-list');
+            const badge = document.getElementById('device-count-badge');
+            badge.innerText = `${connectedDevices.size} Aktif`;
+
+            if (connectedDevices.size === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5 text-slate-500 text-xs">
+                        <i class="fa-solid fa-wifi text-lg mb-1.5 block opacity-40 animate-pulse"></i>
+                        Telefon kamerasından karekodu okutarak bağlanın. Birden fazla telefon bağlanabilir.
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            connectedDevices.forEach((dev) => {
+                const card = document.createElement('div');
+                card.className = `p-2.5 rounded-xl bg-slate-950/80 border ${dev.color.border} flex items-center justify-between gap-2`;
+                card.innerHTML = `
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-8 h-8 rounded-lg ${dev.color.bg} ${dev.color.text} flex items-center justify-center shrink-0 font-bold text-sm">
+                            <i class="fa-solid fa-mobile-screen"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="text-xs font-bold text-white truncate flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full" style="background:${dev.color.hex}"></span>
+                                <span>${dev.name}</span>
+                            </div>
+                            <div class="text-[10px] text-slate-400 truncate">
+                                ${dev.os} • ${dev.model} ${dev.battery ? `• 🔋%${dev.battery}` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded-md ${dev.color.bg} ${dev.color.text} font-bold">
+                            ${dev.filesSent} dosya
+                        </span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Gönderen Kişilere Göre Üst Bar Filtre Butonları
+        function renderSenderFilterPills() {
+            const holder = document.getElementById('dynamic-sender-filters');
+            holder.innerHTML = '';
+            connectedDevices.forEach((dev) => {
+                const btn = document.createElement('button');
+                const isActive = currentFilter === dev.peerId;
+                btn.onclick = () => setFilter(dev.peerId);
+                btn.className = `px-2.5 py-1 rounded-md text-xs font-medium transition flex items-center gap-1.5 border ${isActive ? `${dev.color.bg} ${dev.color.text} ${dev.color.border}` : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'}`;
+                btn.innerHTML = `<span class="w-2 h-2 rounded-full" style="background:${dev.color.hex}"></span> <span>${dev.name}</span>`;
+                holder.appendChild(btn);
+            });
+        }
+
+        // Canlı Gelen Dosya Animasyon Çubuğu
+        function updateIncomingProgressUI(transferId, fileName, percent, sender) {
+            const container = document.getElementById('incoming-transfers-container');
+            let row = document.getElementById(`trans-${transferId}`);
+            const colorHex = sender ? sender.color.hex : '#3b82f6';
+            const senderLabel = sender ? sender.name : 'Telefon';
+
+            if (!row) {
+                row = document.createElement('div');
+                row.id = `trans-${transferId}`;
+                row.className = "p-3 rounded-xl bg-slate-900/95 border border-blue-500/30 shadow-lg flex items-center justify-between gap-4";
+                container.appendChild(row);
+            }
+
+            row.innerHTML = `
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-cloud-arrow-down animate-bounce"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center justify-between text-xs mb-1">
+                            <span class="font-bold text-white truncate">${fileName} <span class="text-[10px] font-normal text-slate-400">(${senderLabel} gönderiyor...)</span></span>
+                            <span class="font-mono font-bold text-blue-400">${percent}%</span>
+                        </div>
+                        <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                            <div class="h-full transition-all duration-150" style="width:${percent}%; background:${colorHex}"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function removeIncomingProgressUI(transferId) {
+            const row = document.getElementById(`trans-${transferId}`);
+            if (row) row.remove();
+        }
+
+        // =========================================================================
+        // BÖLÜM 2: DOSYA İŞLEME, PDF ÖNİZLEME VE WINDOWS EXPLORER RENDER
+        // =========================================================================
+        function dataURLtoBlob(dataurl) {
+            const arr = dataurl.split(',');
+            const mimeMatch = arr[0].match(/:(.*?);/);
+            const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        }
+
+        function formatBytes(bytes) {
+            if (!bytes || bytes === 0) return '0 KB';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        // Yeni Gelen veya PC'den Eklenen Dosyayı Klasöre Kaydet
+        async function addFileToWorkspace({ name, mime, size, dataUrl, senderId, senderName, senderColor }) {
+            const id = 'file-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
+            const blob = dataURLtoBlob(dataUrl);
+            const blobUrl = URL.createObjectURL(blob);
+            const actualSize = size || blob.size;
+
+            let fileCategory = 'other';
+            let thumbnail = null;
+            let pageCount = null;
+
+            if (mime.startsWith('image/')) {
+                fileCategory = 'image';
+                thumbnail = dataUrl;
+            } else if (mime === 'application/pdf' || name.toLowerCase().endsWith('.pdf')) {
+                fileCategory = 'pdf';
+                // PDF.js ile 1. Sayfanın Gerçek Önizlemesini ve Sayfa Sayısını Çıkar
+                try {
+                    const pdfPreview = await generatePDFThumbnail(dataUrl);
+                    thumbnail = pdfPreview.thumbDataUrl;
+                    pageCount = pdfPreview.numPages;
+                } catch (e) {
+                    console.warn('PDF önizleme oluşturulamadı:', e);
+                }
+            }
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            workspaceFiles.unshift({
+                id,
+                name,
+                type: fileCategory,
+                mime,
+                size: actualSize,
+                dataUrl,
+                blobUrl,
+                thumbnail,
+                pageCount,
+                senderId,
+                senderName,
+                senderColor: senderColor || DEVICE_PALETTE[0],
+                time: timeStr,
+                selected: true
+            });
+
+            renderExplorer();
+        }
+
+        // PDF Dosyasının İlk Sayfasını Kapak Görseli Yapma
+        async function generatePDFThumbnail(pdfDataUrl) {
+            const base64 = pdfDataUrl.split(',')[1];
+            const binary = atob(base64);
+            const uint8 = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) uint8[i] = binary.charCodeAt(i);
+
+            const pdfDoc = await pdfjsLib.getDocument({ data: uint8 }).promise;
+            const page = await pdfDoc.getPage(1);
+            const viewport = page.getViewport({ scale: 0.8 });
+
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            const ctx = canvas.getContext('2d');
+            await page.render({ canvasContext: ctx, viewport }).promise;
+
+            return {
+                thumbDataUrl: canvas.toDataURL('image/jpeg', 0.85),
+                numPages: pdfDoc.numPages
+            };
+        }
+
+        // WINDOWS EXPLORER GÖRÜNÜMÜNÜ ÇİZ
+        function renderExplorer() {
+            const totalCountEl = document.getElementById('total-files-count');
+            const emptyState = document.getElementById('empty-explorer');
+            const gridContainer = document.getElementById('files-grid');
+            const listContainer = document.getElementById('files-list');
+            const listBody = document.getElementById('files-list-body');
+            const searchQuery = (document.getElementById('search-input').value || '').toLowerCase();
+
+            totalCountEl.innerText = workspaceFiles.length;
+
+            // Filtreleme
+            const filtered = workspaceFiles.filter(f => {
+                const matchSearch = f.name.toLowerCase().includes(searchQuery) || f.senderName.toLowerCase().includes(searchQuery);
+                if (!matchSearch) return false;
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'image') return f.type === 'image';
+                if (currentFilter === 'pdf') return f.type === 'pdf';
+                return f.senderId === currentFilter;
+            });
+
+            if (workspaceFiles.length === 0) {
+                emptyState.classList.remove('hidden');
+                gridContainer.classList.add('hidden');
+                listContainer.classList.add('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            if (currentViewMode === 'grid') {
+                gridContainer.classList.remove('hidden');
+                listContainer.classList.add('hidden');
+                gridContainer.innerHTML = '';
+
+                filtered.forEach(file => {
+                    const card = document.createElement('div');
+                    card.className = `win-card rounded-2xl overflow-hidden flex flex-col justify-between relative group cursor-grab ${file.selected ? 'selected' : ''}`;
+
+                    // MASAÜSTÜNE SÜRÜKLE-BIRAK (Native Windows File DragOut)
+                    card.setAttribute('draggable', 'true');
+                    card.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('DownloadURL', `${file.mime}:${file.name}:${file.blobUrl}`);
+                    });
+
+                    // Önizleme Görseli veya Dosya İkonu
+                    let previewHTML = '';
+                    if (file.thumbnail) {
+                        previewHTML = `<img src="${file.thumbnail}" class="w-full h-full object-contain p-2 transition duration-300 group-hover:scale-105">`;
+                    } else {
+                        previewHTML = `
+                            <div class="flex flex-col items-center justify-center text-slate-400">
+                                <i class="fa-solid fa-file-lines text-4xl text-blue-400 mb-2"></i>
+                                <span class="text-[10px] font-mono uppercase">${file.name.split('.').pop()}</span>
+                            </div>`;
+                    }
+
+                    // PDF Sayfa Sayısı Rozeti
+                    const pdfBadge = file.type === 'pdf'
+                        ? `<span class="absolute bottom-2 right-2 bg-red-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow flex items-center gap-1">
+                               <i class="fa-solid fa-file-pdf"></i> ${file.pageCount ? file.pageCount + ' Sayfa' : 'PDF'}
+                           </span>`
+                        : '';
+
+                    // Özel Aksiyon Butonları (Görsel ise Kırp, PDF ise Sayfaları Ayır/Sil)
+                    let specialActionBtn = '';
+                    if (file.type === 'image') {
+                        specialActionBtn = `
+                            <button onclick="openImageEditor('${file.id}')" class="px-2 py-1 rounded bg-blue-500/20 hover:bg-blue-500 text-blue-300 hover:text-white text-[11px] font-medium transition flex items-center gap-1" title="Kırp, Döndür, Netleştir">
+                                <i class="fa-solid fa-crop-simple"></i> Düzenle
+                            </button>`;
+                    } else if (file.type === 'pdf') {
+                        specialActionBtn = `
+                            <button onclick="openPDFSplitter('${file.id}')" class="px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-slate-950 text-[11px] font-bold transition flex items-center gap-1" title="PDF Sayfalarını Ayır ve Gereksiz Sayfaları Sil">
+                                <i class="fa-solid fa-scissors"></i> Sayfaları Ayır/Sil
+                            </button>`;
+                    }
+
+                    card.innerHTML = `
+                        <div>
+                            <!-- Üst Seçim & Gönderen Kişi Rozeti -->
+                            <div class="p-2.5 flex items-center justify-between gap-1 z-10">
+                                <label class="cursor-pointer flex items-center gap-1.5 bg-slate-950/80 px-2 py-1 rounded-lg border border-white/5">
+                                    <input type="checkbox" ${file.selected ? 'checked' : ''} onchange="toggleFileSelect('${file.id}')" class="w-3.5 h-3.5 accent-blue-500 rounded cursor-pointer">
+                                </label>
+
+                                <!-- Kim Gönderdi Etiketi -->
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border ${file.senderColor.bg} ${file.senderColor.text} ${file.senderColor.border} truncate max-w-[140px] flex items-center gap-1" title="Gönderen: ${file.senderName}">
+                                    <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background:${file.senderColor.hex}"></span>
+                                    <span class="truncate">${file.senderName}</span>
+                                </span>
+                            </div>
+
+                            <!-- Önizleme Kutusu -->
+                            <div onclick="openPreviewModal('${file.id}')" class="aspect-[4/3] bg-slate-950/70 mx-2.5 rounded-xl overflow-hidden flex items-center justify-center relative cursor-pointer border border-white/5">
+                                ${previewHTML}
+                                ${pdfBadge}
+                            </div>
+                        </div>
+
+                        <!-- Alt Dosya Bilgisi ve İşlem Çubuğu -->
+                        <div class="p-3 mt-1">
+                            <div class="text-xs font-semibold text-slate-200 truncate" title="${file.name}">${file.name}</div>
+                            <div class="flex items-center justify-between text-[10px] text-slate-400 mt-0.5 mb-2.5">
+                                <span>${formatBytes(file.size)}</span>
+                                <span>${file.time}</span>
+                            </div>
+
+                            <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-1">
+                                ${specialActionBtn}
+                                <div class="flex items-center gap-1 ml-auto">
+                                    <button onclick="downloadSingleFile('${file.id}')" class="p-1.5 rounded bg-emerald-500/15 hover:bg-emerald-500 text-emerald-400 hover:text-white text-xs transition" title="İndir">
+                                        <i class="fa-solid fa-download"></i>
+                                    </button>
+                                    <button onclick="deleteSingleFile('${file.id}')" class="p-1.5 rounded bg-red-500/15 hover:bg-red-500 text-red-400 hover:text-white text-xs transition" title="Sil">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    gridContainer.appendChild(card);
+                });
+
+            } else {
+                // DETAYLI LİSTE GÖRÜNÜMÜ
+                gridContainer.classList.add('hidden');
+                listContainer.classList.remove('hidden');
+                listBody.innerHTML = '';
+
+                filtered.forEach(file => {
+                    const tr = document.createElement('tr');
+                    tr.className = `hover:bg-slate-800/50 transition ${file.selected ? 'bg-blue-500/10' : ''}`;
+                    tr.setAttribute('draggable', 'true');
+                    tr.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('DownloadURL', `${file.mime}:${file.name}:${file.blobUrl}`);
+                    });
+
+                    tr.innerHTML = `
+                        <td class="py-2.5 px-4">
+                            <input type="checkbox" ${file.selected ? 'checked' : ''} onchange="toggleFileSelect('${file.id}')" class="accent-blue-500 rounded cursor-pointer">
+                        </td>
+                        <td class="py-2.5 px-4 font-medium text-white flex items-center gap-2.5 cursor-pointer" onclick="openPreviewModal('${file.id}')">
+                            ${file.thumbnail ? `<img src="${file.thumbnail}" class="w-8 h-8 rounded object-cover bg-slate-950">` : `<i class="fa-solid fa-file text-blue-400 text-lg"></i>`}
+                            <span class="truncate max-w-xs">${file.name}</span>
+                        </td>
+                        <td class="py-2.5 px-4">
+                            <span class="text-[11px] font-semibold px-2.5 py-1 rounded-full border ${file.senderColor.bg} ${file.senderColor.text} ${file.senderColor.border} inline-flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 rounded-full" style="background:${file.senderColor.hex}"></span>
+                                ${file.senderName}
+                            </span>
+                        </td>
+                        <td class="py-2.5 px-4 text-slate-400">
+                            ${file.type === 'pdf' ? `PDF Belgesi (${file.pageCount || '?'} Sayfa)` : file.type === 'image' ? 'Görsel' : 'Dosya'}
+                        </td>
+                        <td class="py-2.5 px-4 font-mono text-slate-400">${formatBytes(file.size)}</td>
+                        <td class="py-2.5 px-4 text-slate-400">${file.time}</td>
+                        <td class="py-2.5 px-4 text-right space-x-1">
+                            ${file.type === 'image' ? `<button onclick="openImageEditor('${file.id}')" class="px-2 py-1 rounded bg-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-white">Kırp</button>` : ''}
+                            ${file.type === 'pdf' ? `<button onclick="openPDFSplitter('${file.id}')" class="px-2 py-1 rounded bg-amber-500/20 text-amber-300 hover:bg-amber-500 hover:text-slate-950 font-semibold">Sayfaları Ayır/Sil</button>` : ''}
+                            <button onclick="downloadSingleFile('${file.id}')" class="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white"><i class="fa-solid fa-download"></i></button>
+                            <button onclick="deleteSingleFile('${file.id}')" class="px-2 py-1 rounded bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    listBody.appendChild(tr);
+                });
+            }
+        }
+
+        // =========================================================================
+        // BÖLÜM 3: PDF SAYFALARINA AYIRMA VE GEREKSİZ SAYFALARI SİLME STÜDYOSU
+        // =========================================================================
+        async function openPDFSplitter(fileId) {
+            const file = workspaceFiles.find(f => f.id === fileId);
+            if (!file) return;
+
+            const modal = document.getElementById('pdf-splitter-modal');
+            const grid = document.getElementById('pdf-pages-grid');
+            document.getElementById('pdf-modal-title').innerText = `${file.name} — Sayfa Ayıklama ve Silme`;
+            
+            grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-400"><i class="fa-solid fa-spinner fa-spin text-3xl text-blue-400 mb-3 block"></i>PDF sayfaları yüksek çözünürlükte ayrıştırılıyor...</div>`;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            // PDF'i Oku ve Tüm Sayfaları Render Et
+            const base64 = file.dataUrl.split(',')[1];
+            const binary = atob(base64);
+            const uint8 = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) uint8[i] = binary.charCodeAt(i);
+
+            const pdfDoc = await pdfjsLib.getDocument({ data: uint8 }).promise;
+            activeSplitPDF = { fileId: file.id, fileName: file.name.replace(/\.pdf$/i, ''), pages: [] };
+
+            for (let p = 1; p <= pdfDoc.numPages; p++) {
+                const page = await pdfDoc.getPage(p);
+                const viewport = page.getViewport({ scale: 1.5 });
+                const canvas = document.createElement('canvas');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                const ctx = canvas.getContext('2d');
+                await page.render({ canvasContext: ctx, viewport }).promise;
+
+                activeSplitPDF.pages.push({
+                    pageNum: p,
+                    dataUrl: canvas.toDataURL('image/jpeg', 0.92),
+                    width: viewport.width,
+                    height: viewport.height,
+                    deleted: false
+                });
+            }
+
+            renderPDFSplitterPages();
+        }
+
+        function renderPDFSplitterPages() {
+            const grid = document.getElementById('pdf-pages-grid');
+            const remainingBadge = document.getElementById('pdf-remaining-badge');
+            const activePages = activeSplitPDF.pages.filter(p => !p.deleted);
+            remainingBadge.innerText = `${activePages.length} / ${activeSplitPDF.pages.length} Sayfa Aktif`;
+
+            grid.innerHTML = '';
+            activeSplitPDF.pages.forEach((p, idx) => {
+                const card = document.createElement('div');
+                card.className = `rounded-2xl p-3 border transition flex flex-col justify-between ${p.deleted ? 'bg-red-950/20 border-red-500/30 opacity-45' : 'bg-slate-900 border-slate-800 hover:border-blue-500'}`;
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold ${p.deleted ? 'line-through text-red-400' : 'text-white'}">Sayfa #${p.pageNum}</span>
+                        <button onclick="toggleDeletePDFPage(${idx})" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${p.deleted ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 hover:bg-red-500 text-red-400 hover:text-white'}">
+                            <i class="fa-solid ${p.deleted ? 'fa-rotate-left' : 'fa-trash-can'}"></i>
+                            <span>${p.deleted ? 'Geri Al' : 'Sayfayı Sil'}</span>
+                        </button>
+                    </div>
+                    <div class="aspect-[210/297] bg-white rounded-xl overflow-hidden flex items-center justify-center">
+                        <img src="${p.dataUrl}" class="w-full h-full object-contain">
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleDeletePDFPage(index) {
+            activeSplitPDF.pages[index].deleted = !activeSplitPDF.pages[index].deleted;
+            renderPDFSplitterPages();
+        }
+
+        // Silinmeyen Kalan Sayfaları Yeni Bir Temiz PDF Olarak İndir
+        function downloadCleanedPDF() {
+            const activePages = activeSplitPDF.pages.filter(p => !p.deleted);
+            if (activePages.length === 0) return alert('En az 1 aktif sayfa bırakmalısınız!');
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageW = pdf.internal.pageSize.getWidth();
+            const pageH = pdf.internal.pageSize.getHeight();
+
+            activePages.forEach((p, idx) => {
+                if (idx > 0) pdf.addPage();
+                pdf.addImage(p.dataUrl, 'JPEG', 0, 0, pageW, pageH);
+            });
+
+            pdf.save(`${activeSplitPDF.fileName}_Duzenlenmis.pdf`);
+        }
+
+        // PDF'in Aktif Sayfalarını Ana Windows Klasörüne Tek Tek Görsel Olarak Çıkar
+        async function extractAllPDFPagesToWorkspace() {
+            const activePages = activeSplitPDF.pages.filter(p => !p.deleted);
+            if (activePages.length === 0) return alert('Çıkartılacak aktif sayfa yok!');
+
+            const parentFile = workspaceFiles.find(f => f.id === activeSplitPDF.fileId);
+
+            for (const p of activePages) {
+                await addFileToWorkspace({
+                    name: `${activeSplitPDF.fileName}_Sayfa_${p.pageNum}.jpg`,
+                    mime: 'image/jpeg',
+                    size: 0,
+                    dataUrl: p.dataUrl,
+                    senderId: parentFile ? parentFile.senderId : 'pc',
+                    senderName: parentFile ? parentFile.senderName : 'PDF Ayıklayıcı',
+                    senderColor: parentFile ? parentFile.senderColor : DEVICE_PALETTE[0]
+                });
+            }
+
+            closePDFSplitter();
+        }
+
+        function closePDFSplitter() {
+            document.getElementById('pdf-splitter-modal').classList.add('hidden');
+            document.getElementById('pdf-splitter-modal').classList.remove('flex');
+        }
+
+        // =========================================================================
+        // BÖLÜM 4: ÇOKLU GÖRSELİ VE PDF'LERİ TEK PDF'TE BİRLEŞTİRME
+        // =========================================================================
+        async function exportSelectedToPDF() {
+            const selected = workspaceFiles.filter(f => f.selected && (f.type === 'image' || f.type === 'pdf'));
+            if (selected.length === 0) return alert('Lütfen PDF olarak birleştirmek için en az 1 görsel veya PDF seçin.');
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageW = pdf.internal.pageSize.getWidth();
+            const pageH = pdf.internal.pageSize.getHeight();
+            let firstPageAdded = false;
+
+            // Kronolojik sırayla ekle (ters çevir)
+            const ordered = [...selected].reverse();
+
+            for (const item of ordered) {
+                if (item.type === 'image') {
+                    if (firstPageAdded) pdf.addPage();
+                    const props = pdf.getImageProperties(item.dataUrl);
+                    const ratio = Math.min((pageW - 10) / props.width, (pageH - 10) / props.height);
+                    const w = props.width * ratio;
+                    const h = props.height * ratio;
+                    pdf.addImage(item.dataUrl, 'JPEG', (pageW - w) / 2, (pageH - h) / 2, w, h);
+                    firstPageAdded = true;
+                } else if (item.type === 'pdf') {
+                    // Seçili öğe bir PDF ise tüm sayfalarını açıp yeni PDF'e dahil et
+                    const base64 = item.dataUrl.split(',')[1];
+                    const binary = atob(base64);
+                    const uint8 = new Uint8Array(binary.length);
+                    for (let i = 0; i < binary.length; i++) uint8[i] = binary.charCodeAt(i);
+                    const pdfDoc = await pdfjsLib.getDocument({ data: uint8 }).promise;
+
+                    for (let p = 1; p <= pdfDoc.numPages; p++) {
+                        if (firstPageAdded) pdf.addPage();
+                        const page = await pdfDoc.getPage(p);
+                        const viewport = page.getViewport({ scale: 1.5 });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+                        await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.90), 'JPEG', 0, 0, pageW, pageH);
+                        firstPageAdded = true;
+                    }
+                }
+            }
+
+            pdf.save(`TonoScan_Birlesik_Evrak_${Date.now()}.pdf`);
+        }
+
+        // Seçili Görselleri Alt Alta Tek Bir Uzun JPG Olarak Birleştirme
+        async function mergeSelectedVerticalJPG() {
+            const selected = workspaceFiles.filter(f => f.selected && f.type === 'image');
+            if (selected.length < 2) return alert('Alt alta birleştirmek için en az 2 görsel seçmelisiniz.');
+
+            const ordered = [...selected].reverse();
+            const imgs = await Promise.all(ordered.map(item => new Promise(res => {
+                const img = new Image();
+                img.onload = () => res(img);
+                img.src = item.dataUrl;
+            })));
+
+            const maxW = Math.max(...imgs.map(i => i.width));
+            const totalH = imgs.reduce((sum, i) => sum + (i.height * (maxW / i.width)), 0);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = maxW;
+            canvas.height = totalH;
+            const ctx = canvas.getContext('2d');
+
+            let y = 0;
+            imgs.forEach(img => {
+                const h = img.height * (maxW / img.width);
+                ctx.drawImage(img, 0, y, maxW, h);
+                y += h;
+            });
+
+            await addFileToWorkspace({
+                name: `Birlesik_Gorsel_${Date.now()}.jpg`,
+                mime: 'image/jpeg',
+                size: 0,
+                dataUrl: canvas.toDataURL('image/jpeg', 0.92),
+                senderId: 'pc',
+                senderName: 'Stüdyo Birleştirici',
+                senderColor: DEVICE_PALETTE[2]
+            });
+        }
+
+        // =========================================================================
+        // BÖLÜM 5: GÖRSEL KIRPMA & EVRAK NETLEŞTİRME EDİTÖRÜ
+        // =========================================================================
+        function openImageEditor(fileId) {
+            const file = workspaceFiles.find(f => f.id === fileId);
+            if (!file) return;
+            editingFileId = fileId;
+            currentEditorFilter = 'none';
+
+            const modal = document.getElementById('image-editor-modal');
+            const img = document.getElementById('cropper-target-img');
+            img.src = file.dataUrl;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            if (cropperInstance) cropperInstance.destroy();
+            cropperInstance = new Cropper(img, {
+                viewMode: 1,
+                autoCropArea: 0.95,
+                responsive: true
+            });
+        }
+
+        function setEditorFilter(filterName) {
+            currentEditorFilter = filterName;
+            const box = document.querySelector('.cropper-container');
+            if (!box) return;
+            if (filterName === 'none') box.style.filter = 'none';
+            if (filterName === 'grayscale') box.style.filter = 'grayscale(100%)';
+            if (filterName === 'scanner') box.style.filter = 'grayscale(100%) contrast(185%) brightness(112%)';
+        }
+
+        async function saveEditedImage(asCopy) {
+            if (!cropperInstance || !editingFileId) return;
+            const cropped = cropperInstance.getCroppedCanvas({ maxWidth: 2600, maxHeight: 2600 });
+
+            const outCanvas = document.createElement('canvas');
+            outCanvas.width = cropped.width;
+            outCanvas.height = cropped.height;
+            const ctx = outCanvas.getContext('2d');
+
+            if (currentEditorFilter === 'grayscale') ctx.filter = 'grayscale(100%)';
+            if (currentEditorFilter === 'scanner') ctx.filter = 'grayscale(100%) contrast(185%) brightness(112%)';
+            ctx.drawImage(cropped, 0, 0);
+
+            const newDataUrl = outCanvas.toDataURL('image/jpeg', 0.92);
+            const targetFile = workspaceFiles.find(f => f.id === editingFileId);
+
+            if (asCopy && targetFile) {
+                await addFileToWorkspace({
+                    name: `Duzenlenen_${targetFile.name}`,
+                    mime: 'image/jpeg',
+                    size: 0,
+                    dataUrl: newDataUrl,
+                    senderId: targetFile.senderId,
+                    senderName: targetFile.senderName,
+                    senderColor: targetFile.senderColor
+                });
+            } else if (targetFile) {
+                targetFile.dataUrl = newDataUrl;
+                targetFile.thumbnail = newDataUrl;
+                const newBlob = dataURLtoBlob(newDataUrl);
+                targetFile.blobUrl = URL.createObjectURL(newBlob);
+                targetFile.size = newBlob.size;
+                renderExplorer();
+            }
+
+            closeImageEditor();
+        }
+
+        function closeImageEditor() {
+            if (cropperInstance) cropperInstance.destroy();
+            cropperInstance = null;
+            document.getElementById('image-editor-modal').classList.add('hidden');
+            document.getElementById('image-editor-modal').classList.remove('flex');
+        }
+
+        // =========================================================================
+        // BÖLÜM 6: MOBİL TELEFON TARAFI (KAMERA + DOSYA YÜKLEYİCİ + CİHAZ BİLGİSİ)
+        // =========================================================================
+        async function initMobileSender(roomId, key) {
+            document.getElementById('mobile-app').classList.remove('hidden');
+
+            // Cihaz Model ve İşletim Sistemini Tespit Et
+            const deviceMeta = await detectMobileDeviceDetails();
+            if (!mobSenderName) {
+                mobSenderName = deviceMeta.model;
+            }
+            document.getElementById('mob-sender-name-btn').innerText = mobSenderName;
+            document.getElementById('mob-device-label').innerText = `${deviceMeta.os} • ${deviceMeta.model}`;
+
+            await startMobileCameraStream();
+
+            peer = new Peer();
+            peer.on('open', () => {
+                mobConn = peer.connect(roomId, {
+                    reliable: true,
+                    metadata: { key: key }
+                });
+
+                mobConn.on('open', () => {
+                    document.getElementById('mob-conn-dot').className = "w-3 h-3 rounded-full bg-emerald-400";
+                    document.getElementById('mob-conn-status').innerText = "PC Klasörüne Bağlandı";
+
+                    // Cihaz Kimliğini PC'ye Gönder
+                    mobConn.send({
+                        type: 'device-hello',
+                        senderName: mobSenderName,
+                        model: deviceMeta.model,
+                        os: deviceMeta.os,
+                        browser: deviceMeta.browser,
+                        battery: deviceMeta.battery
+                    });
+
+                    // Canlı Kamera Akışını PC'ye İlet
+                    if (mobStream) {
+                        peer.call(roomId, mobStream);
+                    }
+                });
+
+                mobConn.on('data', (data) => {
+                    if (data.command === 'remote-capture') {
+                        captureMobilePhoto();
+                    }
+                });
+
+                mobConn.on('close', () => {
+                    document.getElementById('mob-conn-dot').className = "w-3 h-3 rounded-full bg-red-500";
+                    document.getElementById('mob-conn-status').innerText = "Bağlantı Kesildi";
+                });
+            });
+        }
+
+        // Telefonun Marka, Model, İşletim Sistemi ve Şarj Durumunu Çözümle
+        async function detectMobileDeviceDetails() {
+            const ua = navigator.userAgent;
+            let os = 'Mobil OS';
+            let model = 'Telefon';
+            let browser = 'Web';
+            let battery = null;
+
+            if (/iPhone/i.test(ua)) {
+                os = 'iOS';
+                model = 'iPhone';
+            } else if (/iPad/i.test(ua)) {
+                os = 'iPadOS';
+                model = 'iPad';
+            } else if (/Android/i.test(ua)) {
+                os = 'Android';
+                const match = ua.match(/Android\s([0-9.]+);\s([^;)]+)/);
+                if (match && match[2]) {
+                    model = match[2].replace(/Build\/.*/i, '').trim();
+                } else {
+                    model = 'Android Cihaz';
+                }
+            }
+
+            if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+                try {
+                    const hints = await navigator.userAgentData.getHighEntropyValues(['model', 'platformVersion']);
+                    if (hints.model) model = hints.model;
+                } catch (e) {}
+            }
+
+            if (navigator.getBattery) {
+                try {
+                    const bat = await navigator.getBattery();
+                    battery = Math.round(bat.level * 100);
+                } catch (e) {}
+            }
+
+            return { os, model, browser, battery };
+        }
+
+        function changeSenderName() {
+            const newName = prompt('PC ekranında dosyalarınızın üzerinde görünecek isminizi yazın:', mobSenderName);
+            if (newName && newName.trim()) {
+                mobSenderName = newName.trim();
+                localStorage.setItem('tonoscan_sender_name', mobSenderName);
+                document.getElementById('mob-sender-name-btn').innerText = mobSenderName;
+                if (mobConn && mobConn.open) {
+                    mobConn.send({ type: 'update-name', senderName: mobSenderName });
+                }
+            }
+        }
+
+        async function startMobileCameraStream() {
+            if (mobStream) mobStream.getTracks().forEach(t => t.stop());
+            try {
+                mobStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: { ideal: mobFacing }, width: { ideal: 1920 }, height: { ideal: 1080 } },
+                    audio: false
+                });
+                document.getElementById('mob-video').srcObject = mobStream;
+            } catch (e) {
+                console.warn('Kamera açılamadı, dosya yükleme sekmesine geçiliyor.');
+                switchMobileTab('files');
+            }
+        }
+
+        function switchMobileCamera() {
+            mobFacing = mobFacing === 'environment' ? 'user' : 'environment';
+            startMobileCameraStream();
+        }
+
+        async function toggleMobileTorch() {
+            if (!mobStream) return;
+            const track = mobStream.getVideoTracks()[0];
+            const caps = track.getCapabilities ? track.getCapabilities() : {};
+            if (!caps.torch) return alert('Bu kamerada flaş desteği bulunmuyor.');
+            mobTorch = !mobTorch;
+            await track.applyConstraints({ advanced: [{ torch: mobTorch }] });
+            document.getElementById('mob-torch-btn').classList.toggle('bg-amber-500', mobTorch);
+        }
+
+        function switchMobileTab(tab) {
+            const camTab = document.getElementById('mob-tab-camera');
+            const filesTab = document.getElementById('mob-tab-files');
+            const navCam = document.getElementById('mob-nav-cam');
+            const navFiles = document.getElementById('mob-nav-files');
+
+            if (tab === 'camera') {
+                camTab.classList.remove('hidden');
+                filesTab.classList.add('hidden');
+                navCam.className = "flex flex-col items-center justify-center gap-1 text-blue-400 font-semibold text-xs";
+                navFiles.className = "flex flex-col items-center justify-center gap-1 text-slate-400 font-semibold text-xs";
+            } else {
+                camTab.classList.add('hidden');
+                filesTab.classList.remove('hidden');
+                filesTab.classList.add('flex');
+                navFiles.className = "flex flex-col items-center justify-center gap-1 text-blue-400 font-semibold text-xs";
+                navCam.className = "flex flex-col items-center justify-center gap-1 text-slate-400 font-semibold text-xs";
+            }
+        }
+
+        // Kameradan Fotoğraf Çek ve Parçalı (Chunked) Olarak Gönder
+        async function captureMobilePhoto() {
+            const video = document.getElementById('mob-video');
+            if (!video.videoWidth) return;
+
+            // Deklanşör Flaş Efekti
+            const flash = document.getElementById('mob-flash');
+            flash.classList.remove('opacity-0');
+            setTimeout(() => flash.classList.add('opacity-0'), 120);
+
+            const canvas = document.getElementById('work-canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.90);
+            const fileName = `Kamera_${new Date().toLocaleTimeString('tr-TR').replace(/:/g, '')}.jpg`;
+            await sendFileInChunks(fileName, 'image/jpeg', Math.round(dataUrl.length * 0.75), dataUrl);
+        }
+
+        // Galeriden veya Telefondan Seçilen Çoklu Dosyaları Gönder (PDF, Resim, Word vb.)
+        async function handleMobileFilesSelected(event) {
+            const files = Array.from(event.target.files);
+            if (!files.length) return;
+
+            for (const file of files) {
+                const dataUrl = await new Promise(res => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => res(e.target.result);
+                    reader.readAsDataURL(file);
+                });
+                await sendFileInChunks(file.name, file.type || 'application/octet-stream', file.size, dataUrl);
+            }
+            event.target.value = '';
+        }
+
+        // 64KB Parçalar Halinde Animasyonlu WebRTC Gönderimi
+        async function sendFileInChunks(fileName, fileMime, fileSize, dataUrl) {
+            if (!mobConn || !mobConn.open) {
+                alert('PC bağlantısı henüz aktif değil!');
+                return;
+            }
+
+            const transferId = 'tx-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6);
+            const chunkSize = 64 * 1024; // 64 KB
+            const totalLength = dataUrl.length;
+
+            const bar = document.getElementById('mob-upload-bar');
+            const nameEl = document.getElementById('mob-upload-filename');
+            const pctEl = document.getElementById('mob-upload-percent');
+            const progEl = document.getElementById('mob-upload-progress');
+
+            bar.classList.remove('hidden');
+            nameEl.innerText = fileName;
+
+            mobConn.send({
+                type: 'transfer-start',
+                transferId,
+                fileName,
+                fileMime,
+                fileSize,
+                totalLength
+            });
+
+            for (let offset = 0; offset < totalLength; offset += chunkSize) {
+                const chunk = dataUrl.slice(offset, offset + chunkSize);
+                mobConn.send({
+                    type: 'transfer-chunk',
+                    transferId,
+                    chunk
+                });
+
+                const pct = Math.min(100, Math.round(((offset + chunk.length) / totalLength) * 100));
+                pctEl.innerText = `${pct}%`;
+                progEl.style.width = `${pct}%`;
+
+                // UI animasyonunun akıcı görünmesi için mikro bekleme
+                if (offset % (chunkSize * 4) === 0) {
+                    await new Promise(r => setTimeout(r, 8));
+                }
+            }
+
+            mobConn.send({ type: 'transfer-end', transferId });
+
+            mobSentCount++;
+            document.getElementById('mob-sent-badge').innerText = `${mobSentCount} Dosya`;
+            const hist = document.getElementById('mob-sent-history');
+            if (mobSentCount === 1) hist.innerHTML = '';
+            const row = document.createElement('div');
+            row.className = "p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between";
+            row.innerHTML = `<span class="truncate text-white font-medium max-w-[200px]">${fileName}</span><span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check"></i> İletildi</span>`;
+            hist.prepend(row);
+
+            setTimeout(() => bar.classList.add('hidden'), 500);
+        }
+
+        // =========================================================================
+        // BÖLÜM 7: YARDIMCI ARAÇLAR (PC YEREL DOSYA EKLEME, FİLTRE, ÖNİZLEME, QR MODAL)
+        // =========================================================================
+        async function handleLocalPCFiles(event) {
+            const files = Array.from(event.target.files);
+            for (const file of files) {
+                const dataUrl = await new Promise(res => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => res(e.target.result);
+                    reader.readAsDataURL(file);
+                });
+                await addFileToWorkspace({
+                    name: file.name,
+                    mime: file.type || 'application/octet-stream',
+                    size: file.size,
+                    dataUrl,
+                    senderId: 'pc-local',
+                    senderName: 'Bu Bilgisayar',
+                    senderColor: DEVICE_PALETTE[1]
+                });
+            }
+        }
+
+        function requestRemoteCapture() {
+            connectedDevices.forEach(dev => {
+                if (dev.conn && dev.conn.open) {
+                    dev.conn.send({ command: 'remote-capture' });
+                }
+            });
+        }
+
+        function openQRModal() {
+            const modal = document.getElementById('qr-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeQRModal() {
+            const modal = document.getElementById('qr-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function copyRoomLink() {
+            const url = document.getElementById('modal-qr-url').innerText;
+            navigator.clipboard.writeText(url);
+            alert('Bağlantı adresi panoya kopyalandı!');
+        }
+
+        function setFilter(filterKey) {
+            currentFilter = filterKey;
+            ['all', 'image', 'pdf'].forEach(k => {
+                const btn = document.getElementById(`filter-btn-${k}`);
+                if (btn) {
+                    btn.className = k === filterKey
+                        ? "px-2.5 py-1 rounded-md text-xs font-medium bg-blue-600 text-white transition flex items-center gap-1"
+                        : "px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition flex items-center gap-1";
+                }
+            });
+            renderSenderFilterPills();
+            renderExplorer();
+        }
+
+        function setViewMode(mode) {
+            currentViewMode = mode;
+            document.getElementById('view-grid-btn').className = mode === 'grid' ? "px-2.5 py-1 rounded-md text-xs bg-blue-600 text-white transition" : "px-2.5 py-1 rounded-md text-xs text-slate-400 hover:text-white transition";
+            document.getElementById('view-list-btn').className = mode === 'list' ? "px-2.5 py-1 rounded-md text-xs bg-blue-600 text-white transition" : "px-2.5 py-1 rounded-md text-xs text-slate-400 hover:text-white transition";
+            renderExplorer();
+        }
+
+        function toggleFileSelect(id) {
+            const f = workspaceFiles.find(x => x.id === id);
+            if (f) f.selected = !f.selected;
+            renderExplorer();
+        }
+
+        function selectAllItems() {
+            const allSelected = workspaceFiles.every(f => f.selected);
+            workspaceFiles.forEach(f => f.selected = !allSelected);
+            renderExplorer();
+        }
+
+        function downloadSingleFile(id) {
+            const f = workspaceFiles.find(x => x.id === id);
+            if (!f) return;
+            const a = document.createElement('a');
+            a.href = f.blobUrl;
+            a.download = f.name;
+            a.click();
+        }
+
+        function downloadSelectedFiles() {
+            const selected = workspaceFiles.filter(f => f.selected);
+            if (selected.length === 0) return alert('İndirmek için en az 1 dosya seçin.');
+            selected.forEach((f, idx) => {
+                setTimeout(() => {
+                    const a = document.createElement('a');
+                    a.href = f.blobUrl;
+                    a.download = f.name;
+                    a.click();
+                }, idx * 250);
+            });
+        }
+
+        function deleteSingleFile(id) {
+            workspaceFiles = workspaceFiles.filter(f => f.id !== id);
+            renderExplorer();
+        }
+
+        function clearAllWorkspace() {
+            if (workspaceFiles.length === 0) return;
+            if (confirm('Klasördeki tüm dosyaları silmek istediğinize emin misiniz?')) {
+                workspaceFiles = [];
+                renderExplorer();
+            }
+        }
+
+        function openPreviewModal(id) {
+            const f = workspaceFiles.find(x => x.id === id);
+            if (!f) return;
+            const modal = document.getElementById('preview-modal');
+            const body = document.getElementById('preview-body');
+            document.getElementById('preview-title').innerText = f.name;
+            const badge = document.getElementById('preview-sender-badge');
+            badge.className = `text-xs px-2.5 py-0.5 rounded-full border ${f.senderColor.bg} ${f.senderColor.text} ${f.senderColor.border}`;
+            badge.innerText = `Gönderen: ${f.senderName}`;
+
+            if (f.type === 'image') {
+                body.innerHTML = `<img src="${f.dataUrl}" class="max-h-full max-w-full rounded-xl shadow-2xl">`;
+            } else if (f.type === 'pdf') {
+                body.innerHTML = `<iframe src="${f.blobUrl}" class="w-full h-full rounded-xl border border-slate-800 bg-white"></iframe>`;
+            } else {
+                body.innerHTML = `<div class="text-center"><p class="mb-4 text-slate-300">${f.name} (${formatBytes(f.size)})</p><button onclick="downloadSingleFile('${f.id}')" class="px-5 py-2.5 bg-blue-600 rounded-xl font-bold text-xs">Dosyayı İndir</button></div>`;
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('preview-modal').classList.add('hidden');
+            document.getElementById('preview-modal').classList.remove('flex');
+            document.getElementById('preview-body').innerHTML = '';
+        }
+    </script>
 </body>
 </html>

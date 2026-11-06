@@ -1,2 +1,1 @@
-# Proje-Deneme
-Deneme ve test amacli
+# PC VE TELEFON ARASI DOSYA AKTARIM PROGRAMIDIR

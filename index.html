@@ -15,6 +15,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <style>
 :root{--bg:#060914;--s1:#0d1424;--s2:#141d33;--s3:#1c2742;--line:#ffffff14;--tx:#e8eefb;--mu:#8795b0;--bl:#3b82f6;--r:14px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -115,10 +116,11 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
 /* Mobil */
 #mob{display:none;height:100dvh;flex-direction:column;background:#000;position:relative;overflow:hidden}#mob.on{display:flex}
 #mv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.frame{position:absolute;inset:96px 26px 200px;pointer-events:none}
-.frame i{position:absolute;width:26px;height:26px;border:3px solid #60a5fa;opacity:.9}
-.frame i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0;border-radius:10px 0 0 0}.frame i:nth-child(2){top:0;right:0;border-left:0;border-bottom:0;border-radius:0 10px 0 0}
-.frame i:nth-child(3){bottom:0;left:0;border-right:0;border-top:0;border-radius:0 0 0 10px}.frame i:nth-child(4){bottom:0;right:0;border-left:0;border-top:0;border-radius:0 0 10px 0}
+.frame{position:absolute;inset:0;pointer-events:none;z-index:6;box-shadow:inset 0 0 0 3px #60a5fa88,inset 0 0 70px #3b82f633}
+#g3{position:absolute;inset:0;pointer-events:none;z-index:3;display:none;background:linear-gradient(#ffffff40,#ffffff40) 33.33% 0/1px 100% no-repeat,linear-gradient(#ffffff40,#ffffff40) 66.66% 0/1px 100% no-repeat,linear-gradient(#ffffff40,#ffffff40) 0 33.33%/100% 1px no-repeat,linear-gradient(#ffffff40,#ffffff40) 0 66.66%/100% 1px no-repeat}
+#g3.on{display:block}
+#fs{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 188px);transform:translateX(-50%);z-index:5;padding:7px 14px;border-radius:99px;background:#000b;border:1px solid #60a5fa66;font-size:11.5px;font-weight:600;white-space:nowrap;backdrop-filter:blur(8px);animation:fsf 5s forwards;pointer-events:none;max-width:94vw}
+@keyframes fsf{0%,75%{opacity:1}100%{opacity:0}}
 .mtop{position:absolute;top:0;left:0;right:0;z-index:5;padding:max(12px,env(safe-area-inset-top)) 14px 22px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(#000d,transparent)}
 .mst{display:flex;align-items:center;gap:10px}#md{width:11px;height:11px;border-radius:50%;background:#fbbf24;box-shadow:0 0 0 4px #fbbf2433}
 #ms{font-weight:700;font-size:13px}#ml{font-size:10.5px;color:#aab6cc}
@@ -127,7 +129,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
 #mu .l{display:flex;justify-content:space-between;gap:8px;font-weight:600}#mu .l span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .side{position:absolute;right:14px;top:50%;transform:translateY(-60%);z-index:5;display:flex;flex-direction:column;gap:12px}
 .cb{width:46px;height:46px;border-radius:50%;background:#0008;border:1px solid #ffffff33;backdrop-filter:blur(10px);display:grid;place-items:center;color:#fff;font-size:16px}.cb.on{background:#f59e0b;color:#000}
-#mh{position:absolute;left:14px;right:84px;bottom:176px;z-index:4;display:flex;flex-direction:column;gap:5px;pointer-events:none}
+#mh{position:absolute;left:14px;right:84px;bottom:236px;z-index:4;display:flex;flex-direction:column;gap:5px;pointer-events:none}
 #mh div{padding:5px 11px;border-radius:99px;background:#000a;color:#34d399;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:fit-content;max-width:100%}
 .mbot{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:30px 20px calc(20px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;align-items:center;background:linear-gradient(transparent,#000e)}
 .rb{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#dbe4f5;cursor:pointer}
@@ -135,6 +137,22 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
 .rb.b .c{background:linear-gradient(135deg,#3b82f6,#7c3aed);border-color:transparent}
 .shut{width:80px;height:80px;border-radius:50%;background:#fff;box-shadow:0 0 0 5px #ffffff55;display:grid;place-items:center;color:#0f172a;font-size:25px;transition:.12s}.shut:active{transform:scale(.9)}
 #fl{pointer-events:none;position:fixed;inset:0;background:#fff;opacity:0;transition:opacity .15s;z-index:99}
+#scanui{display:none;position:absolute;inset:0;z-index:4;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+#mob.scan #scanui{display:flex}
+#mob.scan .mbot,#mob.scan .side,#mob.scan #mh,#mob.scan .frame,#mob.scan .glass,#mob.scan #g3,#mob.scan #fs{display:none!important}
+#sgate{background:#0d1424f2;border:1px solid var(--line);border-radius:24px;padding:28px 22px;max-width:340px;width:100%;backdrop-filter:blur(14px)}
+#sgate .big{width:72px;height:72px;margin:0 auto 14px;border-radius:22px;display:grid;place-items:center;font-size:30px;color:#60a5fa;background:linear-gradient(135deg,#3b82f61f,#8b5cf61f);border:1px solid #3b82f633}
+#sgate h3{font-size:19px;margin-bottom:6px}#sgate p{color:var(--mu);font-size:12.5px;line-height:1.6;margin-bottom:16px}
+#serr{color:#fca5a5;font-size:12px;margin-bottom:12px;line-height:1.5}
+.sq{position:relative;width:min(68vw,300px);aspect-ratio:1;border-radius:26px;box-shadow:0 0 0 100vmax #000a}
+.sq i{position:absolute;width:34px;height:34px;border:4px solid #60a5fa}
+.c1{top:0;left:0;border-right:0!important;border-bottom:0!important;border-radius:26px 0 0 0}.c2{top:0;right:0;border-left:0!important;border-bottom:0!important;border-radius:0 26px 0 0}
+.c3{bottom:0;left:0;border-right:0!important;border-top:0!important;border-radius:0 0 0 26px}.c4{bottom:0;right:0;border-left:0!important;border-top:0!important;border-radius:0 0 26px 0}
+.sq b{position:absolute;left:10%;right:10%;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,#60a5fa,transparent);animation:scn 2s ease-in-out infinite alternate}
+@keyframes scn{from{top:10%}to{top:90%}}
+.sh{margin-top:26px;font-weight:600;font-size:14px;text-shadow:0 2px 8px #000}
+.inp{width:100%;height:46px;background:var(--s2);border:1px solid var(--line);border-radius:12px;padding:0 14px;color:var(--tx);font:inherit;font-size:16px;outline:0;margin-bottom:14px}.inp:focus{border-color:var(--bl)}
+#mob.on~.toast{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 76px)}
 @media(max-width:1100px){.brand p{display:none}.search input{width:150px}}
 </style>
 </head>
@@ -199,20 +217,36 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
 <!-- MOBİL -->
 <div id="mob">
  <video id="mv" autoplay playsinline muted></video>
- <div class="frame"><i></i><i></i><i></i><i></i></div>
+ <div id="g3"></div>
+ <div class="frame"></div>
  <div class="mtop">
   <div class="mst"><span id="md"></span><div><div id="ms">Bağlanıyor...</div><div id="ml"></div></div></div>
-  <button class="glass" onclick="rename()"><i class="fa-solid fa-user-pen" style="color:#93c5fd"></i><span id="mn"></span></button>
+  <div style="display:flex;gap:8px"><button class="glass" onclick="resetPC()" title="Başka bir bilgisayara bağlan"><i class="fa-solid fa-qrcode" style="color:#93c5fd"></i></button><button class="glass" onclick="rename()"><i class="fa-solid fa-user-pen" style="color:#93c5fd"></i><span id="mn"></span></button></div>
  </div>
  <div id="mu" class="hidden"><div class="l"><span id="mun"></span><span id="mup"></span></div><div class="pb"><div id="mub" style="width:0;background:linear-gradient(90deg,#3b82f6,#34d399)"></div></div></div>
- <div class="side"><button id="mt" class="cb" onclick="torch()"><i class="fa-solid fa-bolt"></i></button><button class="cb" onclick="flip()"><i class="fa-solid fa-camera-rotate"></i></button></div>
+ <div class="side"><button id="mt" class="cb" onclick="torch()"><i class="fa-solid fa-bolt"></i></button><button class="cb" onclick="flip()"><i class="fa-solid fa-camera-rotate"></i></button><button id="mg" class="cb" onclick="grid3()" title="Izgara"><i class="fa-solid fa-border-all"></i></button></div>
+ <div id="fs"><i class="fa-solid fa-expand"></i> Tam ekran çekim · gördüğünüz her şey gönderilir</div>
  <div id="mh"></div>
  <div class="mbot">
   <label class="rb"><span class="c"><i class="fa-regular fa-images"></i></span>Galeri<input type="file" accept="image/*,video/*" multiple onchange="pick(this)"></label>
   <button class="shut" onclick="shoot()"><i class="fa-solid fa-camera"></i></button>
   <label class="rb b"><span class="c"><i class="fa-solid fa-file-arrow-up"></i></span>Dosya<input type="file" multiple onchange="pick(this)"></label>
  </div>
+ <div id="scanui">
+  <div id="sgate"><div class="big"><i class="fa-solid fa-qrcode"></i></div><h3>Bilgisayara bağlanın</h3>
+   <p>Bilgisayar ekranındaki karekodu okutmak için kameraya izin verin. İsterseniz telefonun kendi kamerasıyla da karekodu okutabilirsiniz.</p>
+   <div id="serr"></div><button class="btn pri" onclick="scanStart()" style="width:100%;justify-content:center;height:46px"><i class="fa-solid fa-camera"></i>Kamerayı Aç ve Karekodu Okut</button></div>
+  <div id="sview" class="hidden"><div class="sq"><i class="c1"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i><b></b></div><p class="sh">Bilgisayar ekranındaki karekodu çerçeveye alın</p></div>
+ </div>
  <div id="fl"></div>
+</div>
+
+<div id="rnm" class="modal center" onclick="if(event.target===this)closeRn()">
+ <div class="sheet"><span class="pill"><i class="fa-solid fa-user-pen"></i> Cihaz Adı</span>
+  <h3>Telefonunuza isim verin</h3><p>PC ekranında dosyalarınızın üzerinde bu isim görünür.</p>
+  <input id="rni" class="inp" maxlength="30" autocomplete="off" onkeydown="if(event.key==='Enter')saveName()">
+  <div style="display:flex;gap:10px;justify-content:center"><button class="btn" onclick="closeRn()">İptal</button><button class="btn pri" onclick="saveName()"><i class="fa-solid fa-check"></i>Kaydet</button></div>
+ </div>
 </div>
 
 <!-- Modallar -->
@@ -467,41 +501,108 @@ async function spEach(){
 }
 
 /* ---------- TELEFON ---------- */
-let dev,pcUp=false,state=null,mName,mInfo,stream,facing='environment',tOn=false,wake=null,queue=Promise.resolve();
+const isMob=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Mac/.test(navigator.platform));
+let dev,pcUp=false,state=null,mName,mInfo,stream,facing='environment',tOn=false,wake=null,queue=Promise.resolve(),mScan=null;
 function ui(){
  const[c,t]=!pcUp?['#fbbf24','PC bekleniyor...']:state==='ok'?['#34d399',"PC'ye bağlı (şifreli)"]:state==='no'?['#ef4444','Bu cihaz engellendi']:['#fbbf24',"PC'de onay bekleniyor..."];
  $('md').style.background=c;$('md').style.boxShadow=`0 0 0 4px ${c}33`;$('ms').textContent=t;
 }
+function hint(){const e=$('fs');e.style.animation='none';e.offsetHeight;e.style.animation=''}
 async function mobInit(){
- $('mob').classList.add('on');
+ $('mob').classList.add('on');if(isMob)localStorage.ts_ismob=1;
  const h=new URLSearchParams(location.hash.slice(1));let r=h.get('r'),k=h.get('k');
  if(r&&k){localStorage.ts_mr=r;localStorage.ts_mk=k;history.replaceState(null,'',location.pathname)}else{r=localStorage.ts_mr;k=localStorage.ts_mk}
  const ua=navigator.userAgent;let os='Mobil',model='Telefon';
  if(/iPhone/.test(ua)){os='iOS';model='iPhone'}else if(/iPad/.test(ua)){os='iPadOS';model='iPad'}else if(/Android/.test(ua)){os='Android';const m=ua.match(/Android\s[0-9.]+;\s([^;)]+)/);model=m?m[1].replace(/Build\/.*/,'').trim():'Android'}
  mInfo={os,model};mName=localStorage.ts_name||model;$('mn').textContent=mName;$('ml').textContent=os+' • '+model;
- startCam();
+ const v=$('mv');
+ v.addEventListener('pause',()=>{if(!document.hidden)v.play().catch(()=>{})});
+ document.addEventListener('visibilitychange',()=>{
+  if(document.hidden||!stream)return;
+  const t=stream.getVideoTracks()[0];
+  if(!t||t.readyState!=='live')startCam();else v.play().catch(()=>{});
+ });
+ if(!r||!k){scanMode();return}
+ await connectMode(r,k);
+}
+async function connectMode(r,k){
+ $('mob').classList.remove('scan');ui();hint();
+ if(!stream||!stream.active)startCam().then(ok=>{if(!ok)toast('Kamera açılamadı. Galeri ve Dosya düğmeleriyle gönderebilirsiniz.')});
  try{room=r;await initKey(k);await fbInit()}catch(e){$('ms').textContent='Karekodu yeniden okutun';return}
  dev=localStorage.ts_did||(localStorage.ts_did=rid(8));
  R('meta').on('value',s=>{pcUp=s.exists();ui();if(pcUp)hello()});
  R('dev/'+dev).on('value',s=>{state=s.val();ui()});
  ui();
 }
-async function hello(){const q=R('req/'+dev);q.onDisconnect().remove();await q.set({e:await enc(JSON.stringify({name:mName,...mInfo}),'hello:'+dev)})}
-function rename(){const n=prompt('PC ekranında görünecek isminiz:',mName);if(n&&n.trim()){mName=n.trim().slice(0,30);localStorage.ts_name=mName;$('mn').textContent=mName;if(pcUp)hello()}}
-async function startCam(){
- stream&&stream.getTracks().forEach(t=>t.stop());
- try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}},audio:false});$('mv').srcObject=stream}catch(e){}
+/* Karekod okuma ekranı (PC'ye henüz bağlanılmadıysa) */
+function scanMode(){
+ $('mob').classList.add('scan');$('ms').textContent='Karekod bekleniyor';$('md').style.background='#60a5fa';
+ $('sgate').classList.remove('hidden');$('sview').classList.add('hidden');
+ if(navigator.permissions&&navigator.permissions.query)navigator.permissions.query({name:'camera'}).then(p=>{if(p.state==='granted')scanStart()}).catch(()=>{});
 }
-function flip(){facing=facing==='environment'?'user':'environment';startCam()}
+async function scanStart(){
+ $('serr').textContent='';$('sgate').classList.add('hidden');$('sview').classList.remove('hidden');
+ if(!(stream&&stream.active)&&!(await startCam())){
+  $('sgate').classList.remove('hidden');$('sview').classList.add('hidden');
+  $('serr').textContent='Kamera izni verilmedi. Adres çubuğundaki izin ayarından kameraya izin verip tekrar deneyin.';return;
+ }
+ let det=null;try{if('BarcodeDetector' in window)det=new BarcodeDetector({formats:['qr_code']})}catch(e){}
+ const cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});
+ clearInterval(mScan);
+ mScan=setInterval(async()=>{
+  const v=$('mv');if(!v.videoWidth)return;
+  const s=Math.min(1,720/v.videoWidth);cv.width=Math.round(v.videoWidth*s);cv.height=Math.round(v.videoHeight*s);cx.drawImage(v,0,0,cv.width,cv.height);
+  let txt=null;
+  try{
+   if(det){const r=await det.detect(cv);if(r[0])txt=r[0].rawValue}
+   else if(window.jsQR){const d=cx.getImageData(0,0,cv.width,cv.height),q=jsQR(d.data,d.width,d.height);if(q)txt=q.data}
+  }catch(e){}
+  if(txt)scanGot(txt);
+ },300);
+}
+function scanGot(t){
+ let r,k;try{const p=new URLSearchParams(new URL(t).hash.slice(1));r=p.get('r');k=p.get('k')}catch(e){return}
+ if(!r||!k||r.length<20)return;
+ clearInterval(mScan);navigator.vibrate&&navigator.vibrate(60);
+ localStorage.ts_mr=r;localStorage.ts_mk=k;connectMode(r,k);
+}
+function resetPC(){
+ if(!confirm('Başka bir bilgisayara bağlanmak için karekodu yeniden okutacaksınız. Devam edilsin mi?'))return;
+ localStorage.removeItem('ts_mr');localStorage.removeItem('ts_mk');location.reload();
+}
+async function hello(){const q=R('req/'+dev);q.onDisconnect().remove();await q.set({e:await enc(JSON.stringify({name:mName,...mInfo}),'hello:'+dev)})}
+/* İsim değiştirme: prompt() yerine sayfa içi pencere (prompt kamerayı donduruyordu) */
+function rename(){$('rni').value=mName;show('rnm',1);setTimeout(()=>$('rni').focus(),150)}
+function resumeCam(){setTimeout(()=>{const v=$('mv');(!stream||!stream.active)?startCam():v.play().catch(()=>{})},200)}
+function closeRn(){show('rnm',0);resumeCam()}
+function saveName(){
+ const n=$('rni').value.trim().slice(0,30);show('rnm',0);
+ if(n){mName=n;localStorage.ts_name=n;$('mn').textContent=n;if(pcUp)hello()}
+ resumeCam();
+}
+async function startCam(){
+ stream&&stream.getTracks().forEach(t=>t.stop());tOn=false;$('mt').classList.remove('on');
+ try{
+  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}},audio:false});
+  const v=$('mv');v.srcObject=stream;v.play().catch(()=>{});
+  stream.getVideoTracks()[0].onended=()=>{if(!document.hidden)startCam()};
+  return true;
+ }catch(e){return false}
+}
+function flip(){facing=facing==='environment'?'user':'environment';startCam();hint()}
+function grid3(){$('g3').classList.toggle('on');$('mg').classList.toggle('on')}
 async function torch(){
  if(!stream)return;const t=stream.getVideoTracks()[0],c=t.getCapabilities?t.getCapabilities():{};if(!c.torch)return toast('Flaş desteklenmiyor');
  tOn=!tOn;await t.applyConstraints({advanced:[{torch:tOn}]});$('mt').classList.toggle('on',tOn);
 }
+/* Ekranda gördüğünüz alan tam olarak çekilir (object-fit:cover ile aynı kırpma) */
 async function shoot(){
  const v=$('mv');if(!v.videoWidth)return toast('Kamera açık değil');
  const f=$('fl');f.style.opacity=1;setTimeout(()=>f.style.opacity=0,120);
- const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
- enqueue([new File([await toBlob(c,.9)],'Kamera_'+new Date().toLocaleTimeString('tr-TR').replace(/:/g,'')+'.jpg',{type:'image/jpeg'})]);
+ const vw=v.videoWidth,vh=v.videoHeight,cw=v.clientWidth,ch=v.clientHeight,k=Math.max(cw/vw,ch/vh),sw=cw/k,sh=ch/k;
+ const c=document.createElement('canvas');c.width=Math.round(sw);c.height=Math.round(sh);
+ c.getContext('2d').drawImage(v,(vw-sw)/2,(vh-sh)/2,sw,sh,0,0,c.width,c.height);
+ enqueue([new File([await toBlob(c,.92)],'Kamera_'+new Date().toLocaleTimeString('tr-TR').replace(/:/g,'')+'.jpg',{type:'image/jpeg'})]);
 }
 function pick(i){enqueue(Array.from(i.files));i.value=''}
 function enqueue(l){
@@ -538,8 +639,9 @@ async function send(f){
 
 /* ---------- Başlat ---------- */
 addEventListener('DOMContentLoaded',()=>{
- const h=new URLSearchParams(location.hash.slice(1));
- (h.get('r')&&h.get('k'))||(localStorage.ts_mr&&!localStorage.ts_room)?mobInit():pcInit();
+ const h=new URLSearchParams(location.hash.slice(1)),forcePC=/[?&]pc\b/.test(location.search);
+ const mobMode=(h.get('r')&&h.get('k'))||(!forcePC&&(isMob||(localStorage.ts_ismob&&!localStorage.ts_room)));
+ mobMode?mobInit():pcInit();
 });
 </script>
 </body>

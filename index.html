@@ -128,7 +128,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
 .pg{background:var(--s1);border:1px solid var(--line);border-radius:16px;padding:10px;transition:.15s}.pg.del{border-color:#ef444466;opacity:.4}
 .pg .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px}
 .pg img{width:100%;background:#fff;border-radius:8px;display:block}
-.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#1e293bf2;border:1px solid #475569;padding:10px 18px;border-radius:12px;z-index:9999;font-size:12.5px;font-weight:500;box-shadow:0 12px 30px -8px #000;max-width:92vw;text-align:center}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#1e293bf2;border:1px solid #475569;padding:10px 18px;border-radius:12px;z-index:90;font-size:12.5px;font-weight:500;box-shadow:0 12px 30px -8px #000}
 /* Mobil */
 #mob{display:none;height:100dvh;flex-direction:column;background:#000;position:relative;overflow:hidden}#mob.on{display:flex}
 #mv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -143,8 +143,8 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
 .glass{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:99px;background:#ffffff1f;border:1px solid #ffffff33;backdrop-filter:blur(12px);font-size:12px;font-weight:600;color:#fff}
 #mu{position:absolute;top:calc(env(safe-area-inset-top,0px) + 72px);left:14px;right:14px;z-index:6;background:#0b1b4ad9;backdrop-filter:blur(12px);border:1px solid #3b82f666;border-radius:14px;padding:10px 12px;font-size:12px}
 #mu .l{display:flex;justify-content:space-between;gap:8px;font-weight:600}#mu .l span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.side{position:absolute;right:14px;top:50%;transform:translateY(-60%);z-index:5;display:flex;flex-direction:column;gap:12px}
-.cb{width:46px;height:46px;border-radius:50%;background:#0008;border:1px solid #ffffff33;backdrop-filter:blur(10px);display:grid;place-items:center;color:#fff;font-size:16px}.cb.on{background:#f59e0b;color:#000}
+.side{position:absolute;right:14px;top:50%;transform:translateY(-60%);z-index:5;display:flex;flex-direction:column;gap:10px}
+.cb{width:42px;height:42px;border-radius:50%;background:#0008;border:1px solid #ffffff33;backdrop-filter:blur(10px);display:grid;place-items:center;color:#fff;font-size:16px}.cb.on{background:#f59e0b;color:#000}
 #mh{position:absolute;left:14px;right:84px;bottom:236px;z-index:4;display:flex;flex-direction:column;gap:5px;pointer-events:none}
 #mh div{padding:5px 11px;border-radius:99px;background:#000a;color:#34d399;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:fit-content;max-width:100%}
 .mbot{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:30px 20px calc(20px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;align-items:center;background:linear-gradient(transparent,#000e)}
@@ -207,10 +207,9 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
 .cstage{flex:1;min-width:0;position:relative;overflow:hidden;display:grid;place-items:center;background:radial-gradient(circle at 50% 40%,#0e1628,#05080f);user-select:none}
 .cpg{position:relative;background:#fff;box-shadow:0 24px 70px -10px #000;flex-shrink:0}
 .cmg{position:absolute;border:1px dashed #94a3b866;pointer-events:none}
-.cit{position:absolute;touch-action:none;cursor:move}.cit img{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none;object-fit:fill}
+.cit{position:absolute;touch-action:none;cursor:move}.cit img{width:100%;height:100%;display:block;pointer-events:none;-webkit-user-drag:none}
 .cit.on{outline:2px solid #3b82f6;outline-offset:1px}
 .hd{position:absolute;width:13px;height:13px;border-radius:4px;background:#fff;border:2px solid #3b82f6;touch-action:none;z-index:3}
-.hd.eh{background:#93c5fd;border-color:#1d4ed8;border-radius:3px}
 .hr{left:50%;top:-34px;margin-left:-7px;border-radius:50%;cursor:grab}
 .hrl{position:absolute;left:50%;top:-22px;width:2px;height:21px;background:#3b82f6;margin-left:-1px;pointer-events:none}
 .gd{position:absolute;background:#f43f5e;pointer-events:none;z-index:6}
@@ -220,6 +219,8 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
 .cpages{padding:10px 14px;background:var(--s1);border-top:1px solid var(--line);display:flex;gap:8px;overflow-x:auto;align-items:center;flex-shrink:0}
 .cmg-r{display:inline-flex;align-items:center;gap:8px}.cmg-r input{width:90px}
 @media(max-width:900px){.clist,.cprop{display:none}}
+.stools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.selbar{width:max-content;max-width:calc(100% - 40px)}
 @keyframes pop{0%{opacity:0;transform:scale(.86) translateY(12px)}100%{opacity:1;transform:none}}
 @keyframes bump{0%{transform:scale(.4)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
 @keyframes shine{0%{box-shadow:0 0 0 0 #34d39999}100%{box-shadow:0 0 0 16px #34d39900}}
@@ -282,7 +283,7 @@ select.btn{appearance:none;-webkit-appearance:none;cursor:pointer;color:var(--tx
   </aside>
   <main id="drop">
    <div class="bar">
-    <div class="path"><i class="fa-solid fa-folder-open"></i>Gelen Evraklar<small id="cnt">0</small></div>
+    <div class="path"><i class="fa-solid fa-folder-open"></i>Gelen Evraklar<small id="cnt">0</small><span id="hint0" class="mu sm hidden" style="margin-left:10px"><i class="fa-regular fa-hand-pointer"></i> Düzenlemek için dosyanın köşesindeki daireye tıklayın</span></div>
     <div class="bar-r">
      <select id="srt" class="btn" onchange="render()"><option value="t">Yeni → eski</option><option value="o">Eski → yeni</option><option value="n">Ada göre</option><option value="s">Boyuta göre</option></select>
      <div class="seg"><button id="f-all" onclick="setFlt('all')">Tümü</button><button id="f-image" onclick="setFlt('image')">Görseller</button><button id="f-pdf" onclick="setFlt('pdf')">PDF</button></div>
@@ -299,11 +300,9 @@ select.btn{appearance:none;-webkit-appearance:none;cursor:pointer;color:var(--tx
     <div id="grid" class="grid"></div>
    </div>
    <div id="selbar" class="selbar">
-    <div class="c"><span id="selc">0 seçili</span><small>Sırayı değiştirmek için sürükleyin</small></div><div id="strip" class="strip"></div>
-    <button id="bpdf" class="btn ok" onclick="mergePDF()"><i class="fa-solid fa-file-pdf"></i>PDF Kaydet</button>
-    <button id="bcol" class="btn" onclick="colOpen('auto')"><i class="fa-solid fa-wand-magic-sparkles" style="color:#c4b5fd"></i>Kolaj / Düzenle</button>
-    <button id="bdl" class="btn pri" onclick="dlSel()"><i class="fa-solid fa-download"></i>İndir</button>
-    <button class="btn" onclick="clearSel()" title="Seçimi Temizle"><i class="fa-solid fa-xmark"></i></button>
+    <div class="c"><span id="selc">0 seçili</span><small id="selh"></small></div>
+    <div id="strip" class="strip"></div>
+    <div id="stools" class="stools"></div>
    </div>
   </main>
  </div>
@@ -321,14 +320,14 @@ select.btn{appearance:none;-webkit-appearance:none;cursor:pointer;color:var(--tx
  </div>
  <div id="mpool" class="pool"><div class="t"><div id="mpf" class="f"></div></div><span id="mpt"></span></div>
  <div id="mu" class="hidden"><div class="l"><span id="mun"></span><span id="mup"></span></div><div class="pb"><div id="mub" style="width:0;background:linear-gradient(90deg,#3b82f6,#34d399)"></div></div></div>
- <div class="side"><button id="mt" class="cb" onclick="torch()" title="Flaş"><i class="fa-solid fa-bolt"></i></button><button class="cb" onclick="flip()" title="Kamera Değiştir"><i class="fa-solid fa-camera-rotate"></i></button><button id="mg" class="cb" onclick="grid3()" title="Izgara"><i class="fa-solid fa-border-all"></i></button><button id="ma" class="cb" onclick="capAspect()" title="Çekim oranı"><span id="mat" style="font-size:11px;font-weight:800">Tam</span></button><label class="cb" title="Telefonun Kendi Kamerasıyla Çek"><i class="fa-solid fa-camera-retro"></i><input id="inp-cam" type="file" accept="image/*" capture="environment" onchange="pickCam(this)"></label><button id="mm" class="cb" onclick="docMode()" title="Çoklu sayfa (belge) modu"><i class="fa-solid fa-layer-group"></i></button></div>
+ <div class="side"><button id="mt" class="cb" onclick="torch()"><i class="fa-solid fa-bolt"></i></button><button class="cb" onclick="flip()"><i class="fa-solid fa-camera-rotate"></i></button><button id="mg" class="cb" onclick="grid3()" title="Izgara"><i class="fa-solid fa-border-all"></i></button><button id="ma" class="cb" onclick="capAspect()" title="Çekim oranı"><span id="mat" style="font-size:11px;font-weight:800">Tam</span></button><label class="cb" title="Tüm dosya türleri"><i class="fa-solid fa-folder-open"></i><input type="file" multiple onchange="pick(this)"></label><button id="mm" class="cb" onclick="docMode()" title="Çoklu sayfa (belge) modu"><i class="fa-solid fa-layer-group"></i></button></div>
  <div id="fs"><i class="fa-solid fa-expand"></i> Tam ekran çekim · gördüğünüz her şey gönderilir</div>
  <button id="mfin" class="btn pri hidden" onclick="docFinish()" style="position:absolute;z-index:6;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 150px)"><i class="fa-solid fa-file-pdf"></i>Bitir ve PDF Gönder</button>
  <div id="mh"></div>
  <div class="mbot">
-  <label class="rb"><span class="c"><i class="fa-regular fa-images"></i></span>Galeri<input id="inp-gal" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple onchange="pick(this)"></label>
-  <div class="shw" id="shw"><button type="button" class="shut" id="btn-shut" onclick="shoot(event)"><i class="fa-solid fa-camera"></i></button><span id="cnb" class="cnb hidden">0</span></div>
-  <label class="rb b"><span class="c"><i class="fa-solid fa-file-arrow-up"></i></span>Dosya<input id="inp-doc" type="file" accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/zip,text/plain,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,.rar,.7z" multiple onchange="pick(this)"></label>
+  <label class="rb"><span class="c"><i class="fa-regular fa-images"></i></span>Galeri<input type="file" accept="image/*,video/*" multiple onchange="pick(this)"></label>
+  <div class="shw" id="shw"><button class="shut" onclick="shoot()"><i class="fa-solid fa-camera"></i></button><span id="cnb" class="cnb hidden">0</span></div>
+  <label class="rb b"><span class="c"><i class="fa-solid fa-file-arrow-up"></i></span>Dosya<input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.txt,.csv,.rtf,.zip,.rar,.7z,application/pdf,application/zip,text/plain" multiple onchange="pick(this)"></label>
  </div>
  <div id="scanui">
   <div id="sgate"><div class="big"><i class="fa-solid fa-qrcode"></i></div><h3>Bilgisayara bağlanın</h3>
@@ -358,25 +357,19 @@ select.btn{appearance:none;-webkit-appearance:none;cursor:pointer;color:var(--tx
  </div>
 </div>
 <div id="colm" class="modal">
- <div class="mh"><div><b><i class="fa-solid fa-wand-magic-sparkles" style="color:#a78bfa"></i> Kolaj / Sayfa Düzenle</b><small>Görselleri A4 sayfasında taşıyın, köşe veya kenarlardan boyutlandırın</small></div>
+ <div class="mh"><div><b><i class="fa-solid fa-table-cells-large" style="color:#a78bfa"></i> Kolaj / Sayfa Düzenleyici</b><small>Görselleri sayfaya taşıyın, ölçekleyin, döndürün; PDF veya JPG olarak kaydedin</small></div>
   <div class="tools">
-   <select id="csz" class="hidden" onchange="colSize()"><option value="A4">A4</option><option value="LONG">LONG</option></select>
-   <div class="seg"><button id="cop" onclick="colOri('p')"><i class="fa-solid fa-file"></i> Dikey A4</button><button id="col2" onclick="colOri('l')"><i class="fa-solid fa-file" style="transform:rotate(90deg)"></i> Yatay A4</button></div>
-   <span class="cmg-r mu sm" title="Kenar boşluğu (mm)">Boşluk: <b id="cmgv" style="color:#fff;min-width:28px">2mm</b> <input id="cmg" type="range" min="0" max="25" value="2" oninput="colMargin(this.value)"></span>
-   <div class="seg">
-    <button onclick="colLayout('vstack')" title="Seçili görselleri A4 sayfasında alt alta diz">Alt Alta</button>
-    <button onclick="colLayout('hstack')" title="Seçili görselleri A4 sayfasında yan yana diz">Yan Yana</button>
-    <button onclick="colLayout('g4')" title="2x2 4'lü Grid">2×2</button>
-    <button onclick="colLayout('id')" title="Kimlik Ön / Arka">Kimlik</button>
-    <button onclick="colLayout('fit1')" title="Her görseli ayrı A4 sayfasına sığdır">Ayrı Sayfalar</button>
-    <button onclick="colLayout('long')" title="Görselleri boşluksuz alt alta tek uzun görsel yap">Uzun Şerit</button>
-   </div>
-   <button class="btn sm" onclick="colExport('jpg')"><i class="fa-regular fa-image" style="color:#38bdf8"></i>JPG Kaydet</button>
+   <select id="csz" class="btn sm" onchange="colSize()"><option value="A4">A4</option><option value="A5">A5</option><option value="LT">Letter</option><option value="LONG" hidden>Uzun görsel</option></select>
+   <div class="seg"><button id="cop" onclick="colOri('p')">Dikey</button><button id="col2" onclick="colOri('l')">Yatay</button></div>
+   <span class="cmg-r mu sm">Kenar payı <input id="cmg" type="range" min="0" max="30" value="10" oninput="colMargin(this.value)"></span>
+   <select id="clay" class="btn sm" onchange="colLayout(this.value);this.value=''"><option value="">Hazır düzen...</option><option value="fit1">Her görsel ayrı sayfa (sığdır)</option><option value="v2">2 görsel alt alta</option><option value="h2">2 görsel yan yana</option><option value="g4">4'lü (2×2)</option><option value="g6">6'lı (2×3)</option><option value="id">Kimlik ön-arka</option><option value="long">Uzun görsel (alt alta, kenarsız)</option></select>
+   <select id="cdp" class="btn sm" title="JPG çözünürlüğü"><option value="100">100 dpi</option><option value="150" selected>150 dpi</option><option value="200">200 dpi</option><option value="300">300 dpi</option></select>
+   <button class="btn sm" onclick="colExport('jpg')"><i class="fa-regular fa-image"></i>JPG Kaydet</button>
    <button class="btn ok" onclick="colExport('pdf')"><i class="fa-solid fa-file-pdf"></i>PDF Kaydet</button>
-   <button class="btn sm dg" onclick="colClose()"><i class="fa-solid fa-xmark"></i>Kapat</button>
+   <button class="btn sm" onclick="colClose()">Kapat</button>
   </div></div>
  <div class="cbody">
-  <div class="clist"><h4>Görseller</h4><div id="clist" style="display:flex;flex-direction:column;gap:8px"></div><div class="mu sm" style="line-height:1.5">Tıklayınca geçerli A4 sayfasına eklenir.</div></div>
+  <div class="clist"><h4>Görseller</h4><div id="clist" style="display:flex;flex-direction:column;gap:8px"></div><div class="mu sm" style="line-height:1.5">Tıklayınca geçerli sayfaya eklenir.</div></div>
   <div id="cstage" class="cstage"><div id="cpg" class="cpg"></div></div>
   <div id="cprop" class="cprop"></div>
  </div>
@@ -503,7 +496,7 @@ async function pcInit(){
   if($('pvm').classList.contains('on')){if(e.key==='ArrowRight')pvNav(1);else if(e.key==='ArrowLeft')pvNav(-1);else if(e.key==='Escape')closePv();return}
   if(e.key==='Escape'){if($('edm').classList.contains('on'))closeEd();document.querySelectorAll('.modal.on').forEach(m=>m.classList.remove('on'));clearSel()}
   else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'){e.preventDefault();selAll()}
-  else if(e.key==='Delete'&&sel.length)[...sel].forEach(del);
+  else if(e.key==='Delete'&&sel.length)delSel();
  });
  document.addEventListener('paste',e=>{const l=[...((e.clipboardData&&e.clipboardData.files)||[])];if(l.length)pcFiles(l)});
 }
@@ -580,18 +573,31 @@ function render(){
    <div class="num" title="Seçim sırası" onclick="event.stopPropagation();tog('${f.id}')">${n||''}</div>
    <span class="who" style="background:${f.color}33;color:${f.color}" title="${esc(f.sender)}">${esc(f.sender)}</span>
    <span class="tag ${f.type==='pdf'?'pdf':''}">${esc(lbl)}</span></div>
-  <div class="ci"><div class="nm" title="${esc(f.name)} (çift tıkla: yeniden adlandır)" ondblclick="renameFile('${f.id}')">${esc(f.name)}</div><div class="meta"><span>${fmt(f.size)}</span><span>${new Date(f.time).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</span></div>
-  <div class="acts">${f.type==='image'?`<button class="btn sm" onclick="edit('${f.id}')"><i class="fa-solid fa-crop-simple"></i>Düzenle</button>`:''}${f.type==='pdf'?`<button class="btn sm" onclick="split('${f.id}')"><i class="fa-solid fa-scissors"></i>Sayfalar</button>`:''}<span class="sp"><button class="btn sm ok" title="İndir" onclick="dl('${f.id}')"><i class="fa-solid fa-download"></i></button><button class="btn sm dg" title="Sil" onclick="del('${f.id}')"><i class="fa-solid fa-trash-can"></i></button></span></div></div></div>`}).join('');
+  <div class="ci" onclick="tog('${f.id}')" style="cursor:pointer"><div class="nm" title="${esc(f.name)} (çift tıkla: yeniden adlandır)" ondblclick="renameFile('${f.id}')">${esc(f.name)}</div><div class="meta"><span>${fmt(f.size)}</span><span>${new Date(f.time).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</span></div></div></div>`}).join('');
  renderBar();
 }
 function renderBar(){
- const it=sel.map(get).filter(Boolean);$('selbar').classList.toggle('on',it.length>0);$('selc').textContent=it.length+' seçili';
- const hasPdfOrImg=it.some(f=>f.type==='pdf'||f.type==='image'),hasImg=it.some(f=>f.type==='image');
- $('bpdf').classList.toggle('hidden',!hasPdfOrImg);
- $('bpdf').innerHTML='<i class="fa-solid fa-file-pdf"></i>'+(it.length>1?'PDF Birleştir':'PDF Kaydet');
- $('bcol').classList.toggle('hidden',!hasImg);
- $('bdl').innerHTML='<i class="fa-solid fa-download"></i>'+(it.length>1?'ZIP İndir':'İndir');
- $('strip').innerHTML=it.map((f,i)=>`<div class="sti" draggable="true" style="background-image:url('${f.thumb||''}')" title="${esc(f.name)}" ondragstart="stDrag(event,${i})" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="stDrop(event,${i})"><b>${i+1}</b></div>`).join('');
+ const it=sel.map(get).filter(Boolean),n=it.length;
+ $('hint0').classList.toggle('hidden',!(files.length&&!n));
+ $('selbar').classList.toggle('on',n>0);if(!n){$('strip').innerHTML='';return}
+ const im=it.filter(f=>f.type==='image'),pd=it.filter(f=>f.type==='pdf'),ot=n-im.length-pd.length;
+ const B=(id,cls,ic,tx,fn,c)=>`<button id="${id}" class="btn ${cls}" onclick="${fn}"><i class="fa-solid ${ic}"${c?` style="color:${c}"`:''}></i>${tx}</button>`;
+ const fv=localStorage.ts_fit||'fit';
+ const fit=`<select id="pfit" class="btn sm" onchange="localStorage.ts_fit=this.value" title="Görselleri PDF sayfasına yerleştirme biçimi"><option value="fit" ${fv==='fit'?'selected':''}>Sığdır</option><option value="fill" ${fv==='fill'?'selected':''}>Doldur (kenarsız)</option><option value="orig" ${fv==='orig'?'selected':''}>Görsel oranında sayfa</option></select>`;
+ let title,hint,tools='';
+ if(ot){title=n+' dosya seçili';hint='Bu türler için indirme ve silme kullanılabilir'}
+ else if(!pd.length){
+  title=n===1?'1 görsel seçili':n+' görsel seçili';hint=n>1?'Küçük resimleri sürükleyerek sırayı değiştirin':'Düzenleyin veya sayfaya yerleştirin';
+  tools=(n===1?B('bedit','','fa-crop-simple','Düzenle',`edit('${im[0].id}')`,'#60a5fa'):'')+B('bcol','','fa-table-cells-large','Kolaj / Sayfa','colOpen()','#c4b5fd')+B('bscan','','fa-wand-magic-sparkles','Net Evrak','scanSel()','#fcd34d')+B('bpdf','ok','fa-file-pdf',n>1?'PDF Birleştir':'PDF Yap','mergePDF()')+fit;
+ }else if(!im.length){
+  title=n===1?'1 PDF seçili':n+' PDF seçili';hint=n>1?"PDF'ler seçim sırasıyla birleşir":'Sayfaları silin veya ayırın';
+  tools=n===1?B('bpg','','fa-scissors','Sayfaları Düzenle',`split('${pd[0].id}')`,'#fbbf24'):B('bpdf','ok','fa-object-group','PDF Birleştir','mergePDF()');
+ }else{
+  title=im.length+' görsel + '+pd.length+' PDF seçili';hint='Seçim sırasıyla tek PDF olur';tools=B('bpdf','ok','fa-object-group','PDF Birleştir','mergePDF()')+fit;
+ }
+ tools+=B('bdl','pri','fa-download',n>1?'ZIP İndir':'İndir','dlSel()')+B('bdel','dg','fa-trash-can','Sil','delSel()')+'<button class="btn" title="Seçimi temizle" onclick="clearSel()"><i class="fa-solid fa-xmark"></i></button>';
+ $('selc').textContent=title;$('selh').textContent=hint;$('stools').innerHTML=tools;
+ $('strip').innerHTML=n>1?it.map((f,i)=>`<div class="sti" draggable="true" style="background-image:url('${f.thumb||''}')" title="${esc(f.name)}" ondragstart="stDrag(event,${i})" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="stDrop(event,${i})"><b>${i+1}</b></div>`).join(''):'';
 }
 function dragOut(e,id){const f=get(id);e.dataTransfer.setData('DownloadURL',`${f.mime}:${f.name}:${f.url}`)}
 function tog(id){const i=sel.indexOf(id);i>=0?sel.splice(i,1):sel.push(id);render()}
@@ -606,14 +612,18 @@ async function dlSel(){
  const b=await z.generateAsync({type:'blob',compression:'STORE'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='TonoScan_'+new Date().toISOString().slice(0,10)+'.zip';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
 }
 const delQ={};
-function del(id){
- const f=get(id);if(!f)return;files=files.filter(x=>x.id!==id);sel=sel.filter(x=>x!==id);render();
- const t=setTimeout(async()=>{delete delQ[id];URL.revokeObjectURL(f.url);await idbDel(id);storInfo()},7000);delQ[id]=t;
- undoToast('«'+f.name+'» silindi',()=>{clearTimeout(t);delete delQ[id];files.push(f);files.sort((a,b)=>b.time-a.time);render()});
+function delMany(ids){
+ const gone=ids.map(get).filter(Boolean);if(!gone.length)return;
+ const set=new Set(gone.map(f=>f.id));files=files.filter(f=>!set.has(f.id));sel=sel.filter(x=>!set.has(x));render();
+ const t=setTimeout(async()=>{for(const f of gone){URL.revokeObjectURL(f.url);await idbDel(f.id);delete delQ[f.id]}storInfo()},7000);
+ gone.forEach(f=>delQ[f.id]=t);
+ undoToast(gone.length>1?gone.length+' dosya silindi':'«'+gone[0].name+'» silindi',()=>{clearTimeout(t);gone.forEach(f=>delete delQ[f.id]);files.push(...gone);files.sort((a,b)=>b.time-a.time);render();storInfo()});
 }
+function del(id){delMany([id])}
+function delSel(){delMany([...sel])}
 function undoToast(m,fn){const t=$('tt');t.innerHTML=esc(m)+' <button class="btn sm" style="margin-left:10px" id="ub">Geri al</button>';t.classList.remove('hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hidden'),7000);$('ub').onclick=()=>{fn();t.classList.add('hidden')}}
 async function clearAll(){if(!files.length||!confirm('Bu bilgisayardaki tüm dosyalar kalıcı olarak silinecek. Emin misiniz?'))return;files.forEach(f=>URL.revokeObjectURL(f.url));files=[];sel=[];await idbClear();render();storInfo()}
-async function pcFiles(l){for(const f of l)await addFile({name:f.name,mime:f.type,blob:f,sender:'Bu Bilgisayar',color:PAL[1]})}
+async function pcFiles(l){for(const f of Array.from(l))await addFile({name:f.name,mime:f.type,blob:f,sender:'Bu Bilgisayar',color:PAL[1]})}
 function prev(id){
  const f=get(id);pvId=id;$('pvt').textContent=f.name;$('pvc').classList.toggle('hidden',f.type!=='image');
  $('pvb').innerHTML=f.type==='image'?`<img src="${f.url}" style="max-width:100%;max-height:100%;border-radius:12px">`:f.type==='pdf'?`<iframe src="${f.url}" style="width:100%;height:100%;border:0;border-radius:12px;background:#fff"></iframe>`:f.type==='video'?`<video src="${f.url}" controls style="max-width:100%;max-height:100%"></video>`:`<button class="btn pri" onclick="dl('${f.id}')"><i class="fa-solid fa-download"></i>Dosyayı İndir (${fmt(f.size)})</button>`;
@@ -690,20 +700,10 @@ function colContain(it,bx,by,bw,bh){const r=it.ar;let w,h;if(bw/bh>r){h=bh;w=h*r
 function colArrange(all,k,pw,ph,mg){
  all.forEach(i=>{i.rot=0});
  if(k==='long'){let y=0;all.forEach(i=>{i.w=pw;i.h=pw/i.ar;i.cx=pw/2;i.cy=y+i.h/2;y+=i.h});return{pages:[{items:all}],ph:Math.max(50,y),mg:0}}
- if(k==='vstack'){
-  const n=Math.max(1,all.length),g=Math.max(2,mg),cw=pw-2*mg,ch=(ph-2*mg-(n-1)*g)/n;
-  all.forEach((it,idx)=>colContain(it,mg,mg+idx*(ch+g),cw,ch));
-  return{pages:[{items:all}],ph,mg};
- }
- if(k==='hstack'){
-  const n=Math.max(1,all.length),g=Math.max(2,mg),cw=(pw-2*mg-(n-1)*g)/n,ch=ph-2*mg;
-  all.forEach((it,idx)=>colContain(it,mg+idx*(cw+g),mg,cw,ch));
-  return{pages:[{items:all}],ph,mg};
- }
- const cfg={fit1:[1,1],v2:[1,2],h2:[2,1],g4:[2,2],g6:[2,3],id:[1,2]}[k]||[1,1],cols=cfg[0],rows=cfg[1],per=cols*rows,g=Math.max(2,mg),pages=[];
+ const cfg={fit1:[1,1],v2:[1,2],h2:[2,1],g4:[2,2],g6:[2,3],id:[1,2]}[k],cols=cfg[0],rows=cfg[1],per=cols*rows,g=Math.max(4,mg/2),pages=[];
  for(let i=0;i<all.length;i+=per)pages.push({items:all.slice(i,i+per)});
  pages.forEach(p=>{
-  if(k==='id'){const bw=96,bh=62,gap=12,top=Math.max(15,mg+20);p.items.forEach((it,n)=>colContain(it,(pw-bw)/2,top+n*(bh+gap),bw,bh));return}
+  if(k==='id'){const bw=100,bh=64,gap=14,top=mg+25;p.items.forEach((it,n)=>colContain(it,(pw-bw)/2,top+n*(bh+gap),bw,bh));return}
   const cw=(pw-2*mg-(cols-1)*g)/cols,ch=(ph-2*mg-(rows-1)*g)/rows;
   p.items.forEach((it,n)=>colContain(it,mg+(n%cols)*(cw+g),mg+Math.floor(n/cols)*(ch+g),cw,ch));
  });
@@ -720,22 +720,19 @@ function colSnap(it,cx,cy){
 function colDims(){let w=SZ[col.sz]?SZ[col.sz][0]:210,h=SZ[col.sz]?SZ[col.sz][1]:297;if(col.ori==='l'){const t=w;w=h;h=t}col.pw=w;col.ph=h}
 function oriUi(){$('cop').classList.toggle('on',col.ori==='p');$('col2').classList.toggle('on',col.ori==='l')}
 async function colMake(f){const bm=await createImageBitmap(f.blob),it={id:rid(5),fid:f.id,blob:f.blob,url:f.url,ar:bm.width/bm.height,cx:0,cy:0,w:50,h:50,rot:0,flt:'none',bw:0};bm.close&&bm.close();return it}
-async function colOpen(initLay){
- const fl=sel.map(get).filter(f=>f&&f.type==='image');if(!fl.length)return toast('Önce düzenlemek istediğiniz görselleri seçin');
- const lay=(!initLay||initLay==='auto')?(fl.length===1?'fit1':fl.length<=3?'vstack':fl.length===4?'g4':'fit1'):initLay;
- col={sz:'A4',ori:'p',pw:210,ph:297,mg:2,pages:[{items:[]}],pi:0,sel:null,lay,dirty:false};
- $('csz').value='A4';$('cmg').value=2;if($('cmgv'))$('cmgv').textContent='2mm';oriUi();show('colm',1);colInit();
+async function colOpen(){
+ const fl=sel.map(get).filter(f=>f&&f.type==='image');if(!fl.length)return toast('Önce görsel seçin');
+ col={sz:'A4',ori:'p',pw:210,ph:297,mg:10,pages:[{items:[]}],pi:0,sel:null,lay:'fit1',dirty:false};
+ $('csz').value='A4';$('cmg').value=10;oriUi();show('colm',1);colInit();
  for(const f of fl)col.pages[0].items.push(await colMake(f));
- colLayout(lay);
- if(col.pages[0]&&col.pages[0].items[0])col.sel=col.pages[0].items[0].id;
- col.dirty=false;colRender();
+ colLayout('fit1');col.dirty=false;
 }
 function colClose(){if(col&&col.dirty&&!confirm('Kapatırsanız kaydedilmemiş kolaj düzeni silinir. Kapatılsın mı?'))return;show('colm',0);col=null}
 function colLayout(k){
  if(!k||!col)return;const all=col.pages.flatMap(p=>p.items);if(!all.length)return toast('Önce soldaki listeden görsel ekleyin');
- if(k==='long'){col.sz='LONG';col.pw=210;col.mg=0;$('csz').value='LONG';$('cmg').value=0;if($('cmgv'))$('cmgv').textContent='0mm'}
- else if(col.sz==='LONG'){col.sz='A4';col.ori='p';colDims();col.mg=2;$('csz').value='A4';$('cmg').value=2;if($('cmgv'))$('cmgv').textContent='2mm'}
- const r=colArrange(all,k,col.pw,col.ph,col.mg);col.pages=r.pages;col.ph=r.ph;col.mg=r.mg;col.pi=0;col.sel=col.pages[0]?.items[0]?.id||null;col.lay=k;col.dirty=true;oriUi();colRender();
+ if(k==='long'){col.sz='LONG';col.pw=210;col.mg=0;$('csz').value='LONG';$('cmg').value=0}
+ else if(col.sz==='LONG'){col.sz='A4';col.ori='p';colDims();col.mg=10;$('csz').value='A4';$('cmg').value=10}
+ const r=colArrange(all,k,col.pw,col.ph,col.mg);col.pages=r.pages;col.ph=r.ph;col.mg=r.mg;col.pi=0;col.sel=null;col.lay=k;col.dirty=true;oriUi();colRender();
 }
 function colResize(old){
  const sx=col.pw/old[0],sy=col.ph/old[1],s=Math.min(sx,sy);
@@ -743,50 +740,40 @@ function colResize(old){
 }
 function colSize(){
  const v=$('csz').value;if(!col)return;
- if(v==='LONG'){colLayout('long');return}
- if(col.sz==='LONG'&&v!=='LONG'){col.sz=v;col.ori='p';colDims();col.mg=2;$('cmg').value=2;if($('cmgv'))$('cmgv').textContent='2mm';colLayout('vstack');return}
+ if(col.sz==='LONG'&&v!=='LONG'){col.sz=v;col.ori='p';colDims();col.mg=10;$('cmg').value=10;colLayout('fit1');return}
  const old=[col.pw,col.ph];col.sz=v;colDims();colResize(old);
 }
-function colOri(o){if(!col)return;if(col.sz==='LONG'){col.sz='A4';$('csz').value='A4'}const old=[col.pw,col.ph];col.ori=o;colDims();colResize(old)}
-function colMargin(v){col.mg=+v;if($('cmgv'))$('cmgv').textContent=v+'mm';if(col.lay&&col.lay!=='long')colLayout(col.lay);else colRender()}
+function colOri(o){if(!col)return;if(col.sz==='LONG')return toast('Uzun görselde yön seçilemez');const old=[col.pw,col.ph];col.ori=o;colDims();colResize(old)}
+function colMargin(v){col.mg=+v;colRender()}
 function colPos(it){
  const el=$('ci-'+it.id);if(!el)return;const k=colK;
  el.style.cssText=`left:${(it.cx-it.w/2)*k}px;top:${(it.cy-it.h/2)*k}px;width:${it.w*k}px;height:${it.h*k}px;transform:rotate(${it.rot}deg);box-shadow:${it.bw?`0 0 0 ${it.bw*k}px #000`:'none'}`;
 }
 function colRender(){
  if(!col)return;const st=$('cstage'),pg=$('cpg'),P=col.pages[col.pi];
- colK=Math.max(.15,Math.min((st.clientWidth-50)/col.pw,(st.clientHeight-50)/col.ph));
+ colK=Math.max(.15,Math.min((st.clientWidth-70)/col.pw,(st.clientHeight-70)/col.ph));
  pg.style.width=col.pw*colK+'px';pg.style.height=col.ph*colK+'px';
  pg.innerHTML=col.mg?`<div class="cmg" style="inset:${col.mg*colK}px"></div>`:'';
  P.items.forEach(it=>{
   const el=document.createElement('div'),on=col.sel===it.id;el.id='ci-'+it.id;el.dataset.id=it.id;el.className='cit'+(on?' on':'');
-  el.innerHTML=`<img src="${it.url}" alt="" style="filter:${FL[it.flt]||'none'}">`+(on?
-   '<i class="hrl"></i><i class="hd hr" data-h="r" title="Döndür"></i>'+
-   '<i class="hd" data-h="s" style="left:-8px;top:-8px;cursor:nwse-resize" title="Oranlı Ölçekle"></i>'+
-   '<i class="hd" data-h="s" style="right:-8px;top:-8px;cursor:nesw-resize" title="Oranlı Ölçekle"></i>'+
-   '<i class="hd" data-h="s" style="left:-8px;bottom:-8px;cursor:nesw-resize" title="Oranlı Ölçekle"></i>'+
-   '<i class="hd" data-h="s" style="right:-8px;bottom:-8px;cursor:nwse-resize" title="Oranlı Ölçekle"></i>'+
-   '<i class="hd eh" data-h="ew" style="right:-7px;top:calc(50% - 6px);cursor:ew-resize" title="Genişliği Serbest Uzat"></i>'+
-   '<i class="hd eh" data-h="ew" style="left:-7px;top:calc(50% - 6px);cursor:ew-resize" title="Genişliği Serbest Uzat"></i>'+
-   '<i class="hd eh" data-h="ns" style="left:calc(50% - 6px);bottom:-7px;cursor:ns-resize" title="Yüksekliği Serbest Uzat"></i>'+
-   '<i class="hd eh" data-h="ns" style="left:calc(50% - 6px);top:-7px;cursor:ns-resize" title="Yüksekliği Serbest Uzat"></i>':'');
+  el.innerHTML=`<img src="${it.url}" alt="" style="filter:${FL[it.flt]||'none'}">`+(on?'<i class="hrl"></i><i class="hd hr" data-h="r"></i><i class="hd" data-h="s" style="left:-8px;top:-8px;cursor:nwse-resize"></i><i class="hd" data-h="s" style="right:-8px;top:-8px;cursor:nesw-resize"></i><i class="hd" data-h="s" style="left:-8px;bottom:-8px;cursor:nesw-resize"></i><i class="hd" data-h="s" style="right:-8px;bottom:-8px;cursor:nwse-resize"></i>':'');
   pg.appendChild(el);colPos(it);
  });
  colPages();colProps();colList();
 }
 function colList(){
- $('clist').innerHTML=files.filter(f=>f.type==='image').map(f=>`<div class="clt" title="${esc(f.name)} (Tıkla: Sayfaya Ekle)" style="background-image:url('${f.thumb||f.url}')" onclick="colAdd('${f.id}')"></div>`).join('')||'<div class="mu sm">Klasörde görsel yok</div>';
+ $('clist').innerHTML=files.filter(f=>f.type==='image').map(f=>`<div class="clt" title="${esc(f.name)}" style="background-image:url('${f.thumb||f.url}')" onclick="colAdd('${f.id}')"></div>`).join('')||'<div class="mu sm">Klasörde görsel yok</div>';
 }
 async function colAdd(fid){
  const f=get(fid);if(!f||!col)return;const it=await colMake(f);
- colContain(it,col.mg,col.mg,col.pw-2*col.mg,col.ph-2*col.mg);it.w*=.65;it.h*=.65;
+ colContain(it,col.mg,col.mg,col.pw-2*col.mg,col.ph-2*col.mg);it.w*=.6;it.h*=.6;
  col.pages[col.pi].items.push(it);col.sel=it.id;col.dirty=true;colRender();
 }
 function colPages(){
  $('cpages').innerHTML=col.pages.map((p,i)=>`<button class="btn sm ${i===col.pi?'on':''}" onclick="colGo(${i})">Sayfa ${i+1} <span class="mu">(${p.items.length})</span></button>`).join('')+
- `<button class="btn sm" onclick="colPg(1)"><i class="fa-solid fa-plus"></i>Yeni Sayfa</button><button class="btn sm" title="Sayfayı sola taşı" onclick="colMv(-1)"><i class="fa-solid fa-arrow-left"></i></button><button class="btn sm" title="Sayfayı sağa taşı" onclick="colMv(1)"><i class="fa-solid fa-arrow-right"></i></button><button class="btn sm dg" onclick="colPg(-1)"><i class="fa-solid fa-trash-can"></i>Sayfayı Sil</button>`;
+ `<button class="btn sm" onclick="colPg(1)"><i class="fa-solid fa-plus"></i>Sayfa Ekle</button><button class="btn sm" title="Sayfayı sola taşı" onclick="colMv(-1)"><i class="fa-solid fa-arrow-left"></i></button><button class="btn sm" title="Sayfayı sağa taşı" onclick="colMv(1)"><i class="fa-solid fa-arrow-right"></i></button><button class="btn sm dg" onclick="colPg(-1)"><i class="fa-solid fa-trash-can"></i>Sayfayı Sil</button>`;
 }
-function colGo(i){col.pi=i;col.sel=col.pages[i]?.items[0]?.id||null;colRender()}
+function colGo(i){col.pi=i;col.sel=null;colRender()}
 function colPg(d){
  if(d>0){col.pages.push({items:[]});col.pi=col.pages.length-1}
  else{if(col.pages.length<2)return toast('En az bir sayfa kalmalı');if(col.pages[col.pi].items.length&&!confirm('Bu sayfadaki görseller silinecek. Emin misiniz?'))return;col.pages.splice(col.pi,1);col.pi=Math.max(0,col.pi-1)}
@@ -795,27 +782,21 @@ function colPg(d){
 function colMv(d){const j=col.pi+d;if(j<0||j>=col.pages.length)return;const t=col.pages[col.pi];col.pages[col.pi]=col.pages[j];col.pages[j]=t;col.pi=j;col.dirty=true;colRender()}
 function colProps(){
  const it=colSelItem(),el=$('cprop');
- if(!it){el.innerHTML='<h4>Özellikler</h4><div class="mu" style="line-height:1.75">Düzenlemek için sayfadaki bir görsele tıklayın.<br><br><b style="color:#cbd5e1">Kontroller</b><br>• Sürükleyerek konumlandırın<br>• <b>Köşelerden</b> oranlı büyütün/küçültün<br>• <b>Mavi kenarlardan</b> serbestçe sündürün<br>• Üstteki daireden döndürün<br>• Sol panelden yeni görsel ekleyin</div>';return}
+ if(!it){el.innerHTML='<h4>Özellikler</h4><div class="mu" style="line-height:1.75">Bir görsele tıklayın.<br><br><b style="color:#cbd5e1">İpuçları</b><br>• Sürükleyerek taşıyın<br>• Köşeden ölçekleyin<br>• Üstteki daireden döndürün (Shift: 15°)<br>• Alt tuşu hizalamayı kapatır<br>• Oklar: 1 mm (Shift: 5 mm)<br>• Del: sil · Ctrl+D: kopyala</div>';return}
  const pgs=col.pages.map((p,i)=>i===col.pi?'':`<option value="${i}">Sayfa ${i+1}</option>`).join('');
- el.innerHTML=`<h4>Hızlı Yerleşim</h4><div class="g"><button class="btn sm" onclick="colFit('fit')">Sığdır</button><button class="btn sm" onclick="colFit('fill')">Tam Doldur</button><button class="btn sm" onclick="colFit('stretch')">Sayfaya Ger</button><button class="btn sm" onclick="colFit('mid')">Ortala</button></div>
- <h4>Boyut (mm) ve Açı</h4>
- <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-  <label class="mu">Genişlik<input type="number" min="5" step="1" value="${Math.round(it.w)}" onchange="colSet('w',this.value)"></label>
-  <label class="mu">Yükseklik<input type="number" min="5" step="1" value="${Math.round(it.h)}" onchange="colSet('h',this.value)"></label>
- </div>
+ el.innerHTML=`<h4>Yerleşim</h4><div class="g"><button class="btn sm" onclick="colFit('fit')">Sığdır</button><button class="btn sm" onclick="colFit('fill')">Doldur</button><button class="btn sm" onclick="colFit('mid')">Ortala</button></div>
+ <h4>Boyut ve açı</h4><label class="mu">Genişlik (mm)<input type="number" min="5" step="1" value="${Math.round(it.w)}" onchange="colSet('w',this.value)"></label>
  <label class="mu">Açı (°)<input type="number" step="1" value="${Math.round(it.rot)}" onchange="colSet('rot',this.value)"></label>
- <div class="g"><button class="btn sm" onclick="colSet('rot',${it.rot-90})">⟲ Sola 90°</button><button class="btn sm" onclick="colSet('rot',${it.rot+90})">⟳ Sağa 90°</button></div>
- <h4>Görünüm</h4><label class="mu">Filtre<select onchange="colSet('flt',this.value)"><option value="none">Orijinal</option><option value="gray" ${it.flt==='gray'?'selected':''}>Gri Tonlama</option><option value="scan" ${it.flt==='scan'?'selected':''}>Net Evrak</option></select></label>
+ <div class="g"><button class="btn sm" onclick="colSet('rot',${it.rot-90})">⟲ 90°</button><button class="btn sm" onclick="colSet('rot',${it.rot+90})">⟳ 90°</button></div>
+ <h4>Görünüm</h4><label class="mu">Filtre<select onchange="colSet('flt',this.value)"><option value="none">Orijinal</option><option value="gray" ${it.flt==='gray'?'selected':''}>Gri</option><option value="scan" ${it.flt==='scan'?'selected':''}>Net evrak</option></select></label>
  <label class="mu">Çerçeve<select onchange="colSet('bw',this.value)"><option value="0">Yok</option><option value="0.3" ${it.bw===0.3?'selected':''}>İnce</option><option value="0.8" ${it.bw===0.8?'selected':''}>Kalın</option></select></label>
- <button class="btn sm" onclick="colCrop()"><i class="fa-solid fa-crop-simple"></i>Görseli Kırp</button>
- <h4>Katman & İşlem</h4><div class="g"><button class="btn sm" onclick="colZ(1)">Öne</button><button class="btn sm" onclick="colZ(-1)">Arkaya</button><button class="btn sm" onclick="colDup()">Çoğalt</button><button class="btn sm dg" onclick="colDel()"><i class="fa-solid fa-trash-can"></i>Sil</button></div>
+ <button class="btn sm" onclick="colCrop()"><i class="fa-solid fa-crop-simple"></i>Kırp</button>
+ <h4>Katman</h4><div class="g"><button class="btn sm" onclick="colZ(1)">Öne</button><button class="btn sm" onclick="colZ(-1)">Arkaya</button><button class="btn sm" onclick="colDup()">Kopyala</button><button class="btn sm dg" onclick="colDel()"><i class="fa-solid fa-trash-can"></i>Sil</button></div>
  ${pgs?`<label class="mu">Başka sayfaya taşı<select onchange="colMove(this.value)"><option value="">Seçin...</option>${pgs}</select></label>`:''}`;
 }
 function colSet(k,v){
  const it=colSelItem();if(!it)return;if(k!=='flt')v=+v;
- if(k==='w'){if(!(v>=5))return;it.h=it.h*v/it.w;it.w=v}
- else if(k==='h'){if(!(v>=5))return;it.h=v}
- else if(k==='rot'){it.rot=((v%360)+540)%360-180}else it[k]=v;
+ if(k==='w'){if(!(v>=5))return;it.h=it.h*v/it.w;it.w=v}else if(k==='rot'){it.rot=((v%360)+540)%360-180}else it[k]=v;
  col.dirty=true;colRender();
 }
 function colFit(m){
@@ -823,7 +804,6 @@ function colFit(m){
  const sw=Math.abs(it.rot-Math.round(it.rot/90)*90)<.5&&Math.abs(Math.round(it.rot/90))%2===1,ar=sw?1/it.ar:it.ar;
  let bx=col.mg,by=col.mg,bw=col.pw-2*col.mg,bh=col.ph-2*col.mg;
  if(m==='fill'){bx=0;by=0;bw=col.pw;bh=col.ph}
- if(m==='stretch'){it.rot=0;it.w=bw;it.h=bh;it.cx=bx+bw/2;it.cy=by+bh/2;col.dirty=true;colRender();return}
  if(m!=='mid'){
   let vw,vh;
   if(m==='fill'?bw/bh>ar:bw/bh<=ar){vw=bw;vh=bw/ar}else{vh=bh;vw=bh*ar}
@@ -867,8 +847,6 @@ function colInit(){
     if(!ev.altKey){const r=colSnap(it,cx,cy);cx=r.cx;cy=r.cy;colGuides(r)}
     it.cx=cx;it.cy=cy;
    }else if(mode==='s'){const f=Math.max(.05,Math.hypot(ev.clientX-ccx,ev.clientY-ccy)/S.d);it.w=Math.max(6,S.w*f);it.h=it.w*(S.h/S.w)}
-   else if(mode==='ew'){const dx=Math.abs(ev.clientX-ccx)/k*2;it.w=Math.max(8,dx)}
-   else if(mode==='ns'){const dy=Math.abs(ev.clientY-ccy)/k*2;it.h=Math.max(8,dy)}
    else{let r=S.rot+(Math.atan2(ev.clientY-ccy,ev.clientX-ccx)-S.a)*180/Math.PI;r=((r%360)+540)%360-180;const q=Math.round(r/90)*90;if(Math.abs(r-q)<4)r=q;else if(ev.shiftKey)r=Math.round(r/15)*15;it.rot=Math.round(r*10)/10}
    col.dirty=true;colPos(it);
   };
@@ -877,7 +855,7 @@ function colInit(){
  });
 }
 async function colBake(it,dpi){
- const bm=await createImageBitmap(it.blob),tw=Math.max(16,Math.min(bm.width,Math.round(it.w/25.4*dpi))),th=Math.max(16,Math.min(bm.height,Math.round(it.h/25.4*dpi))),c=document.createElement('canvas');
+ const bm=await createImageBitmap(it.blob),tw=Math.max(16,Math.min(bm.width,Math.round(it.w/25.4*dpi))),th=Math.max(16,Math.round(tw/it.ar)),c=document.createElement('canvas');
  c.width=tw;c.height=th;const x=c.getContext('2d');x.filter=FL[it.flt]||'none';x.drawImage(bm,0,0,tw,th);bm.close&&bm.close();return toBlob(c,.92);
 }
 async function colPdf(){
@@ -890,11 +868,11 @@ async function colPdf(){
    if(it.bw){const b=it.bw,o2=colOrigin(it.cx,it.cy,it.w+b,it.h+b,it.rot,col.ph);P.drawRectangle({x:o2.x*mm,y:o2.y*mm,width:(it.w+b)*mm,height:(it.h+b)*mm,rotate:PDFLib.degrees(-it.rot),borderWidth:b*mm,borderColor:PDFLib.rgb(0,0,0)})}
   }
  }
- await addFile({name:`Kolaj_A4_${Date.now()}.pdf`,mime:'application/pdf',blob:new Blob([await out.save()],{type:'application/pdf'}),sender:'Stüdyo',color:PAL[2]});
+ await addFile({name:`Kolaj_${Date.now()}.pdf`,mime:'application/pdf',blob:new Blob([await out.save()],{type:'application/pdf'}),sender:'Stüdyo',color:PAL[2]});
  toast('PDF oluşturuldu ve klasöre kaydedildi');
 }
 async function colJpg(){
- const dpi=200,pxmm=dpi/25.4,m=pxmm*Math.min(1,16000/Math.max(col.pw*pxmm,col.ph*pxmm)),stamp=Date.now();
+ const dpi=+$('cdp').value,pxmm=dpi/25.4,m=pxmm*Math.min(1,16000/Math.max(col.pw*pxmm,col.ph*pxmm)),stamp=Date.now();
  for(let pi=0;pi<col.pages.length;pi++){
   const c=document.createElement('canvas');c.width=Math.round(col.pw*m);c.height=Math.round(col.ph*m);
   const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);
@@ -911,10 +889,10 @@ async function colJpg(){
 async function colExport(t){
  if(!col)return;if(!col.pages.some(p=>p.items.length))return toast('Sayfada görsel yok');
  toast('Hazırlanıyor...');
- try{t==='pdf'?await colPdf():await colJpg();col.dirty=false;show('colm',0);sel=[];render()}catch(e){toast('Dışa aktarılamadı: '+(e.message||e))}
+ try{t==='pdf'?await colPdf():await colJpg();col.dirty=false}catch(e){toast('Dışa aktarılamadı: '+(e.message||e))}
 }
 
-/* ---------- Birleştirme (seçim sırasına göre, sıfır kenar boşluğu) ---------- */
+/* ---------- Birleştirme (seçim sırasına göre) ---------- */
 async function mergeJPG(){
  const s=sel.map(get).filter(f=>f&&f.type==='image');if(s.length<2)return toast('En az 2 görsel seçin');
  const im=await Promise.all(s.map(f=>createImageBitmap(f.blob))),w=Math.max(...im.map(i=>i.width)),hs=im.map(i=>i.height*w/i.width);
@@ -931,9 +909,9 @@ async function mergePDF(){
    let img;const by=await f.blob.arrayBuffer();
    if(f.mime==='image/jpeg')img=await out.embedJpg(by);else if(f.mime==='image/png')img=await out.embedPng(by);
    else{const b=await createImageBitmap(f.blob),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);img=await out.embedJpg(await(await toBlob(c,.92)).arrayBuffer())}
-   const isLand=img.width>img.height,pw=isLand?842:595,ph=isLand?595:842,pg=out.addPage([pw,ph]);
-   const k=Math.min(pw/img.width,ph/img.height),w=img.width*k,h=img.height*k;
-   pg.drawImage(img,{x:(pw-w)/2,y:(ph-h)/2,width:w,height:h});
+   const fm=localStorage.ts_fit||'fit';
+   if(fm==='orig'){const hh=img.height*595/img.width;out.addPage([595,hh]).drawImage(img,{x:0,y:0,width:595,height:hh})}
+   else{const pg=out.addPage([595,842]),k=fm==='fill'?Math.max(595/img.width,842/img.height):Math.min(575/img.width,822/img.height),w=img.width*k,h=img.height*k;pg.drawImage(img,{x:(595-w)/2,y:(842-h)/2,width:w,height:h})}
   }
  }
  await addFile({name:`Birlesik_Evrak_${Date.now()}.pdf`,mime:'application/pdf',blob:new Blob([await out.save()],{type:'application/pdf'}),sender:'Stüdyo',color:PAL[2]});
@@ -1064,32 +1042,19 @@ function saveName(){
 }
 async function startCam(){
  stream&&stream.getTracks().forEach(t=>t.stop());tOn=false;$('mt').classList.remove('on');
- const tries=[
-  {video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}},audio:false},
-  {video:{facingMode:facing},audio:false},
-  {video:true,audio:false}
- ];
- for(const c of tries){
-  try{
-   stream=await navigator.mediaDevices.getUserMedia(c);
-   const v=$('mv');v.srcObject=stream;
-   await new Promise(res=>{
-    let done=false;const ok=()=>{if(!done){done=true;res()}};
-    v.onloadedmetadata=ok;setTimeout(ok,600);
-   });
-   await v.play().catch(()=>{});
-   if(stream.getVideoTracks()[0])stream.getVideoTracks()[0].onended=()=>{if(!document.hidden)startCam()};
-   return true;
-  }catch(e){}
- }
- return false;
+ try{
+  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:3840},height:{ideal:2160}},audio:false});
+  const v=$('mv');v.srcObject=stream;v.play().catch(()=>{});
+  stream.getVideoTracks()[0].onended=()=>{if(!document.hidden)startCam()};
+  return true;
+ }catch(e){return false}
 }
 function flip(){facing=facing==='environment'?'user':'environment';startCam();hint()}
 /* Çekim oranı: Tam ekran / 3:4 / A4 (çerçevenin dışı karartılır, içi gönderilir) */
 let capI=0;const CAPS=[[0,'Tam'],[3/4,'3:4'],[1/Math.SQRT2,'A4']];
 function maskRect(){
- const v=$('mv'),cw=v.clientWidth||window.innerWidth,ch=v.clientHeight||window.innerHeight,r=CAPS[capI][0];if(!r)return{x:0,y:0,w:cw,h:ch};
- let w,h;if(cw/ch>r){h=ch*.8;w=h*r}else{w=cw*.92;h=w/r}
+ const v=$('mv'),cw=v.clientWidth,ch=v.clientHeight,r=CAPS[capI][0];if(!r)return{x:0,y:0,w:cw,h:ch};
+ let w,h;if(cw/ch>r){h=ch*.8;w=h*r}else{w=cw*.84;h=w/r}
  return{x:(cw-w)/2,y:(ch-h)/2,w,h};
 }
 function maskUi(){
@@ -1106,97 +1071,37 @@ async function torch(){
  if(!stream)return;const t=stream.getVideoTracks()[0],c=t.getCapabilities?t.getCapabilities():{};if(!c.torch)return toast('Flaş desteklenmiyor');
  tOn=!tOn;await t.applyConstraints({advanced:[{torch:tOn}]});$('mt').classList.toggle('on',tOn);
 }
-function makeNamedBlob(blob,name,type){
- try{return new File([blob],name,{type:type||blob.type||'application/octet-stream'})}
- catch(e){blob.name=name;return blob}
-}
-/* Ekranda gördüğünüz alan tam olarak çekilir; kamera akışı yoksa sistem kamerasına düşer */
-let shooting=false;
-async function shoot(ev){
- if(ev)ev.preventDefault();
- if(shooting)return;
- shooting=true;
- try{
-  const v=$('mv');
-  if(!stream||!stream.active||!v.videoWidth){
-   await startCam();
-  }
-  if(!v.videoWidth){
-   toast('Canlı kamera hazır değil, telefon kamerası açılıyor...');
-   $('inp-cam')&&$('inp-cam').click();
-   return;
-  }
-  const f=$('fl');f.style.opacity=1;setTimeout(()=>f.style.opacity=0,140);
-  const vw=v.videoWidth,vh=v.videoHeight,cw=v.clientWidth||vw,ch=v.clientHeight||vh,k=Math.max(cw/vw,ch/vh),sw=cw/k,sh=ch/k,m=maskRect();
-  const sx=Math.max(0,(vw-sw)/2+m.x/k),sy=Math.max(0,(vh-sh)/2+m.y/k),rw=Math.min(vw-sx,m.w/k),rh=Math.min(vh-sy,m.h/k);
-  const c=document.createElement('canvas');c.width=Math.max(1,Math.round(rw));c.height=Math.max(1,Math.round(rh));
-  c.getContext('2d').drawImage(v,sx,sy,rw,rh,0,0,c.width,c.height);
-  let bl=await toBlob(c,.92);
-  if(!bl){
-   const du=c.toDataURL('image/jpeg',.92);
-   bl=new Blob([unb64(du.split(',')[1])],{type:'image/jpeg'});
-  }
-  try{navigator.vibrate&&navigator.vibrate(20)}catch(e){}
-  if(docOn){
-   docPg.push(bl);docUi();
-   toast(docPg.length+'. sayfa eklendi («Bitir ve PDF Gönder» ile tamamlayın)');
-   return;
-  }
-  if(!pcUp)toast('Fotoğraf çekildi, PC bağlantısı bekleniyor...');
-  else if(state!=='ok')toast('Fotoğraf çekildi! Gönderim için PC ekranının sol panelinden «İzin ver» butonuna basın.');
-  const fname='Kamera_'+new Date().toLocaleTimeString('tr-TR').replace(/[^0-9]/g,'')+'.jpg';
-  enqueue([makeNamedBlob(bl,fname,'image/jpeg')]);
- }catch(err){
-  toast('Çekim hatası: '+(err.message||err));
- }finally{
-  shooting=false;
- }
+/* Ekranda gördüğünüz alan tam olarak çekilir (object-fit:cover ile aynı kırpma) */
+async function shoot(){
+ const v=$('mv');if(!v.videoWidth)return toast('Kamera açık değil');
+ const f=$('fl');f.style.opacity=1;setTimeout(()=>f.style.opacity=0,120);
+ const vw=v.videoWidth,vh=v.videoHeight,cw=v.clientWidth,ch=v.clientHeight,k=Math.max(cw/vw,ch/vh),sw=cw/k,sh=ch/k,m=maskRect();
+ const sx=(vw-sw)/2+m.x/k,sy=(vh-sh)/2+m.y/k,rw=m.w/k,rh=m.h/k;
+ const c=document.createElement('canvas');c.width=Math.round(rw);c.height=Math.round(rh);
+ c.getContext('2d').drawImage(v,sx,sy,rw,rh,0,0,c.width,c.height);
+ const bl=await toBlob(c,.92);navigator.vibrate&&navigator.vibrate(15);
+ if(docOn){docPg.push(bl);docUi();return}
+ enqueue([new File([bl],'Kamera_'+new Date().toLocaleTimeString('tr-TR').replace(/:/g,'')+'.jpg',{type:'image/jpeg'})]);
 }
 /* Çoklu sayfa (belge) modu: çekilen sayfalar tek PDF olur */
 let docOn=false,docPg=[];
 function docMode(){
  if(docOn&&docPg.length&&!confirm('Çekilen '+docPg.length+' sayfa silinecek. Belge modundan çıkılsın mı?'))return;
- docOn=!docOn;if(!docOn)docPg=[];$('mm').classList.toggle('on',docOn);docUi();toast(docOn?'Çoklu çekim açık: Her çekim sayfaya eklenir, bitince «Bitir ve PDF Gönder»e basın':'Çoklu çekim kapatıldı');
+ docOn=!docOn;if(!docOn)docPg=[];$('mm').classList.toggle('on',docOn);docUi();toast(docOn?'Belge modu: sayfaları çekin, sonra «Bitir» deyin':'Belge modu kapalı');
 }
 function docUi(){const c=$('cnb');c.textContent=docPg.length;c.classList.toggle('hidden',!docPg.length);$('mfin').classList.toggle('hidden',!docPg.length)}
 async function docFinish(){
- if(!docPg.length)return toast('Henüz sayfa çekmediniz');
- toast('Çoklu sayfalar PDF yapılıyor...');
- try{
-  const out=await PDFLib.PDFDocument.create();
-  for(const b of docPg){
-   const img=await out.embedJpg(await b.arrayBuffer());
-   const isLand=img.width>img.height,pw=isLand?842:595,ph=isLand?595:842;
-   const k=Math.min(pw/img.width,ph/img.height),w=img.width*k,h=img.height*k;
-   const pg=out.addPage([pw,ph]);
-   pg.drawImage(img,{x:(pw-w)/2,y:(ph-h)/2,width:w,height:h});
-  }
-  const pdfBytes=await out.save();
-  const pdfBlob=new Blob([pdfBytes],{type:'application/pdf'});
-  const fname='Belge_'+new Date().toLocaleTimeString('tr-TR').replace(/[^0-9]/g,'')+'.pdf';
-  docPg=[];docOn=false;$('mm').classList.remove('on');docUi();
-  enqueue([makeNamedBlob(pdfBlob,fname,'application/pdf')]);
- }catch(e){
-  toast('PDF oluşturulamadı: '+(e.message||e));
- }
+ if(!docPg.length)return;const out=await PDFLib.PDFDocument.create();
+ for(const b of docPg){const img=await out.embedJpg(await b.arrayBuffer()),k=595/img.width,pg=out.addPage([595,img.height*k]);pg.drawImage(img,{x:0,y:0,width:595,height:img.height*k})}
+ const pdf=new File([await out.save()],'Belge_'+new Date().toLocaleTimeString('tr-TR').replace(/:/g,'')+'.pdf',{type:'application/pdf'});
+ docPg=[];docUi();enqueue([pdf]);
 }
 function failChip(f,e){
  toast('Gönderilemedi: '+(e.message||e));$('mu').classList.add('hidden');
- const r=document.createElement('div');r.style.cssText='pointer-events:auto;color:#fca5a5;display:flex;gap:8px;align-items:center';r.innerHTML='<span>✗ '+esc(f.name||'Dosya')+'</span>';
+ const r=document.createElement('div');r.style.cssText='pointer-events:auto;color:#fca5a5;display:flex;gap:8px;align-items:center';r.innerHTML='<span>✗ '+esc(f.name)+'</span>';
  const b=document.createElement('button');b.className='btn sm';b.textContent='Tekrar dene';b.onclick=()=>{r.remove();enqueue([f])};r.appendChild(b);$('mh').prepend(r);
 }
-async function pickCam(i){
- const fl=Array.from(i.files||[]);i.value='';if(!fl.length)return;
- if(docOn){
-  for(const f of fl){
-   const bm=await createImageBitmap(f),c=document.createElement('canvas');c.width=bm.width;c.height=bm.height;c.getContext('2d').drawImage(bm,0,0);bm.close&&bm.close();
-   const bl=await toBlob(c,.92);if(bl)docPg.push(bl);
-  }
-  docUi();toast(docPg.length+'. sayfa eklendi');return;
- }
- enqueue(fl);
-}
-function pick(i){enqueue(Array.from(i.files||[]));i.value=''}
+function pick(i){enqueue(Array.from(i.files));i.value=''}
 function enqueue(l){
  for(const f of l){
   if(f.size>MAX){toast(`${f.name} 250 MB sınırını aşıyor`);continue}

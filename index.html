@@ -3,7 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>TonoScan Studio | Kablosuz Evrak Aktarım Merkezi</title>
+<title>TonoScan: Telefondan PC'ye Karekodla Dosya ve Belge Aktarma</title>
+<meta name="description" content="Telefon kamerasıyla belge tara, karekodla bilgisayara anında gönder. Uçtan uca şifreli, kurulumsuz. PDF birleştir, kırp, ZIP indir.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://buraktonoz.com/tarama/">
+<meta name="theme-color" content="#060914">
+<meta property="og:type" content="website"><meta property="og:locale" content="tr_TR"><meta property="og:site_name" content="TonoScan">
+<meta property="og:title" content="TonoScan: Telefondan PC'ye Karekodla Dosya ve Belge Aktarma"><meta property="og:description" content="Telefon kamerasıyla belge tara, karekodla bilgisayara anında gönder. Uçtan uca şifreli, kurulumsuz. PDF birleştir, kırp, ZIP indir."><meta property="og:url" content="https://buraktonoz.com/tarama/">
+<meta name="twitter:card" content="summary"><meta name="twitter:title" content="TonoScan: Telefondan PC'ye Karekodla Dosya ve Belge Aktarma"><meta name="twitter:description" content="Telefon kamerasıyla belge tara, karekodla bilgisayara anında gönder. Uçtan uca şifreli, kurulumsuz. PDF birleştir, kırp, ZIP indir.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"TonoScan","url":"https://buraktonoz.com/tarama/","applicationCategory":"UtilitiesApplication","operatingSystem":"Web (Chrome, Edge, Safari)","inLanguage":"tr","description":"Telefon kamerasıyla belge tara, karekodla bilgisayara anında gönder. Uçtan uca şifreli, kurulumsuz. PDF birleştir, kırp, ZIP indir.","featureList":["Karekodla telefondan bilgisayara aktarım","Uçtan uca AES-256-GCM şifreleme","Çoklu sayfa belge tarama ve PDF oluşturma","PDF birleştirme, sayfa silme ve ayırma","Görsel kırpma ve net evrak filtresi","250 MB'a kadar dosya aktarımı"],"author":{"@type":"Person","name":"Burak Tonoz"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"TonoScan'i kurmam gerekir mi?","acceptedAnswer":{"@type":"Answer","text":"Hayır. Bilgisayarda sayfayı açıp telefonla karekodu okutmanız yeterli. Uygulama kurulumu ve üyelik gerekmez."}},
+{"@type":"Question","name":"Dosyalarım güvende mi?","acceptedAnswer":{"@type":"Answer","text":"Dosyalar telefondan çıkmadan AES-256-GCM ile şifrelenir. Şifre anahtarı karekodun adres kısmında kalır ve hiçbir sunucuya gönderilmez. Dosyalar sunucuda kalıcı saklanmaz, yalnızca bilgisayarınızın tarayıcı deposunda durur."}},
+{"@type":"Question","name":"En fazla ne kadar büyük dosya gönderilebilir?","acceptedAnswer":{"@type":"Answer","text":"Tek dosya için sınır 250 MB'dır. Fotoğraf, PDF, video ve diğer dosya türleri gönderilebilir."}},
+{"@type":"Question","name":"Aynı anda birden fazla telefon bağlanabilir mi?","acceptedAnswer":{"@type":"Answer","text":"Evet. Aynı karekodu okutan her telefon bilgisayardan izin alarak bağlanır, gelen dosyalar gönderen cihazın rengiyle ayrılır."}}
+]}</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%232563eb%22/><text x=%2250%%22 y=%2255%%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2260%22>📷</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -16,6 +30,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 <style>
 :root{--bg:#060914;--s1:#0d1424;--s2:#141d33;--s3:#1c2742;--line:#ffffff14;--tx:#e8eefb;--mu:#8795b0;--bl:#3b82f6;--r:14px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -153,6 +169,55 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
 .sh{margin-top:26px;font-weight:600;font-size:14px;text-shadow:0 2px 8px #000}
 .inp{width:100%;height:46px;background:var(--s2);border:1px solid var(--line);border-radius:12px;padding:0 14px;color:var(--tx);font:inherit;font-size:16px;outline:0;margin-bottom:14px}.inp:focus{border-color:var(--bl)}
 #mob.on~.toast{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 76px)}
+.doc{max-width:760px;width:100%;margin:0 auto;padding:12px 4px 60px;line-height:1.75;font-size:14px;color:#cbd5e1}
+.doc h1{font-size:28px;line-height:1.25;color:#fff;margin-bottom:12px}.doc h2{font-size:19px;color:#fff;margin:30px 0 10px}
+.doc ol,.doc ul{padding-left:22px}.doc li{margin:6px 0}.doc a{color:#93c5fd}
+.doc details{background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0}.doc summary{cursor:pointer;font-weight:600;color:#fff}.doc details p{margin-top:8px}
+.ilink{display:inline-block;margin-bottom:8px;color:#93c5fd;font-size:11.5px;text-decoration:underline;cursor:pointer}
+.pool .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}.pool .pc{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.pool .t{height:10px;border-radius:99px;background:var(--s3);overflow:hidden;box-shadow:inset 0 1px 3px #0008}
+.pool .f{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#3b82f6,#8b5cf6);transition:width .9s cubic-bezier(.2,.8,.2,1);position:relative;overflow:hidden}
+.pool.warn .f{background:linear-gradient(90deg,#f59e0b,#fbbf24)}.pool.bad .f{background:linear-gradient(90deg,#ef4444,#f97316);animation:breathe 1.6s ease-in-out infinite}
+.pool .f::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,#ffffff66,transparent);transform:translateX(-100%);opacity:0}
+.pool.live .f::after{opacity:1;animation:shim 1.4s linear infinite}
+@keyframes shim{to{transform:translateX(100%)}}@keyframes breathe{50%{filter:brightness(1.4)}}
+.pool small{color:var(--mu);font-size:11px;display:block;margin-top:9px;line-height:1.5}
+#mpool{position:absolute;left:14px;right:14px;top:calc(env(safe-area-inset-top,0px) + 56px);z-index:5;display:none;align-items:center;gap:9px;font-size:10.5px;font-weight:700;color:#cfe0ff;pointer-events:none;text-shadow:0 1px 4px #000}
+#mpool.on{display:flex}#mob.scan #mpool{display:none!important}#mpool .t{flex:1;height:5px;background:#ffffff26}
+.meter.warn>div{background:linear-gradient(90deg,#f59e0b,#fbbf24)}.meter.bad>div{background:linear-gradient(90deg,#ef4444,#f97316)}
+.panel{background:linear-gradient(180deg,#121c33,#0d1424);box-shadow:0 14px 34px -22px #000,inset 0 1px 0 #ffffff0a}
+.top{position:relative}.top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,#3b82f699,#8b5cf699,transparent)}
+.scroll{background-image:radial-gradient(#ffffff0b 1px,transparent 1px);background-size:22px 22px}
+.th::after{content:"";position:absolute;inset:auto 0 0 0;height:46%;background:linear-gradient(transparent,#0009);pointer-events:none}
+.th .tag,.th .who{z-index:2}
+.btn:focus-visible,select:focus-visible,.search input:focus-visible{outline:2px solid #60a5fa;outline-offset:2px}
+.btn.pri,.btn.ok{position:relative;overflow:hidden}
+.btn.pri::after,.btn.ok::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,#ffffff40 50%,transparent 70%);transform:translateX(-120%);transition:transform .6s}
+.btn.pri:hover::after,.btn.ok:hover::after{transform:translateX(120%)}
+.chip.ok::before{animation:pulse 2s infinite}@keyframes pulse{0%{box-shadow:0 0 0 0 currentColor}100%{box-shadow:0 0 0 7px transparent}}
+.empty .big{animation:float 3.5s ease-in-out infinite}@keyframes float{50%{transform:translateY(-8px)}}
+.logo{animation:glow 4s ease-in-out infinite}@keyframes glow{50%{box-shadow:0 8px 30px -4px #8b5cf6dd}}
+.selbar{box-shadow:0 20px 50px -10px #000,0 0 0 1px #3b82f640}
+.shut{box-shadow:0 0 0 5px #ffffff55,0 0 34px #60a5fa66}
+@keyframes pop{0%{opacity:0;transform:scale(.86) translateY(12px)}100%{opacity:1;transform:none}}
+@keyframes bump{0%{transform:scale(.4)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+@keyframes shine{0%{box-shadow:0 0 0 0 #34d39999}100%{box-shadow:0 0 0 16px #34d39900}}
+.card.new{animation:pop .5s cubic-bezier(.2,1.3,.4,1),shine .9s .1s}
+.sel .num{animation:bump .3s}
+.strip{display:flex;gap:8px;overflow-x:auto;max-width:520px;padding:6px 4px}
+.sti{width:44px;height:44px;border-radius:9px;position:relative;flex-shrink:0;background:#0b1222 center/cover;border:1px solid var(--line);cursor:grab;transition:.15s}
+.sti:hover{transform:translateY(-3px)}.sti.over{outline:2px solid #3b82f6;transform:scale(1.1)}
+.sti b{position:absolute;top:-6px;left:-6px;width:19px;height:19px;border-radius:50%;background:#3b82f6;display:grid;place-items:center;font-size:10px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px;text-align:left}
+.steps div{background:var(--s1);border:1px solid var(--line);border-radius:14px;padding:12px;font-size:11.5px;line-height:1.5}
+.steps b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#7c3aed);color:#fff;margin-bottom:6px}
+.meter{height:5px;background:var(--s3);border-radius:9px;overflow:hidden;margin:6px 0}.meter>div{height:100%;background:linear-gradient(90deg,#3b82f6,#8b5cf6);width:1%;transition:width .5s}
+select.btn{appearance:none;-webkit-appearance:none;cursor:pointer;color:var(--tx)}select.btn option{background:#141d33}
+.shw{position:relative;display:grid;place-items:center}
+.shw::before{content:"";position:absolute;inset:-11px;border-radius:50%;background:conic-gradient(#34d399 calc(var(--p,0)*1%),#ffffff22 0);-webkit-mask:radial-gradient(circle,transparent 62%,#000 63%);mask:radial-gradient(circle,transparent 62%,#000 63%);opacity:0;transition:opacity .2s}
+.shw.up::before{opacity:1}
+.cnb{position:absolute;top:-8px;right:-8px;min-width:26px;height:26px;border-radius:13px;background:#3b82f6;display:grid;place-items:center;font-size:12px;font-weight:800;padding:0 7px;z-index:2;animation:bump .3s}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:1100px){.brand p{display:none}.search input{width:150px}}
 </style>
 </head>
@@ -168,6 +233,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
   <div class="tools">
    <label class="btn"><i class="fa-solid fa-folder-plus" style="color:#fbbf24"></i>PC'den Ekle<input type="file" multiple onchange="pcFiles(this.files);this.value=''"></label>
    <button class="btn" onclick="selAll()"><i class="fa-solid fa-list-check" style="color:#60a5fa"></i>Tümünü Seç</button>
+   <button id="bdir" class="btn" onclick="pickDir()" title="Gelen dosyalar bu klasöre de otomatik yazılsın"><i class="fa-solid fa-folder-tree" style="color:#34d399"></i><span id="bdirt">Klasöre Kaydet</span></button>
    <div class="sep"></div>
    <button class="btn dg" onclick="clearAll()"><i class="fa-solid fa-trash-can"></i>Temizle</button>
   </div>
@@ -184,13 +250,20 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
      <div class="ph"><span><i class="fa-solid fa-mobile-screen-button" style="color:#60a5fa"></i> Cihazlar</span><span id="dc" style="color:#60a5fa">0 aktif</span></div>
      <div id="dl"></div>
     </div>
+    <div id="pool" class="panel pool" title="Şifreli aktarım boyutu, gerçek dosya boyutundan yaklaşık %33 büyüktür">
+     <div class="ph"><span><i class="fa-solid fa-gauge-high" style="color:#a78bfa"></i> Ortak kapasite</span><span id="pst" class="chip ok" style="padding:1px 9px">Açık</span></div>
+     <div class="row"><span id="ppc" class="pc">%0</span><span id="pgb" class="mu sm">0 B / 5 GB</span></div>
+     <div class="t"><div id="pf" class="f"></div></div>
+     <small id="pnote">Tüm kullanıcıların bu ay birlikte aktardığı veri</small>
+    </div>
    </div>
-   <div class="foot"><div id="stor">Depolama...</div>Created by <b style="color:#cbd5e1">Tonoz</b></div>
+   <div class="foot"><div id="stor">Depolama...</div><div class="meter"><div id="mtr"></div></div><select id="autoc" class="btn sm" style="margin:8px 0;width:100%" onchange="localStorage.ts_ac=this.value"><option value="0">Otomatik temizleme: kapalı</option><option value="7">7 günden eski dosyaları sil</option><option value="30">30 günden eski dosyaları sil</option></select><a class="ilink" onclick="openInfo()">Nasıl çalışır? / Sık sorulan sorular</a><br>Created by <b style="color:#cbd5e1">Tonoz</b></div>
   </aside>
   <main id="drop">
    <div class="bar">
     <div class="path"><i class="fa-solid fa-folder-open"></i>Gelen Evraklar<small id="cnt">0</small></div>
     <div class="bar-r">
+     <select id="srt" class="btn" onchange="render()"><option value="t">Yeni → eski</option><option value="o">Eski → yeni</option><option value="n">Ada göre</option><option value="s">Boyuta göre</option></select>
      <div class="seg"><button id="f-all" onclick="setFlt('all')">Tümü</button><button id="f-image" onclick="setFlt('image')">Görseller</button><button id="f-pdf" onclick="setFlt('pdf')">PDF</button></div>
      <div class="search"><i class="fa-solid fa-magnifying-glass"></i><input id="q" oninput="render()" placeholder="Dosya veya cihaz ara..."></div>
     </div>
@@ -199,15 +272,17 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
    <div class="scroll">
     <div id="empty" class="empty">
      <div class="big"><i class="fa-solid fa-cloud-arrow-up"></i></div><h2>Klasör henüz boş</h2>
-     Karekodu telefondan okutun. Fotoğraf ve dosyalar şifrelenerek gelir, bu bilgisayarda saklanır ve sayfayı yenileseniz de kalır. Dosyaları sürükleyip masaüstüne bırakabilirsiniz.
+     Dosyalar şifrelenerek gelir, bu bilgisayarda saklanır ve sayfayı yenileseniz de kalır.
+     <div class="steps"><div><b>1</b>Soldaki karekodu telefondan okutun</div><div><b>2</b>Telefonda çekin, galeriden veya dosyalardan seçin</div><div><b>3</b>Burada görün, birleştirin, indirin</div></div>
     </div>
     <div id="grid" class="grid"></div>
    </div>
    <div id="selbar" class="selbar">
-    <div class="c"><span id="selc">0 seçili</span><small>Birleştirme seçim sırasına göre (1, 2, 3...)</small></div>
+    <div class="c"><span id="selc">0 seçili</span><small>Küçük resimleri sürükleyerek sırayı değiştirin</small></div><div id="strip" class="strip"></div>
     <button id="bpdf" class="btn ok" onclick="mergePDF()"><i class="fa-solid fa-file-pdf"></i>PDF Birleştir</button>
     <button id="bjpg" class="btn" onclick="mergeJPG()"><i class="fa-solid fa-arrows-up-down" style="color:#c4b5fd"></i>Alt Alta JPG</button>
-    <button class="btn pri" onclick="dlSel()"><i class="fa-solid fa-download"></i>İndir</button>
+    <button id="bscan" class="btn" onclick="scanSel()"><i class="fa-solid fa-wand-magic-sparkles" style="color:#fcd34d"></i>Net Evrak</button>
+    <button id="bdl" class="btn pri" onclick="dlSel()"><i class="fa-solid fa-download"></i>İndir</button>
     <button class="btn" onclick="clearSel()"><i class="fa-solid fa-xmark"></i>Seçimi Temizle</button>
    </div>
   </main>
@@ -223,19 +298,21 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
   <div class="mst"><span id="md"></span><div><div id="ms">Bağlanıyor...</div><div id="ml"></div></div></div>
   <div style="display:flex;gap:8px"><button class="glass" onclick="resetPC()" title="Başka bir bilgisayara bağlan"><i class="fa-solid fa-qrcode" style="color:#93c5fd"></i></button><button class="glass" onclick="rename()"><i class="fa-solid fa-user-pen" style="color:#93c5fd"></i><span id="mn"></span></button></div>
  </div>
+ <div id="mpool" class="pool"><div class="t"><div id="mpf" class="f"></div></div><span id="mpt"></span></div>
  <div id="mu" class="hidden"><div class="l"><span id="mun"></span><span id="mup"></span></div><div class="pb"><div id="mub" style="width:0;background:linear-gradient(90deg,#3b82f6,#34d399)"></div></div></div>
- <div class="side"><button id="mt" class="cb" onclick="torch()"><i class="fa-solid fa-bolt"></i></button><button class="cb" onclick="flip()"><i class="fa-solid fa-camera-rotate"></i></button><button id="mg" class="cb" onclick="grid3()" title="Izgara"><i class="fa-solid fa-border-all"></i></button></div>
+ <div class="side"><button id="mt" class="cb" onclick="torch()"><i class="fa-solid fa-bolt"></i></button><button class="cb" onclick="flip()"><i class="fa-solid fa-camera-rotate"></i></button><button id="mg" class="cb" onclick="grid3()" title="Izgara"><i class="fa-solid fa-border-all"></i></button><button id="mm" class="cb" onclick="docMode()" title="Çoklu sayfa (belge) modu"><i class="fa-solid fa-layer-group"></i></button></div>
  <div id="fs"><i class="fa-solid fa-expand"></i> Tam ekran çekim · gördüğünüz her şey gönderilir</div>
+ <button id="mfin" class="btn pri hidden" onclick="docFinish()" style="position:absolute;z-index:6;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 150px)"><i class="fa-solid fa-file-pdf"></i>Bitir ve PDF Gönder</button>
  <div id="mh"></div>
  <div class="mbot">
   <label class="rb"><span class="c"><i class="fa-regular fa-images"></i></span>Galeri<input type="file" accept="image/*,video/*" multiple onchange="pick(this)"></label>
-  <button class="shut" onclick="shoot()"><i class="fa-solid fa-camera"></i></button>
+  <div class="shw" id="shw"><button class="shut" onclick="shoot()"><i class="fa-solid fa-camera"></i></button><span id="cnb" class="cnb hidden">0</span></div>
   <label class="rb b"><span class="c"><i class="fa-solid fa-file-arrow-up"></i></span>Dosya<input type="file" multiple onchange="pick(this)"></label>
  </div>
  <div id="scanui">
   <div id="sgate"><div class="big"><i class="fa-solid fa-qrcode"></i></div><h3>Bilgisayara bağlanın</h3>
    <p>Bilgisayar ekranındaki karekodu okutmak için kameraya izin verin. İsterseniz telefonun kendi kamerasıyla da karekodu okutabilirsiniz.</p>
-   <div id="serr"></div><button class="btn pri" onclick="scanStart()" style="width:100%;justify-content:center;height:46px"><i class="fa-solid fa-camera"></i>Kamerayı Aç ve Karekodu Okut</button></div>
+   <div id="serr"></div><button class="btn pri" onclick="scanStart()" style="width:100%;justify-content:center;height:46px"><i class="fa-solid fa-camera"></i>Kamerayı Aç ve Karekodu Okut</button><div style="margin-top:14px"><a class="ilink" onclick="openInfo()">TonoScan nedir?</a></div></div>
   <div id="sview" class="hidden"><div class="sq"><i class="c1"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i><b></b></div><p class="sh">Bilgisayar ekranındaki karekodu çerçeveye alın</p></div>
  </div>
  <div id="fl"></div>
@@ -275,14 +352,34 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
  <div class="mb"><div id="spg" class="pgs"></div></div>
 </div>
 <div id="pvm" class="modal">
- <div class="mh"><b id="pvt"></b><button class="btn" onclick="show('pvm',0);$('pvb').innerHTML=''"><i class="fa-solid fa-xmark"></i>Kapat</button></div>
+ <div class="mh"><b id="pvt"></b><div class="tools"><button class="btn" onclick="pvNav(-1)"><i class="fa-solid fa-chevron-left"></i></button><button class="btn" onclick="pvNav(1)"><i class="fa-solid fa-chevron-right"></i></button><button id="pvc" class="btn" onclick="copyImg()"><i class="fa-regular fa-copy"></i>Kopyala</button><button class="btn" onclick="closePv()"><i class="fa-solid fa-xmark"></i>Kapat</button></div></div>
  <div id="pvb" class="mb"></div>
 </div>
+<section id="info" class="modal">
+ <div class="mh"><b>TonoScan hakkında</b><button class="btn pri" onclick="closeInfo()"><i class="fa-solid fa-arrow-right"></i>Uygulamayı Aç</button></div>
+ <div class="mb" style="align-items:flex-start"><article class="doc">
+  <h1>Telefondan Bilgisayara Karekodla Dosya, Fotoğraf ve Belge Aktarma</h1>
+  <p>TonoScan, telefonunuzun kamerasıyla belge taramanızı ve fotoğraf, PDF veya herhangi bir dosyayı karekod okutarak bilgisayara anında göndermenizi sağlayan ücretsiz bir web aracıdır. Kablo, uygulama kurulumu veya üyelik gerekmez; gönderilen her şey uçtan uca şifrelenir.</p>
+  <h2>Nasıl çalışır?</h2>
+  <ol><li>Bilgisayarda TonoScan sayfasını açın, ekrandaki karekodu telefonunuzun kamerasıyla okutun.</li><li>Telefonda belgeyi çekin, galeriden fotoğraf seçin veya dosya gönderin. Birden fazla sayfayı tek PDF'te toplayabilirsiniz.</li><li>Dosyalar bilgisayarınızda anında görünür. Kırpın, birleştirin, PDF yapın veya ZIP olarak indirin.</li></ol>
+  <h2>Neler yapabilirsiniz?</h2>
+  <ul><li>Telefonla belge tarama ve çoklu sayfa PDF oluşturma</li><li>Fotoğraf kırpma, döndürme ve net evrak (fotokopi) filtresi</li><li>PDF birleştirme, sayfa silme ve sayfaları ayırma</li><li>Görselleri alt alta tek resimde birleştirme</li><li>Seçim sırasına göre birleştirme ve toplu ZIP indirme</li><li>Aynı anda birden fazla telefondan dosya alma</li><li>250 MB'a kadar tek dosya aktarımı</li><li>Gelen dosyaları bilgisayarda seçtiğiniz klasöre otomatik kaydetme</li></ul>
+  <h2>Güvenlik ve gizlilik</h2>
+  <p>Dosyalar telefondan çıkmadan AES-256-GCM ile şifrelenir. Şifre anahtarı karekodun adres kısmında (# işaretinden sonra) bulunur ve hiçbir sunucuya gönderilmez. Dosyalar sunucuda kalıcı olarak saklanmaz; aktarım sırasında yalnızca şifreli parçalar kısa süre bulunur ve alındıkları anda silinir. Alınan dosyalar sadece sizin bilgisayarınızın tarayıcı deposunda durur ve istediğiniz zaman silebilirsiniz. Kullanıcı hesabı veya kişisel veri toplanmaz.</p>
+  <h2>Sık sorulan sorular</h2>
+  <details><summary>TonoScan'i kurmam gerekir mi?</summary><p>Hayır. Bilgisayarda sayfayı açıp telefonla karekodu okutmanız yeterli. Uygulama kurulumu ve üyelik gerekmez.</p></details>
+  <details><summary>Dosyalarım güvende mi?</summary><p>Dosyalar telefondan çıkmadan AES-256-GCM ile şifrelenir. Şifre anahtarı karekodun adres kısmında kalır ve hiçbir sunucuya gönderilmez. Dosyalar sunucuda kalıcı saklanmaz, yalnızca bilgisayarınızın tarayıcı deposunda durur.</p></details>
+  <details><summary>En fazla ne kadar büyük dosya gönderilebilir?</summary><p>Tek dosya için sınır 250 MB'dır. Fotoğraf, PDF, video ve diğer dosya türleri gönderilebilir.</p></details>
+  <details><summary>Aynı anda birden fazla telefon bağlanabilir mi?</summary><p>Evet. Aynı karekodu okutan her telefon bilgisayardan izin alarak bağlanır, gelen dosyalar gönderen cihazın rengiyle ayrılır.</p></details>
+  <details><summary>Hangi tarayıcılar destekleniyor?</summary><p>Bilgisayarda Chrome ve Edge önerilir. Telefonda güncel Chrome veya Safari kullanabilirsiniz. Klasöre otomatik kaydetme özelliği yalnızca Chrome ve Edge'de çalışır.</p></details>
+  <p style="margin-top:28px"><button class="btn pri" onclick="closeInfo()"><i class="fa-solid fa-qrcode"></i>Uygulamayı Aç</button></p>
+ </article></div>
+</section>
 <div id="tt" class="toast hidden"></div>
 
 <script>
 const FB={apiKey:"AIzaSyC1yFeAKzqziGz_Z0C8RHgSabSRb7Wff_M",authDomain:"tarama-646dc.firebaseapp.com",databaseURL:"https://tarama-646dc-default-rtdb.europe-west1.firebasedatabase.app",projectId:"tarama-646dc",storageBucket:"tarama-646dc.firebasestorage.app",messagingSenderId:"50610490478",appId:"1:50610490478:web:7b6c5e0d731c1942c6aa7f"};
-const MAX=250*1024*1024,CH=192*1024,WIN=4,PAL=['#3b82f6','#10b981','#a855f7','#f59e0b','#f43f5e','#06b6d4'];
+const APPCHECK_KEY="",MAX=250*1024*1024,CH=192*1024,WIN=6,PAL=['#3b82f6','#10b981','#a855f7','#f59e0b','#f43f5e','#06b6d4'];
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 const $=id=>document.getElementById(id),te=new TextEncoder(),td=new TextDecoder();
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -302,14 +399,16 @@ let db,room,K,files=[],sel=[],devs={},rx={},flt='all',cr=null,edF='none',ed=null
 async function initKey(k){K=await crypto.subtle.importKey('raw',un64u(k),'AES-GCM',false,['encrypt','decrypt'])}
 async function enc(d,aad){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:te.encode(aad)},K,typeof d==='string'?te.encode(d):d));const o=new Uint8Array(12+ct.length);o.set(iv);o.set(ct,12);return b64(o)}
 async function dec(s,aad){const u=unb64(s);return crypto.subtle.decrypt({name:'AES-GCM',iv:u.subarray(0,12),additionalData:te.encode(aad)},K,u.subarray(12))}
-async function fbInit(){firebase.initializeApp(FB);await firebase.auth().signInAnonymously();db=firebase.database()}
+async function fbInit(){firebase.initializeApp(FB);if(APPCHECK_KEY&&firebase.appCheck)firebase.appCheck().activate(APPCHECK_KEY,true);await firebase.auth().signInAnonymously();db=firebase.database()}
 const R=p=>db.ref(`rooms/${room}/${p}`);
 
 /* ---------- Yerel depo (IndexedDB) ---------- */
 let idb;
-const idbOpen=()=>new Promise((res,rej)=>{const r=indexedDB.open('tonoscan',1);r.onupgradeneeded=()=>r.result.createObjectStore('files',{keyPath:'id'});r.onsuccess=()=>{idb=r.result;res()};r.onerror=()=>rej(r.error)});
+const idbOpen=()=>new Promise((res,rej)=>{const r=indexedDB.open('tonoscan',2);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('files'))d.createObjectStore('files',{keyPath:'id'});if(!d.objectStoreNames.contains('kv'))d.createObjectStore('kv')};r.onsuccess=()=>{idb=r.result;res()};r.onerror=()=>rej(r.error)});
 const idbTx=(m,fn)=>new Promise((res,rej)=>{const t=idb.transaction('files',m),s=t.objectStore('files'),q=fn(s);t.oncomplete=()=>res(q&&q.result);t.onerror=()=>rej(t.error)});
-const idbPut=f=>{const{url,...r}=f;return idbTx('readwrite',s=>s.put(r))};
+const kvPut=(k,v)=>new Promise(r=>{const t=idb.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=r;t.onerror=r});
+const kvGet=k=>new Promise(r=>{const q=idb.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)});
+const idbPut=f=>{const{url,fresh,...r}=f;return idbTx('readwrite',s=>s.put(r))};
 const idbDel=id=>idbTx('readwrite',s=>s.delete(id));
 const idbClear=()=>idbTx('readwrite',s=>s.clear());
 const idbAll=()=>idbTx('readonly',s=>s.getAll());
@@ -322,22 +421,25 @@ async function makeThumb(f){
  }catch(e){}
 }
 async function addFile({name,mime,blob,sender,color}){
- const f={id:rid(8),name,mime:mime||blob.type||'application/octet-stream',size:blob.size,blob,sender,color,time:Date.now(),type:'other'};
- await makeThumb(f);f.url=URL.createObjectURL(blob);files.unshift(f);await idbPut(f);render();storInfo();return f}
+ const f={id:rid(8),name,mime:mime||blob.type||'application/octet-stream',size:blob.size,blob,sender,color,time:Date.now(),type:'other',fresh:true};
+ await makeThumb(f);f.url=URL.createObjectURL(blob);files.unshift(f);await idbPut(f);render();storInfo();setTimeout(()=>{f.fresh=false},900);if(f.sender!=='Bu Bilgisayar')dirSave(f);return f}
 const get=id=>files.find(f=>f.id===id);
 
 /* ---------- PC ---------- */
 async function pcInit(){
  $('pc').classList.add('on');
+ if(navigator.locks){const got=await new Promise(r=>navigator.locks.request('tonoscan-pc',{ifAvailable:true},l=>{if(!l){r(false);return}r(true);return new Promise(()=>{})}));
+  if(!got){document.body.innerHTML='<div style="height:100vh;display:grid;place-items:center;text-align:center;padding:24px;font-family:Inter,sans-serif;color:#e8eefb"><div><h2 style="margin-bottom:8px">TonoScan başka bir sekmede açık</h2><p style="color:#8795b0">Aynı anda tek sekme kullanılabilir. Diğer sekmeyi kapatıp bu sayfayı yenileyin.</p></div></div>';return}}
  await idbOpen();
  files=(await idbAll()).sort((a,b)=>b.time-a.time).map(r=>({...r,url:URL.createObjectURL(r.blob)}));
  setFlt('all');storInfo();navigator.storage&&navigator.storage.persist&&navigator.storage.persist();
+ dirH=await kvGet('dir')||null;dirUi();autoClean();
  if(!localStorage.ts_room){localStorage.ts_room=rid(16);localStorage.ts_key=rid(32);localStorage.ts_dev='{}'}
  room=localStorage.ts_room;await initKey(localStorage.ts_key);
  const url=location.origin+location.pathname+'#r='+room+'&k='+localStorage.ts_key;window.joinUrl=url;
  new QRCode($('qr1'),{text:url,width:170,height:170,correctLevel:QRCode.CorrectLevel.M});
  new QRCode($('qr2'),{text:url,width:280,height:280,correctLevel:QRCode.CorrectLevel.M});
- try{await fbInit()}catch(e){$('st').className='chip bad';$('st').textContent='Firebase hatası: '+(e.code||e.message);return}
+ try{await fbInit()}catch(e){$('st').className='chip bad';$('st').textContent=trErr(e);return}
  let conn=false;const meta=R('meta');
  const setMeta=()=>{meta.onDisconnect().remove();meta.set({u:firebase.auth().currentUser.uid,t:firebase.database.ServerValue.TIMESTAMP})};
  db.ref('.info/connected').on('value',s=>{conn=!!s.val();const e=$('st');if(conn){setMeta();e.className='chip ok';e.textContent='Şifreli köprü aktif'}else{e.className='chip bad';e.textContent='Bağlantı yok'}});
@@ -345,8 +447,18 @@ async function pcInit(){
  R('req').on('child_added',onReq);R('req').on('child_changed',onReq);
  R('req').on('child_removed',s=>{const d=devs[s.key];if(d){d.online=false;renderDevs()}});
  R('inbox').on('child_added',onInbox);R('inbox').on('child_removed',s=>abortRx(s.key));
+ db.ref('usage/pool').on('value',x=>{pool=x.val();poolUi()});setInterval(()=>$('pool').classList.toggle('live',Object.keys(rx).length>0),800);setInterval(poolUi,60000);poolUi();
  const dz=$('drop');dz.ondragover=e=>e.preventDefault();dz.ondrop=e=>{e.preventDefault();if(e.dataTransfer.files.length)pcFiles(e.dataTransfer.files)};
  renderDevs();
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden){unread=0;document.title=baseT}});
+ document.addEventListener('keydown',e=>{
+  if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  if($('pvm').classList.contains('on')){if(e.key==='ArrowRight')pvNav(1);else if(e.key==='ArrowLeft')pvNav(-1);else if(e.key==='Escape')closePv();return}
+  if(e.key==='Escape'){if($('edm').classList.contains('on'))closeEd();document.querySelectorAll('.modal.on').forEach(m=>m.classList.remove('on'));clearSel()}
+  else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'){e.preventDefault();selAll()}
+  else if(e.key==='Delete'&&sel.length)[...sel].forEach(del);
+ });
+ document.addEventListener('paste',e=>{const l=[...((e.clipboardData&&e.clipboardData.files)||[])];if(l.length)pcFiles(l)});
 }
 const apr=()=>JSON.parse(localStorage.ts_dev||'{}');
 async function onReq(s){
@@ -373,7 +485,7 @@ async function onInbox(s){
  t.fn=t.ref.on('child_added',async cs=>{
   const i=+cs.key;if(!rx[key]||t.parts[i])return;let b;
   try{b=await dec(cs.val(),key+':'+i)}catch{cs.ref.remove();return}
-  if(t.parts[i])return;t.parts[i]=b;t.c++;cs.ref.remove();R('acks/'+key).set(t.c);
+  if(t.parts[i])return;t.parts[i]=b;t.c++;qAdd(cs.val().length);cs.ref.remove();R('acks/'+key).set(t.c);
   prog(key,m.name,Math.floor(t.c/t.n*100),d);
   if(t.c===t.n)await fin(key);
  });
@@ -383,7 +495,8 @@ async function fin(key){
  const blob=new Blob(t.parts,{type:t.m.mime});t.parts=null;
  if(blob.size!==t.m.size){toast('Dosya doğrulanamadı: '+t.m.name);$('tr-'+key)?.remove();return}
  const d=devs[t.id];if(d)d.n++;
- await addFile({name:t.m.name,mime:t.m.mime,blob,sender:d?d.name:'Telefon',color:d?d.color:PAL[0]});
+ if(files.some(x=>x.name===t.m.name&&x.size===blob.size))toast('Dikkat: «'+t.m.name+'» aynı ad ve boyutta daha önce gelmişti');
+ const nf=await addFile({name:t.m.name,mime:t.m.mime,blob,sender:d?d.name:'Telefon',color:d?d.color:PAL[0]});notify(nf);
  setTimeout(()=>$('tr-'+key)?.remove(),400);renderDevs();
 }
 function abortRx(key){const t=rx[key];if(!t)return;t.ref.off('child_added',t.fn);delete rx[key];$('tr-'+key)?.remove();toast('Aktarım yarıda kesildi: '+t.m.name)}
@@ -397,43 +510,123 @@ function newRoom(){
  db.ref('rooms/'+room).remove().finally(()=>{['ts_room','ts_key','ts_dev'].forEach(k=>localStorage.removeItem(k));location.reload()});
 }
 function copyLink(){navigator.clipboard.writeText(window.joinUrl);toast('Bağlantı kopyalandı')}
-async function storInfo(){if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate();$('stor').textContent=`Kullanılan: ${fmt(e.usage)} • Tarayıcı üst sınırı: ${fmt(e.quota)}`}}
+const LOCAL_MAX=5*1024**3;
+function storInfo(){
+ const b=files.reduce((a,f)=>a+f.size,0),p=Math.min(100,b/LOCAL_MAX*100),m=$('mtr');
+ $('stor').textContent='Bu bilgisayarda: '+fmt(b)+' / 5 GB';
+ m.style.width=Math.max(1,p)+'%';m.parentNode.className='meter'+(p>=100?' bad':p>=80?' warn':'');
+ if(p>=80&&!window._lw){window._lw=1;toast(p>=100?'Yerel depo sınırına ulaştınız (5 GB). Eski dosyaları silin.':'Yerel depo %80 doldu. Eski dosyaları silmeyi düşünün.')}
+}
 
 /* ---------- Gezgin ---------- */
 function setFlt(k){flt=k;['all','image','pdf'].forEach(x=>$('f-'+x).classList.toggle('on',x===k));render()}
 function render(){
  const q=$('q').value.toLowerCase();$('cnt').textContent=files.length;
- const l=files.filter(f=>(flt==='all'||f.type===flt)&&(f.name+f.sender).toLowerCase().includes(q));
+ const l=files.filter(f=>(flt==='all'||f.type===flt)&&(f.name+f.sender).toLowerCase().includes(q)),so=$('srt').value;
+ l.sort(so==='o'?(a,b)=>a.time-b.time:so==='n'?(a,b)=>a.name.localeCompare(b.name,'tr'):so==='s'?(a,b)=>b.size-a.size:(a,b)=>b.time-a.time);
  $('empty').classList.toggle('hidden',files.length>0);
  $('grid').innerHTML=l.map(f=>{
   const n=sel.indexOf(f.id)+1,ext=(f.name.split('.').pop()||'').slice(0,5).toUpperCase();
   const lbl=f.type==='pdf'?`PDF · ${f.pages||'?'} sf`:f.type==='video'?'VİDEO':ext;
-  return`<div class="card ${n?'sel':''}" draggable="true" ondragstart="dragOut(event,'${f.id}')">
+  return`<div class="card ${n?'sel':''} ${f.fresh?'new':''}" draggable="true" ondragstart="dragOut(event,'${f.id}')">
   <div class="th" onclick="prev('${f.id}')">${f.thumb?`<img src="${f.thumb}" alt="">`:`<i class="fa-solid ${f.type==='video'?'fa-film':'fa-file-lines'} ico"></i>`}
    <div class="num" title="Seçim sırası" onclick="event.stopPropagation();tog('${f.id}')">${n||''}</div>
    <span class="who" style="background:${f.color}33;color:${f.color}" title="${esc(f.sender)}">${esc(f.sender)}</span>
    <span class="tag ${f.type==='pdf'?'pdf':''}">${esc(lbl)}</span></div>
-  <div class="ci"><div class="nm" title="${esc(f.name)}">${esc(f.name)}</div><div class="meta"><span>${fmt(f.size)}</span><span>${new Date(f.time).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</span></div>
+  <div class="ci"><div class="nm" title="${esc(f.name)} (çift tıkla: yeniden adlandır)" ondblclick="renameFile('${f.id}')">${esc(f.name)}</div><div class="meta"><span>${fmt(f.size)}</span><span>${new Date(f.time).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}</span></div>
   <div class="acts">${f.type==='image'?`<button class="btn sm" onclick="edit('${f.id}')"><i class="fa-solid fa-crop-simple"></i>Düzenle</button>`:''}${f.type==='pdf'?`<button class="btn sm" onclick="split('${f.id}')"><i class="fa-solid fa-scissors"></i>Sayfalar</button>`:''}<span class="sp"><button class="btn sm ok" title="İndir" onclick="dl('${f.id}')"><i class="fa-solid fa-download"></i></button><button class="btn sm dg" title="Sil" onclick="del('${f.id}')"><i class="fa-solid fa-trash-can"></i></button></span></div></div></div>`}).join('');
  renderBar();
 }
 function renderBar(){
  const it=sel.map(get).filter(Boolean);$('selbar').classList.toggle('on',it.length>0);$('selc').textContent=it.length+' dosya seçili';
- $('bpdf').disabled=!it.some(f=>f.type==='pdf'||f.type==='image');$('bjpg').disabled=it.filter(f=>f.type==='image').length<2;
+ $('bpdf').disabled=!it.some(f=>f.type==='pdf'||f.type==='image');$('bjpg').disabled=it.filter(f=>f.type==='image').length<2;$('bscan').disabled=!it.some(f=>f.type==='image');
+ $('bdl').innerHTML='<i class="fa-solid fa-download"></i>'+(it.length>1?'ZIP İndir':'İndir');
+ $('strip').innerHTML=it.map((f,i)=>`<div class="sti" draggable="true" style="background-image:url('${f.thumb||''}')" title="${esc(f.name)}" ondragstart="stDrag(event,${i})" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="stDrop(event,${i})"><b>${i+1}</b></div>`).join('');
 }
 function dragOut(e,id){const f=get(id);e.dataTransfer.setData('DownloadURL',`${f.mime}:${f.name}:${f.url}`)}
 function tog(id){const i=sel.indexOf(id);i>=0?sel.splice(i,1):sel.push(id);render()}
 function selAll(){const all=files.length&&files.every(f=>sel.includes(f.id));sel=all?[]:[...files].reverse().map(f=>f.id);render()}
 function clearSel(){sel=[];render()}
 function dl(id){const f=get(id),a=document.createElement('a');a.href=f.url;a.download=f.name;a.click()}
-function dlSel(){const s=sel.map(get).filter(Boolean);if(!s.length)return toast('Dosya seçin');s.forEach((f,i)=>setTimeout(()=>dl(f.id),i*300))}
-async function del(id){const f=get(id);URL.revokeObjectURL(f.url);files=files.filter(x=>x.id!==id);sel=sel.filter(x=>x!==id);await idbDel(id);render();storInfo()}
+async function dlSel(){
+ const s=sel.map(get).filter(Boolean);if(!s.length)return toast('Dosya seçin');
+ if(s.length===1||!window.JSZip)return s.forEach((f,i)=>setTimeout(()=>dl(f.id),i*300));
+ toast('ZIP hazırlanıyor...');const z=new JSZip(),used={};
+ s.forEach((f,i)=>{let n=f.name;if(used[n])n=(i+1)+'_'+n;used[n]=1;z.file(n,f.blob)});
+ const b=await z.generateAsync({type:'blob',compression:'STORE'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='TonoScan_'+new Date().toISOString().slice(0,10)+'.zip';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+}
+const delQ={};
+function del(id){
+ const f=get(id);if(!f)return;files=files.filter(x=>x.id!==id);sel=sel.filter(x=>x!==id);render();
+ const t=setTimeout(async()=>{delete delQ[id];URL.revokeObjectURL(f.url);await idbDel(id);storInfo()},7000);delQ[id]=t;
+ undoToast('«'+f.name+'» silindi',()=>{clearTimeout(t);delete delQ[id];files.push(f);files.sort((a,b)=>b.time-a.time);render()});
+}
+function undoToast(m,fn){const t=$('tt');t.innerHTML=esc(m)+' <button class="btn sm" style="margin-left:10px" id="ub">Geri al</button>';t.classList.remove('hidden');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add('hidden'),7000);$('ub').onclick=()=>{fn();t.classList.add('hidden')}}
 async function clearAll(){if(!files.length||!confirm('Bu bilgisayardaki tüm dosyalar kalıcı olarak silinecek. Emin misiniz?'))return;files.forEach(f=>URL.revokeObjectURL(f.url));files=[];sel=[];await idbClear();render();storInfo()}
 async function pcFiles(l){for(const f of l)await addFile({name:f.name,mime:f.type,blob:f,sender:'Bu Bilgisayar',color:PAL[1]})}
 function prev(id){
- const f=get(id);$('pvt').textContent=f.name;
+ const f=get(id);pvId=id;$('pvt').textContent=f.name;$('pvc').classList.toggle('hidden',f.type!=='image');
  $('pvb').innerHTML=f.type==='image'?`<img src="${f.url}" style="max-width:100%;max-height:100%;border-radius:12px">`:f.type==='pdf'?`<iframe src="${f.url}" style="width:100%;height:100%;border:0;border-radius:12px;background:#fff"></iframe>`:f.type==='video'?`<video src="${f.url}" controls style="max-width:100%;max-height:100%"></video>`:`<button class="btn pri" onclick="dl('${f.id}')"><i class="fa-solid fa-download"></i>Dosyayı İndir (${fmt(f.size)})</button>`;
  show('pvm',1);
+}
+
+/* ---------- Ek PC araçları ---------- */
+let pvId=null,dragI=-1,dirH=null,unread=0;const baseT=document.title;
+function trErr(e){const c=(e&&(e.code||e.message))||'';return /operation-not-allowed|admin-restricted/.test(c)?'Anonymous giriş kapalı (Firebase → Authentication)':/network|offline/.test(c)?'İnternet bağlantısı yok':/unauthorized-domain/.test(c)?"Bu alan adı Firebase'de yetkili değil":/permission|PERMISSION/.test(c)?'Veritabanı kuralları izin vermiyor':'Bağlantı hatası: '+c}
+function stDrag(e,i){dragI=i;e.dataTransfer.effectAllowed='move'}
+function stDrop(e,j){e.preventDefault();if(dragI<0||dragI===j)return;const x=sel.splice(dragI,1)[0];sel.splice(j,0,x);dragI=-1;render()}
+function pvNav(d){const l=files.filter(f=>flt==='all'||f.type===flt),i=l.findIndex(f=>f.id===pvId);if(i<0)return;prev(l[(i+d+l.length)%l.length].id)}
+function closePv(){show('pvm',0);$('pvb').innerHTML='';pvId=null}
+async function copyImg(){const f=get(pvId);if(!f)return;try{const b=await createImageBitmap(f.blob),c=document.createElement('canvas');c.width=b.width;c.height=b.height;c.getContext('2d').drawImage(b,0,0);const pb=await new Promise(r=>c.toBlob(r,'image/png'));await navigator.clipboard.write([new ClipboardItem({'image/png':pb})]);toast('Görsel panoya kopyalandı')}catch(e){toast('Kopyalanamadı')}}
+async function renameFile(id){const f=get(id),n=prompt('Yeni ad:',f.name);if(!n||!n.trim())return;f.name=n.trim();await idbPut(f);render()}
+async function scanSel(){
+ const s=sel.map(get).filter(f=>f&&f.type==='image');if(!s.length)return;toast('Net evrak uygulanıyor...');
+ for(const f of s){const b=await createImageBitmap(f.blob),c=document.createElement('canvas');c.width=b.width;c.height=b.height;const x=c.getContext('2d');x.filter='grayscale(1) contrast(1.85) brightness(1.12)';x.drawImage(b,0,0);const nb=await toBlob(c,.92);URL.revokeObjectURL(f.url);Object.assign(f,{blob:nb,size:nb.size,mime:'image/jpeg',url:URL.createObjectURL(nb)});await makeThumb(f);await idbPut(f)}
+ render();storInfo();toast(s.length+' görsele net evrak filtresi uygulandı');
+}
+function beep(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.frequency.value=880;g.gain.setValueAtTime(.12,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.25);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.25)}catch(e){}}
+function notify(f){if(document.hidden){unread++;document.title='('+unread+' yeni) '+baseT}beep()}
+/* ---------- Ortak kapasite havuzu (5 GB / ay) ---------- */
+const CAP=5*1024**3;let pool=null,qPend=0,qT=null;
+const nextMonth=()=>{const d=new Date();return Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1)};
+function poolState(){const now=Date.now();let b=0,u=null;if(pool&&now<pool.u){b=pool.b;u=pool.u}return{b,u,p:Math.min(100,b/CAP*100),full:b>=CAP}}
+function poolUi(){
+ const s=poolState(),cls=s.p>=90?'bad':s.p>=60?'warn':'',days=s.u?Math.max(1,Math.ceil((s.u-Date.now())/864e5)):null;
+ const pct=s.p<10?s.p.toFixed(1).replace('.',','):Math.round(s.p),pc=$('pool'),mp=$('mpool');
+ if(pc){
+  pc.classList.remove('warn','bad');cls&&pc.classList.add(cls);
+  $('pf').style.width=Math.max(s.b?1.5:0,s.p)+'%';$('ppc').textContent='%'+pct;$('pgb').textContent=fmt(s.b)+' / 5 GB';
+  const st=$('pst');st.className='chip '+(s.p>=90?'bad':s.p>=60?'':'ok');st.style.padding='1px 9px';st.textContent=s.full?'Doldu':s.p>=60?'Yoğun':'Açık';
+  $('pnote').textContent=s.full?'Ortak kapasite doldu. '+days+' gün sonra yenilenir, o zamana kadar yeni aktarım yapılamaz.':'Tüm kullanıcıların bu ay birlikte aktardığı veri'+(days?' · '+days+' gün sonra yenilenir':'');
+ }
+ if(mp){
+  mp.classList.add('on');mp.classList.remove('warn','bad');cls&&mp.classList.add(cls);
+  $('mpf').style.width=Math.max(s.b?3:0,s.p)+'%';$('mpt').textContent=s.full?'Kapasite doldu':'Ortak kapasite %'+pct;
+ }
+}
+/* PC: aldığı her parçanın boyutunu biriktirip birkaç saniyede bir havuza ekler */
+function qAdd(n){qPend+=n;if(!qT)qT=setTimeout(qFlush,2500)}
+function qFlush(){
+ qT=null;if(!qPend||!db)return;const n=Math.min(qPend,24e6);qPend-=n;
+ db.ref('usage/pool').transaction(c=>{const now=Date.now();if(!c||now>=c.u)return{b:n,u:nextMonth()};return{b:c.b+n,u:c.u}},()=>{if(qPend&&!qT)qT=setTimeout(qFlush,2500)});
+}
+async function autoClean(){const d=+localStorage.ts_ac||0;$('autoc').value=String(d);if(!d)return;const lim=Date.now()-d*864e5,old=files.filter(f=>f.time<lim);for(const f of old){URL.revokeObjectURL(f.url);await idbDel(f.id)}if(old.length){files=files.filter(f=>f.time>=lim);sel=[];render();toast(old.length+' eski dosya otomatik silindi')}}
+/* Klasöre otomatik kaydetme (Chrome/Edge) */
+async function dirOk(){return !!dirH&&(await dirH.queryPermission({mode:'readwrite'}))==='granted'}
+async function dirUi(){const ok=await dirOk();$('bdirt').textContent=!dirH?'Klasöre Kaydet':ok?dirH.name:'İzni Yenile';$('bdir').classList.toggle('on',ok)}
+async function pickDir(){
+ if(!window.showDirectoryPicker)return toast('Bu tarayıcı klasöre kaydetmeyi desteklemiyor (Chrome veya Edge kullanın)');
+ if(dirH){
+  if(!(await dirOk())){if((await dirH.requestPermission({mode:'readwrite'}))==='granted'){dirUi();return toast('Klasöre kaydetme etkin')}}
+  if(confirm('Klasöre otomatik kaydetme kapatılsın mı?')){dirH=null;await kvPut('dir',null);dirUi()}return;
+ }
+ try{dirH=await showDirectoryPicker({mode:'readwrite'});await kvPut('dir',dirH);dirUi();toast('Gelen dosyalar «'+dirH.name+'» klasörüne de yazılacak')}catch(e){}
+}
+async function dirSave(f){
+ try{if(!(await dirOk()))return;let n=f.name.replace(/[\\/:*?"<>|]/g,'_');
+  try{await dirH.getFileHandle(n);n=n.replace(/(\.\w+)?$/,'_'+Date.now()+'$1')}catch(e){}
+  const w=await(await dirH.getFileHandle(n,{create:true})).createWritable();await w.write(f.blob);await w.close();
+ }catch(e){}
 }
 
 /* ---------- Birleştirme (seçim sırasına göre) ---------- */
@@ -532,6 +725,7 @@ async function connectMode(r,k){
  dev=localStorage.ts_did||(localStorage.ts_did=rid(8));
  R('meta').on('value',s=>{pcUp=s.exists();ui();if(pcUp)hello()});
  R('dev/'+dev).on('value',s=>{state=s.val();ui()});
+ db.ref('usage/pool').on('value',x=>{pool=x.val();poolUi()});setInterval(poolUi,60000);poolUi();
  ui();
 }
 /* Karekod okuma ekranı (PC'ye henüz bağlanılmadıysa) */
@@ -583,7 +777,7 @@ function saveName(){
 async function startCam(){
  stream&&stream.getTracks().forEach(t=>t.stop());tOn=false;$('mt').classList.remove('on');
  try{
-  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}},audio:false});
+  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:3840},height:{ideal:2160}},audio:false});
   const v=$('mv');v.srcObject=stream;v.play().catch(()=>{});
   stream.getVideoTracks()[0].onended=()=>{if(!document.hidden)startCam()};
   return true;
@@ -602,18 +796,39 @@ async function shoot(){
  const vw=v.videoWidth,vh=v.videoHeight,cw=v.clientWidth,ch=v.clientHeight,k=Math.max(cw/vw,ch/vh),sw=cw/k,sh=ch/k;
  const c=document.createElement('canvas');c.width=Math.round(sw);c.height=Math.round(sh);
  c.getContext('2d').drawImage(v,(vw-sw)/2,(vh-sh)/2,sw,sh,0,0,c.width,c.height);
- enqueue([new File([await toBlob(c,.92)],'Kamera_'+new Date().toLocaleTimeString('tr-TR').replace(/:/g,'')+'.jpg',{type:'image/jpeg'})]);
+ const bl=await toBlob(c,.92);navigator.vibrate&&navigator.vibrate(15);
+ if(docOn){docPg.push(bl);docUi();return}
+ enqueue([new File([bl],'Kamera_'+new Date().toLocaleTimeString('tr-TR').replace(/:/g,'')+'.jpg',{type:'image/jpeg'})]);
+}
+/* Çoklu sayfa (belge) modu: çekilen sayfalar tek PDF olur */
+let docOn=false,docPg=[];
+function docMode(){
+ if(docOn&&docPg.length&&!confirm('Çekilen '+docPg.length+' sayfa silinecek. Belge modundan çıkılsın mı?'))return;
+ docOn=!docOn;if(!docOn)docPg=[];$('mm').classList.toggle('on',docOn);docUi();toast(docOn?'Belge modu: sayfaları çekin, sonra «Bitir» deyin':'Belge modu kapalı');
+}
+function docUi(){const c=$('cnb');c.textContent=docPg.length;c.classList.toggle('hidden',!docPg.length);$('mfin').classList.toggle('hidden',!docPg.length)}
+async function docFinish(){
+ if(!docPg.length)return;const out=await PDFLib.PDFDocument.create();
+ for(const b of docPg){const img=await out.embedJpg(await b.arrayBuffer()),k=595/img.width,pg=out.addPage([595,img.height*k]);pg.drawImage(img,{x:0,y:0,width:595,height:img.height*k})}
+ const pdf=new File([await out.save()],'Belge_'+new Date().toLocaleTimeString('tr-TR').replace(/:/g,'')+'.pdf',{type:'application/pdf'});
+ docPg=[];docUi();enqueue([pdf]);
+}
+function failChip(f,e){
+ toast('Gönderilemedi: '+(e.message||e));$('mu').classList.add('hidden');
+ const r=document.createElement('div');r.style.cssText='pointer-events:auto;color:#fca5a5;display:flex;gap:8px;align-items:center';r.innerHTML='<span>✗ '+esc(f.name)+'</span>';
+ const b=document.createElement('button');b.className='btn sm';b.textContent='Tekrar dene';b.onclick=()=>{r.remove();enqueue([f])};r.appendChild(b);$('mh').prepend(r);
 }
 function pick(i){enqueue(Array.from(i.files));i.value=''}
 function enqueue(l){
  for(const f of l){
   if(f.size>MAX){toast(`${f.name} 250 MB sınırını aşıyor`);continue}
-  queue=queue.then(()=>send(f)).catch(e=>{toast('Gönderilemedi: '+(e.message||e));$('mu').classList.add('hidden')});
+  queue=queue.then(()=>send(f)).catch(e=>failChip(f,e));
  }
 }
 const waitAck=()=>new Promise(r=>{wake=r;setTimeout(r,2000)});
 async function send(f){
  if(!pcUp||state!=='ok')throw new Error(!pcUp?'PC bağlı değil':'PC onayı gerekli');
+ const ps=poolState();if(ps.full)throw new Error('Ortak kapasite doldu · '+Math.max(1,Math.ceil((ps.u-Date.now())/864e5))+' gün sonra yenilenir');
  const key=dev+'~'+rid(6),n=Math.max(1,Math.ceil(f.size/CH)),ib=R('inbox/'+key),cb=R('chunks/'+key),ab=R('acks/'+key);
  let acked=0,last=Date.now(),wl=null;
  try{wl=await navigator.wakeLock.request('screen')}catch{}
@@ -621,24 +836,34 @@ async function send(f){
  ab.on('value',s=>{const v=s.val()||0;if(v>acked){acked=v;last=Date.now()}wake&&wake()});
  const chk=()=>{if(!pcUp||Date.now()-last>60000)throw new Error('PC yanıt vermiyor')};
  $('mu').classList.remove('hidden');$('mun').textContent=f.name;
- const setP=p=>{$('mup').textContent=p+'%';$('mub').style.width=p+'%'};setP(0);
+ const setP=p=>{$('mup').textContent=p+'%';$('mub').style.width=p+'%';$('shw').style.setProperty('--p',p);$('shw').classList.add('up')};setP(0);
  try{
   await ib.set({n,m:await enc(JSON.stringify({name:f.name,mime:f.type||'application/octet-stream',size:f.size}),'m:'+key)});
+  const pend=new Set();let werr=null;
   for(let i=0;i<n;i++){
-   while(i-acked>=WIN){chk();await waitAck()}
-   await cb.child(i).set(await enc(await f.slice(i*CH,(i+1)*CH).arrayBuffer(),key+':'+i));
+   while(i-acked>=WIN){chk();if(werr)throw werr;await waitAck()}
+   const c=await enc(await f.slice(i*CH,(i+1)*CH).arrayBuffer(),key+':'+i);
+   const p=cb.child(i).set(c).catch(e=>{werr=e});pend.add(p);p.then(()=>pend.delete(p));
+   if(pend.size>=3)await Promise.race(pend);
    setP(Math.floor((i+1)/n*100));
   }
+  await Promise.all(pend);if(werr)throw werr;
   while(acked<n){chk();await waitAck()}
  }finally{
   ab.off();await Promise.allSettled([ib.remove(),cb.remove(),ab.remove()]);[ib,cb,ab].forEach(x=>x.onDisconnect().cancel());
-  wl&&wl.release().catch(()=>{});setTimeout(()=>$('mu').classList.add('hidden'),400);
+  wl&&wl.release().catch(()=>{});$('shw').classList.remove('up');setTimeout(()=>$('mu').classList.add('hidden'),400);
  }
+ navigator.vibrate&&navigator.vibrate(25);
  const r=document.createElement('div');r.textContent='✓ '+f.name;$('mh').prepend(r);while($('mh').children.length>4)$('mh').lastChild.remove();
 }
 
 /* ---------- Başlat ---------- */
+const isBot=/bot|crawl|spider|slurp|mediapartners|lighthouse|pagespeed|facebookexternalhit|twitterbot|whatsapp|telegrambot/i.test(navigator.userAgent);
+function openInfo(){show('info',1)}
+function closeInfo(){show('info',0)}
 addEventListener('DOMContentLoaded',()=>{
+ if(isBot||location.hash==='#bilgi'||/[?&]bilgi/.test(location.search))openInfo();
+ if(isBot)return;
  const h=new URLSearchParams(location.hash.slice(1)),forcePC=/[?&]pc\b/.test(location.search);
  const mobMode=(h.get('r')&&h.get('k'))||(!forcePC&&(isMob||(localStorage.ts_ismob&&!localStorage.ts_room)));
  mobMode?mobInit():pcInit();

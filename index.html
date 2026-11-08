@@ -221,6 +221,8 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative
 @media(max-width:900px){.clist,.cprop{display:none}}
 .stools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .selbar{width:max-content;max-width:calc(100% - 40px)}
+#sview{width:100%;display:flex;flex-direction:column;align-items:center}
+.sq{margin:0 auto}.sh{text-align:center;max-width:300px;position:relative;z-index:1}
 @keyframes pop{0%{opacity:0;transform:scale(.86) translateY(12px)}100%{opacity:1;transform:none}}
 @keyframes bump{0%{transform:scale(.4)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
 @keyframes shine{0%{box-shadow:0 0 0 0 #34d39999}100%{box-shadow:0 0 0 16px #34d39900}}
@@ -320,14 +322,14 @@ select.btn{appearance:none;-webkit-appearance:none;cursor:pointer;color:var(--tx
  </div>
  <div id="mpool" class="pool"><div class="t"><div id="mpf" class="f"></div></div><span id="mpt"></span></div>
  <div id="mu" class="hidden"><div class="l"><span id="mun"></span><span id="mup"></span></div><div class="pb"><div id="mub" style="width:0;background:linear-gradient(90deg,#3b82f6,#34d399)"></div></div></div>
- <div class="side"><button id="mt" class="cb" onclick="torch()"><i class="fa-solid fa-bolt"></i></button><button class="cb" onclick="flip()"><i class="fa-solid fa-camera-rotate"></i></button><button id="mg" class="cb" onclick="grid3()" title="Izgara"><i class="fa-solid fa-border-all"></i></button><button id="ma" class="cb" onclick="capAspect()" title="Çekim oranı"><span id="mat" style="font-size:11px;font-weight:800">Tam</span></button><label class="cb" title="Tüm dosya türleri"><i class="fa-solid fa-folder-open"></i><input type="file" multiple onchange="pick(this)"></label><button id="mm" class="cb" onclick="docMode()" title="Çoklu sayfa (belge) modu"><i class="fa-solid fa-layer-group"></i></button></div>
+ <div class="side"><button id="mt" class="cb" onclick="torch()"><i class="fa-solid fa-bolt"></i></button><button class="cb" onclick="flip()"><i class="fa-solid fa-camera-rotate"></i></button><button id="mg" class="cb" onclick="grid3()" title="Izgara"><i class="fa-solid fa-border-all"></i></button><button id="ma" class="cb" onclick="capAspect()" title="Çekim oranı"><span id="mat" style="font-size:11px;font-weight:800">Tam</span></button><button id="mm" class="cb" onclick="docMode()" title="Çoklu sayfa (belge) modu"><i class="fa-solid fa-layer-group"></i></button></div>
  <div id="fs"><i class="fa-solid fa-expand"></i> Tam ekran çekim · gördüğünüz her şey gönderilir</div>
  <button id="mfin" class="btn pri hidden" onclick="docFinish()" style="position:absolute;z-index:6;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 150px)"><i class="fa-solid fa-file-pdf"></i>Bitir ve PDF Gönder</button>
  <div id="mh"></div>
  <div class="mbot">
   <label class="rb"><span class="c"><i class="fa-regular fa-images"></i></span>Galeri<input type="file" accept="image/*,video/*" multiple onchange="pick(this)"></label>
   <div class="shw" id="shw"><button class="shut" onclick="shoot()"><i class="fa-solid fa-camera"></i></button><span id="cnb" class="cnb hidden">0</span></div>
-  <label class="rb b"><span class="c"><i class="fa-solid fa-file-arrow-up"></i></span>Dosya<input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.txt,.csv,.rtf,.zip,.rar,.7z,application/pdf,application/zip,text/plain" multiple onchange="pick(this)"></label>
+  <label class="rb b"><span class="c"><i class="fa-solid fa-file-arrow-up"></i></span>Dosya<input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.txt,.csv,.rtf,.zip,.rar,.7z,.dwg,.dxf,.kml,.kmz,.gpx,.json,.xml,.mp3,.m4a,.wav,application/pdf,application/zip,text/plain" multiple onchange="pick(this)"></label>
  </div>
  <div id="scanui">
   <div id="sgate"><div class="big"><i class="fa-solid fa-qrcode"></i></div><h3>Bilgisayara bağlanın</h3>
@@ -363,6 +365,7 @@ select.btn{appearance:none;-webkit-appearance:none;cursor:pointer;color:var(--tx
    <div class="seg"><button id="cop" onclick="colOri('p')">Dikey</button><button id="col2" onclick="colOri('l')">Yatay</button></div>
    <span class="cmg-r mu sm">Kenar payı <input id="cmg" type="range" min="0" max="30" value="10" oninput="colMargin(this.value)"></span>
    <select id="clay" class="btn sm" onchange="colLayout(this.value);this.value=''"><option value="">Hazır düzen...</option><option value="fit1">Her görsel ayrı sayfa (sığdır)</option><option value="v2">2 görsel alt alta</option><option value="h2">2 görsel yan yana</option><option value="g4">4'lü (2×2)</option><option value="g6">6'lı (2×3)</option><option value="id">Kimlik ön-arka</option><option value="long">Uzun görsel (alt alta, kenarsız)</option></select>
+   <select id="cfa" class="btn sm" onchange="colAllFlt(this.value);this.value=''"><option value="">Tüm görsellere filtre...</option><option value="none">Orijinal</option><option value="gray">Gri</option><option value="scan">Net evrak</option></select>
    <select id="cdp" class="btn sm" title="JPG çözünürlüğü"><option value="100">100 dpi</option><option value="150" selected>150 dpi</option><option value="200">200 dpi</option><option value="300">300 dpi</option></select>
    <button class="btn sm" onclick="colExport('jpg')"><i class="fa-regular fa-image"></i>JPG Kaydet</button>
    <button class="btn ok" onclick="colExport('pdf')"><i class="fa-solid fa-file-pdf"></i>PDF Kaydet</button>
@@ -377,7 +380,7 @@ select.btn{appearance:none;-webkit-appearance:none;cursor:pointer;color:var(--tx
 </div>
 <div id="edm" class="modal">
  <div class="mh"><div><b><i class="fa-solid fa-crop-simple" style="color:#60a5fa"></i> Görsel Düzenleyici</b><small>Kırpın, döndürün veya net evrak filtresi uygulayın</small></div>
-  <div class="tools"><button class="btn" onclick="closeEd()">İptal</button><button class="btn" onclick="saveEd(true)"><i class="fa-regular fa-clone"></i>Kopya Kaydet</button><button class="btn pri" onclick="saveEd(false)"><i class="fa-solid fa-check"></i>Üzerine Kaydet</button></div></div>
+  <div class="tools"><button class="btn" onclick="closeEd()">İptal</button><span id="edx" class="tools"><button class="btn" onclick="saveEd(true)"><i class="fa-regular fa-clone"></i>Kopya Kaydet</button><select id="efit" class="btn sm" onchange="localStorage.ts_fit=this.value" title="PDF sayfasına yerleştirme biçimi"><option value="fit">PDF: Sığdır</option><option value="fill">PDF: Doldur (kenarsız)</option><option value="orig">PDF: Görsel oranında</option></select><button class="btn ok" onclick="edPdf()"><i class="fa-solid fa-file-pdf"></i>PDF Yap</button></span><button class="btn pri" onclick="saveEd(false)"><i class="fa-solid fa-check"></i>Kaydet</button></div></div>
  <div class="mb ov"><img id="cri" style="max-width:100%;max-height:100%"></div>
  <div class="mf">
   <button class="btn sm" onclick="cr.rotate(-90)"><i class="fa-solid fa-rotate-left"></i>Sola</button><button class="btn sm" onclick="cr.rotate(90)"><i class="fa-solid fa-rotate-right"></i>Sağa</button><div class="sep"></div>
@@ -486,7 +489,7 @@ async function pcInit(){
  R('req').on('child_added',onReq);R('req').on('child_changed',onReq);
  R('req').on('child_removed',s=>{const d=devs[s.key];if(d){d.online=false;renderDevs()}});
  R('inbox').on('child_added',onInbox);R('inbox').on('child_removed',s=>abortRx(s.key));
- db.ref('usage/pool').on('value',x=>{pool=x.val();poolUi()});setInterval(()=>$('pool').classList.toggle('live',Object.keys(rx).length>0),800);setInterval(poolUi,60000);poolUi();
+ db.ref('usage/pool').on('value',x=>{pool=x.val();poolUi()},e=>{poolErr=e.code||'okuma hatası';poolUi()});setInterval(()=>$('pool').classList.toggle('live',Object.keys(rx).length>0),800);setInterval(poolUi,60000);poolUi();
  const dz=$('drop');dz.ondragover=e=>e.preventDefault();dz.ondrop=e=>{e.preventDefault();if(e.dataTransfer.files.length)pcFiles(e.dataTransfer.files)};
  renderDevs();
  document.addEventListener('visibilitychange',()=>{if(!document.hidden){unread=0;document.title=baseT}});
@@ -499,6 +502,7 @@ async function pcInit(){
   else if(e.key==='Delete'&&sel.length)delSel();
  });
  document.addEventListener('paste',e=>{const l=[...((e.clipboardData&&e.clipboardData.files)||[])];if(l.length)pcFiles(l)});
+ document.querySelector('.scroll').addEventListener('click',e=>{if(sel.length&&!e.target.closest('.card'))clearSel()});
 }
 const apr=()=>JSON.parse(localStorage.ts_dev||'{}');
 async function onReq(s){
@@ -587,13 +591,13 @@ function renderBar(){
  let title,hint,tools='';
  if(ot){title=n+' dosya seçili';hint='Bu türler için indirme ve silme kullanılabilir'}
  else if(!pd.length){
-  title=n===1?'1 görsel seçili':n+' görsel seçili';hint=n>1?'Küçük resimleri sürükleyerek sırayı değiştirin':'Düzenleyin veya sayfaya yerleştirin';
-  tools=(n===1?B('bedit','','fa-crop-simple','Düzenle',`edit('${im[0].id}')`,'#60a5fa'):'')+B('bcol','','fa-table-cells-large','Kolaj / Sayfa','colOpen()','#c4b5fd')+B('bscan','','fa-wand-magic-sparkles','Net Evrak','scanSel()','#fcd34d')+B('bpdf','ok','fa-file-pdf',n>1?'PDF Birleştir':'PDF Yap','mergePDF()')+fit;
+  title=n===1?'1 görsel seçili':n+' görsel seçili';hint=n>1?'Küçük resimleri sürükleyerek sırayı değiştirin':'Kırpma, döndürme, net evrak ve PDF için Düzenle';
+  tools=n===1?B('bedit','','fa-pen-to-square','Düzenle',`edit('${im[0].id}')`,'#60a5fa'):B('bcol','','fa-table-cells-large','Kolaj / Sayfa','colOpen()','#c4b5fd');
  }else if(!im.length){
   title=n===1?'1 PDF seçili':n+' PDF seçili';hint=n>1?"PDF'ler seçim sırasıyla birleşir":'Sayfaları silin veya ayırın';
   tools=n===1?B('bpg','','fa-scissors','Sayfaları Düzenle',`split('${pd[0].id}')`,'#fbbf24'):B('bpdf','ok','fa-object-group','PDF Birleştir','mergePDF()');
  }else{
-  title=im.length+' görsel + '+pd.length+' PDF seçili';hint='Seçim sırasıyla tek PDF olur';tools=B('bpdf','ok','fa-object-group','PDF Birleştir','mergePDF()')+fit;
+  title=im.length+' görsel + '+pd.length+' PDF seçili';hint='Seçim sırasıyla tek PDF olur';tools=B('bpdf','ok','fa-object-group','PDF Birleştir','mergePDF()');
  }
  tools+=B('bdl','pri','fa-download',n>1?'ZIP İndir':'İndir','dlSel()')+B('bdel','dg','fa-trash-can','Sil','delSel()')+'<button class="btn" title="Seçimi temizle" onclick="clearSel()"><i class="fa-solid fa-xmark"></i></button>';
  $('selc').textContent=title;$('selh').textContent=hint;$('stools').innerHTML=tools;
@@ -647,10 +651,10 @@ async function scanSel(){
 function beep(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.frequency.value=880;g.gain.setValueAtTime(.12,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.25);o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.25)}catch(e){}}
 function notify(f){if(document.hidden){unread++;document.title='('+unread+' yeni) '+baseT}beep()}
 /* ---------- Ortak kapasite havuzu (5 GB / ay) ---------- */
-const CAP=5*1024**3;let pool=null,qPend=0,qT=null;
+const CAP=5*1024**3;let pool=null,poolErr=null,qPend=0,qT=null;
 const nextMonth=()=>{const d=new Date();return Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1)};
 function poolState(){const now=Date.now();let b=0,u=null;if(pool&&now<pool.u){b=pool.b;u=pool.u}return{b,u,p:Math.min(100,b/CAP*100),full:b>=CAP}}
-function poolUi(){
+function poolUi0(){
  const s=poolState(),cls=s.p>=90?'bad':s.p>=60?'warn':'',days=s.u?Math.max(1,Math.ceil((s.u-Date.now())/864e5)):null;
  const pct=s.p<10?s.p.toFixed(1).replace('.',','):Math.round(s.p),pc=$('pool'),mp=$('mpool');
  if(pc){
@@ -664,11 +668,16 @@ function poolUi(){
   $('mpf').style.width=Math.max(s.b?3:0,s.p)+'%';$('mpt').textContent=s.full?'Kapasite doldu':'Ortak kapasite %'+pct;
  }
 }
+function poolUi(){
+ poolUi0();if(!poolErr)return;
+ if($('pool')){const st=$('pst');st.className='chip bad';st.textContent='Hata';$('pnote').textContent='Kapasite sayacı kullanılamıyor ('+poolErr+'). Firebase kurallarını güncel dosyadaki gibi yenileyin.'}
+ if($('mpool'))$('mpt').textContent='Kapasite bilgisi alınamıyor';
+}
 /* PC: aldığı her parçanın boyutunu biriktirip birkaç saniyede bir havuza ekler */
 function qAdd(n){qPend+=n;if(!qT)qT=setTimeout(qFlush,2500)}
 function qFlush(){
  qT=null;if(!qPend||!db)return;const n=Math.min(qPend,24e6);qPend-=n;
- db.ref('usage/pool').transaction(c=>{const now=Date.now();if(!c||now>=c.u)return{b:n,u:nextMonth()};return{b:c.b+n,u:c.u}},()=>{if(qPend&&!qT)qT=setTimeout(qFlush,2500)});
+ db.ref('usage/pool').transaction(c=>{const now=Date.now();if(!c||now>=c.u)return{b:n,u:nextMonth()};return{b:c.b+n,u:c.u}},(err)=>{poolErr=err?(err.code||err.message||'hata'):null;if(err)qPend=0;poolUi();if(qPend&&!qT)qT=setTimeout(qFlush,2500)});
 }
 async function autoClean(){const d=+localStorage.ts_ac||0;$('autoc').value=String(d);if(!d)return;const lim=Date.now()-d*864e5,old=files.filter(f=>f.time<lim);for(const f of old){URL.revokeObjectURL(f.url);await idbDel(f.id)}if(old.length){files=files.filter(f=>f.time>=lim);sel=[];render();toast(old.length+' eski dosya otomatik silindi')}}
 /* Klasöre otomatik kaydetme (Chrome/Edge) */
@@ -799,6 +808,7 @@ function colSet(k,v){
  if(k==='w'){if(!(v>=5))return;it.h=it.h*v/it.w;it.w=v}else if(k==='rot'){it.rot=((v%360)+540)%360-180}else it[k]=v;
  col.dirty=true;colRender();
 }
+function colAllFlt(v){if(!v||!col)return;col.pages.forEach(p=>p.items.forEach(i=>{i.flt=v}));col.dirty=true;colRender()}
 function colFit(m){
  const it=colSelItem();if(!it)return;
  const sw=Math.abs(it.rot-Math.round(it.rot/90)*90)<.5&&Math.abs(Math.round(it.rot/90))%2===1,ar=sw?1/it.ar:it.ar;
@@ -815,7 +825,7 @@ function colZ(d){const a=col.pages[col.pi].items,i=a.findIndex(x=>x.id===col.sel
 function colDup(){const it=colSelItem();if(!it)return;const n={...it,id:rid(5),cx:it.cx+6,cy:it.cy+6};col.pages[col.pi].items.push(n);col.sel=n.id;col.dirty=true;colRender()}
 function colDel(){const a=col.pages[col.pi].items,i=a.findIndex(x=>x.id===col.sel);if(i<0)return;a.splice(i,1);col.sel=null;col.dirty=true;colRender()}
 function colMove(j){j=+j;const it=colSelItem();if(!it||isNaN(j)||!col.pages[j])return;const a=col.pages[col.pi].items;a.splice(a.indexOf(it),1);col.pages[j].items.push(it);col.sel=null;col.dirty=true;colRender()}
-function colCrop(){const it=colSelItem();if(!it)return;ed={ci:it,name:'kolaj.jpg'};edF='none';$('cri').src=it.url;show('edm',1);cr&&cr.destroy();cr=new Cropper($('cri'),{viewMode:1,autoCropArea:.95})}
+function colCrop(){const it=colSelItem();if(!it)return;ed={ci:it,name:'kolaj.jpg'};edF='none';$('edx').classList.add('hidden');$('cri').src=it.url;show('edm',1);cr&&cr.destroy();cr=new Cropper($('cri'),{viewMode:1,autoCropArea:.95})}
 async function colCropDone(it,nb){const bm=await createImageBitmap(nb),ar=bm.width/bm.height;bm.close&&bm.close();it.blob=nb;it.url=URL.createObjectURL(nb);it.ar=ar;it.h=it.w/ar;col.dirty=true;colRender()}
 function colKey(e){
  if(!col||$('edm').classList.contains('on'))return;
@@ -920,7 +930,17 @@ async function mergePDF(){
 
 /* ---------- Görsel düzenleyici ---------- */
 function edit(id){
- ed=get(id);edF='none';$('cri').src=ed.url;show('edm',1);cr&&cr.destroy();cr=new Cropper($('cri'),{viewMode:1,autoCropArea:.95});
+ ed=get(id);edF='none';$('edx').classList.remove('hidden');$('efit').value=localStorage.ts_fit||'fit';$('cri').src=ed.url;show('edm',1);cr&&cr.destroy();cr=new Cropper($('cri'),{viewMode:1,autoCropArea:.95});
+}
+async function edPdf(){
+ if(!cr||!ed||ed.ci)return;toast('PDF hazırlanıyor...');
+ const s=cr.getCroppedCanvas({maxWidth:4000,maxHeight:4000}),c=document.createElement('canvas');c.width=s.width;c.height=s.height;
+ const x=c.getContext('2d');x.filter=edF==='gray'?'grayscale(1)':edF==='scan'?'grayscale(1) contrast(1.85) brightness(1.12)':'none';x.drawImage(s,0,0);
+ const out=await PDFLib.PDFDocument.create(),img=await out.embedJpg(await(await toBlob(c,.92)).arrayBuffer()),fm=$('efit').value;
+ if(fm==='orig'){const hh=img.height*595/img.width;out.addPage([595,hh]).drawImage(img,{x:0,y:0,width:595,height:hh})}
+ else{const pg=out.addPage([595,842]),k=fm==='fill'?Math.max(595/img.width,842/img.height):Math.min(575/img.width,822/img.height),w=img.width*k,h=img.height*k;pg.drawImage(img,{x:(595-w)/2,y:(842-h)/2,width:w,height:h})}
+ await addFile({name:ed.name.replace(/\.\w+$/,'')+'.pdf',mime:'application/pdf',blob:new Blob([await out.save()],{type:'application/pdf'}),sender:ed.sender,color:ed.color});
+ closeEd();toast('PDF oluşturuldu ve klasöre kaydedildi');
 }
 function setEdF(k){edF=k;const b=document.querySelector('.cropper-container');if(b)b.style.filter=k==='gray'?'grayscale(1)':k==='scan'?'grayscale(1) contrast(1.85) brightness(1.12)':'none'}
 async function saveEd(copy){
@@ -991,7 +1011,7 @@ async function connectMode(r,k){
  dev=localStorage.ts_did||(localStorage.ts_did=rid(8));
  R('meta').on('value',s=>{pcUp=s.exists();ui();if(pcUp)hello()});
  R('dev/'+dev).on('value',s=>{state=s.val();ui()});
- db.ref('usage/pool').on('value',x=>{pool=x.val();poolUi()});setInterval(poolUi,60000);poolUi();
+ db.ref('usage/pool').on('value',x=>{pool=x.val();poolUi()},e=>{poolErr=e.code||'okuma hatası';poolUi()});setInterval(poolUi,60000);poolUi();
  ui();
 }
 /* Karekod okuma ekranı (PC'ye henüz bağlanılmadıysa) */

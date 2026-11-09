@@ -1,0 +1,531 @@
+/* ==========================================================================
+   TonoScan - Mobil Arayüz Stilleri (Kamera, Tarayıcı ve Kontroller)
+   ========================================================================== */
+
+#mob {
+  display: none;
+  height: 100dvh;
+  flex-direction: column;
+  background: #000;
+  position: relative;
+  overflow: hidden;
+}
+
+#mob.on {
+  display: flex;
+}
+
+#mv {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  box-shadow: inset 0 0 0 3px #60a5fa88, inset 0 0 70px #3b82f633;
+}
+
+#g3 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  display: none;
+  background: linear-gradient(#ffffff40, #ffffff40) 33.33% 0/1px 100% no-repeat,
+              linear-gradient(#ffffff40, #ffffff40) 66.66% 0/1px 100% no-repeat,
+              linear-gradient(#ffffff40, #ffffff40) 0 33.33%/100% 1px no-repeat,
+              linear-gradient(#ffffff40, #ffffff40) 0 66.66%/100% 1px no-repeat;
+}
+
+#g3.on {
+  display: block;
+}
+
+#cmask {
+  position: absolute;
+  z-index: 2;
+  box-shadow: 0 0 0 100vmax #000b;
+  border: 2px solid #60a5fa;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+#fs {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 188px);
+  transform: translateX(-50%);
+  z-index: 5;
+  padding: 7px 14px;
+  border-radius: 99px;
+  background: #0a0f2099;
+  border: 1px solid #ffffff33;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  animation: fsf 5s forwards;
+  pointer-events: none;
+  max-width: 94vw;
+}
+
+@keyframes fsf {
+  0%, 75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ==========================================================================
+   Mobil Üst Bar ve Durum
+   ========================================================================== */
+.mtop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  padding: max(12px, env(safe-area-inset-top)) 14px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(#0008, transparent);
+}
+
+.mst {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px 7px 10px;
+  border-radius: 99px;
+  background: linear-gradient(150deg, #ffffff26, #ffffff0d);
+  border: 1px solid #ffffff38;
+  box-shadow: inset 0 1px 0 #ffffff40, 0 10px 24px -12px #000;
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  max-width: 62vw;
+}
+
+.mst > div {
+  min-width: 0;
+}
+
+#md {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 0 4px #fbbf2433;
+}
+
+#ms {
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#ml {
+  font-size: 10.5px;
+  color: #aab6cc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.glass {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border-radius: 99px;
+  background: linear-gradient(150deg, #ffffff26, #ffffff0d);
+  border: 1px solid #ffffff38;
+  box-shadow: inset 0 1px 0 #ffffff40;
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Mobil Kapasite Havuz Göstergesi */
+#mpool {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: calc(env(safe-area-inset-top, 0px) + 56px);
+  z-index: 5;
+  display: none;
+  align-items: center;
+  gap: 9px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #cfe0ff;
+  pointer-events: none;
+  text-shadow: 0 1px 4px #000;
+}
+
+#mpool.on {
+  display: flex;
+}
+
+#mob.scan #mpool {
+  display: none !important;
+}
+
+#mpool .t {
+  flex: 1;
+  height: 5px;
+  background: #ffffff26;
+}
+
+/* Yükleme İlerleme Paneli */
+#mu {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 72px);
+  left: 14px;
+  right: 14px;
+  z-index: 6;
+  background: linear-gradient(150deg, #ffffff24, #ffffff0b);
+  border: 1px solid #ffffff38;
+  box-shadow: inset 0 1px 0 #ffffff40, 0 16px 30px -16px #000;
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+
+#mu .l {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-weight: 600;
+}
+
+#mu .l span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Yan Düğmeler ve Alt Kontroller
+   ========================================================================== */
+.side {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-60%);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cb {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #ffffff26, #ffffff0a);
+  border: 1px solid #ffffff3a;
+  box-shadow: inset 0 1px 0 #ffffff40, 0 8px 20px -10px #000;
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 16px;
+}
+
+.cb.on {
+  background: linear-gradient(150deg, #fbbf24, #f59e0b);
+  border-color: #fde68a;
+  color: #000;
+}
+
+#mh {
+  position: absolute;
+  left: 14px;
+  right: 84px;
+  bottom: 236px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  pointer-events: none;
+}
+
+#mh div {
+  padding: 5px 11px;
+  border-radius: 99px;
+  background: #0a0f20a6;
+  border: 1px solid #ffffff22;
+  color: #34d399;
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.mbot {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+  padding: 12px 16px;
+  border-radius: 34px;
+  background: linear-gradient(150deg, #ffffff24, #ffffff0b);
+  border: 1px solid #ffffff38;
+  box-shadow: inset 0 1px 0 #ffffff4a, 0 24px 50px -18px #000;
+  -webkit-backdrop-filter: blur(22px) saturate(170%);
+  backdrop-filter: blur(22px) saturate(170%);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 5;
+}
+
+.rb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #dbe4f5;
+  cursor: pointer;
+}
+
+.rb .c {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  background: linear-gradient(150deg, #ffffff2a, #ffffff0d);
+  border: 1px solid #ffffff3a;
+  box-shadow: inset 0 1px 0 #ffffff40;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+}
+
+.rb.b .c {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-color: transparent;
+  box-shadow: inset 0 1px 0 #ffffff55, 0 8px 20px -8px #6366f1;
+}
+
+.shw {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.shw::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: -11px;
+  border-radius: 50%;
+  background: conic-gradient(#34d399 calc(var(--p, 0) * 1%), #ffffff22 0);
+  -webkit-mask: radial-gradient(circle, transparent 62%, #000 63%);
+  mask: radial-gradient(circle, transparent 62%, #000 63%);
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.shw.up::before {
+  opacity: 1;
+}
+
+.shut {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 5px #ffffff55, 0 0 34px #60a5fa66;
+  display: grid;
+  place-items: center;
+  color: #0f172a;
+  font-size: 25px;
+  transition: .12s;
+}
+
+.shut:active {
+  transform: scale(0.9);
+}
+
+.cnb {
+  pointer-events: none;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 26px;
+  height: 26px;
+  border-radius: 13px;
+  background: #3b82f6;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 0 7px;
+  z-index: 2;
+  animation: bump .3s;
+}
+
+#fl {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  transition: opacity .15s;
+  z-index: 99;
+}
+
+/* ==========================================================================
+   Karekod Tarama Ekranı (Scan Mode)
+   ========================================================================== */
+#scanui {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+#mob.scan #scanui {
+  display: flex;
+}
+
+#mob.scan .mbot,
+#mob.scan .side,
+#mob.scan #mh,
+#mob.scan .frame,
+#mob.scan .glass,
+#mob.scan #g3,
+#mob.scan #fs {
+  display: none !important;
+}
+
+#sgate {
+  border-radius: 28px;
+  background: linear-gradient(150deg, #1a2244b8, #0a0f2499);
+  border: 1px solid #ffffff38;
+  box-shadow: inset 0 1px 0 #ffffff4a, 0 30px 60px -20px #000;
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  padding: 28px 22px;
+  max-width: 340px;
+  width: 100%;
+}
+
+#sgate .big {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 14px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+  color: #60a5fa;
+  background: linear-gradient(150deg, #ffffff26, #ffffff0a);
+  border: 1px solid #ffffff38;
+  box-shadow: inset 0 1px 0 #ffffff40;
+}
+
+#sgate h3 {
+  font-size: 19px;
+  margin-bottom: 6px;
+}
+
+#sgate p {
+  color: var(--mu);
+  font-size: 12.5px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+#serr {
+  color: #fca5a5;
+  font-size: 12px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+#sview {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sq {
+  position: relative;
+  width: min(68vw, 300px);
+  aspect-ratio: 1;
+  border-radius: 26px;
+  box-shadow: 0 0 0 100vmax #000a;
+  margin: 0 auto;
+}
+
+.sq i {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border: 4px solid #60a5fa;
+}
+
+.c1 { top: 0; left: 0; border-right: 0 !important; border-bottom: 0 !important; border-radius: 26px 0 0 0; }
+.c2 { top: 0; right: 0; border-left: 0 !important; border-bottom: 0 !important; border-radius: 0 26px 0 0; }
+.c3 { bottom: 0; left: 0; border-right: 0 !important; border-top: 0 !important; border-radius: 0 0 0 26px; }
+.c4 { bottom: 0; right: 0; border-left: 0 !important; border-top: 0 !important; border-radius: 0 0 26px 0; }
+
+.sq b {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, #60a5fa, transparent);
+  animation: scn 2s ease-in-out infinite alternate;
+}
+
+@keyframes scn {
+  from { top: 10%; }
+  to { top: 90%; }
+}
+
+.sh {
+  margin-top: 26px;
+  font-weight: 600;
+  font-size: 14px;
+  text-shadow: 0 2px 8px #000;
+  text-align: center;
+  max-width: 300px;
+  position: relative;
+  z-index: 1;
+}
+
+#mob.on ~ .toast {
+  bottom: auto;
+  top: calc(env(safe-area-inset-top, 0px) + 76px);
+}
+
+#mob .modal:not(.center) {
+  padding: 10px;
+}

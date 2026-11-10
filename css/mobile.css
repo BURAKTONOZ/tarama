@@ -394,6 +394,260 @@
 }
 
 /* ==========================================================================
+   QR Tarayıcı Üst Bilgi Barı
+   ========================================================================== */
+.scan-topbar {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  left: 16px;
+  right: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-radius: 20px;
+  background: linear-gradient(150deg, #101938d9, #090e24d9);
+  border: 1px solid #ffffff2e;
+  box-shadow: inset 0 1px 0 #ffffff40, 0 16px 36px -16px #000;
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+}
+
+.scan-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+}
+
+.scan-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 16px;
+}
+
+.scan-brand h3 {
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.scan-brand h3 span {
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.scan-brand p {
+  font-size: 10.5px;
+  color: #34d399;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 1px;
+}
+
+.scan-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #93c5fd;
+  background: #3b82f626;
+  border: 1px solid #3b82f644;
+  padding: 3px 8px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Mobil Karşılama ve Gönderim Paneli (#mhub)
+   ========================================================================== */
+#mhub {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(120% 90% at 50% 0, #0d1738, #050712 75%);
+  overflow-y: auto;
+  padding: max(16px, env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom));
+}
+
+#mob.scan #mhub,
+#mob.cam-mode #mhub {
+  display: none !important;
+}
+
+#mob:not(.cam-mode):not(.scan) #mv,
+#mob:not(.cam-mode):not(.scan) .mbot,
+#mob:not(.cam-mode):not(.scan) .side,
+#mob:not(.cam-mode):not(.scan) .frame,
+#mob:not(.cam-mode):not(.scan) #g3,
+#mob:not(.cam-mode):not(.scan) #cmask,
+#mob:not(.cam-mode):not(.scan) #fs,
+#mob:not(.cam-mode):not(.scan) #mfin,
+#mob:not(.cam-mode):not(.scan) > .mtop {
+  display: none !important;
+}
+
+.mhub-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.mhub-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 420px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.hub-hero {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.hub-hero .hub-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #3b82f633, #8b5cf633);
+  border: 1px solid #3b82f655;
+  box-shadow: 0 12px 30px -10px #6366f1aa;
+  display: grid;
+  place-items: center;
+  color: #60a5fa;
+  font-size: 26px;
+  margin: 0 auto 16px;
+}
+
+.hub-hero h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.hub-hero p {
+  font-size: 12.5px;
+  color: var(--mu);
+  line-height: 1.6;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.hub-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hub-btn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 22px;
+  background: var(--gf);
+  border: 1px solid var(--gbd);
+  box-shadow: var(--ghi), 0 14px 30px -18px #000;
+  -webkit-backdrop-filter: var(--gbl);
+  backdrop-filter: var(--gbl);
+  cursor: pointer;
+  transition: all .2s cubic-bezier(.2, .8, .2, 1);
+  text-align: left;
+  color: var(--tx);
+  position: relative;
+  overflow: hidden;
+}
+
+.hub-btn:hover, .hub-btn:active {
+  transform: translateY(-2px);
+  border-color: #60a5fa88;
+  background: linear-gradient(150deg, #ffffff28, #ffffff10);
+}
+
+.hub-btn.camera {
+  border-color: #3b82f666;
+  box-shadow: inset 0 1px 0 #ffffff44, 0 16px 36px -18px #3b82f688;
+}
+
+.hb-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.hub-btn.camera .hb-icon {
+  background: linear-gradient(135deg, #3b82f6, #7c3aed);
+  color: #fff;
+  box-shadow: 0 6px 18px -4px #3b82f6aa;
+}
+
+.hub-btn.gallery .hb-icon {
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  color: #fff;
+  box-shadow: 0 6px 18px -4px #10b981aa;
+}
+
+.hub-btn.files .hb-icon {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: #fff;
+  box-shadow: 0 6px 18px -4px #f59e0baa;
+}
+
+.hb-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.hb-info b {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 3px;
+}
+
+.hb-info span {
+  display: block;
+  font-size: 11.5px;
+  color: var(--mu);
+  line-height: 1.4;
+}
+
+.hb-arrow {
+  color: #64748b;
+  font-size: 13px;
+  transition: transform .2s, color .2s;
+}
+
+.hub-btn:hover .hb-arrow {
+  transform: translateX(4px);
+  color: #93c5fd;
+}
+
+.cam-back {
+  background: #0009;
+  border: 1px solid #ffffff44;
+}
+
+/* ==========================================================================
    Karekod Tarama Ekranı (Scan Mode)
    ========================================================================== */
 #scanui {

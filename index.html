@@ -198,7 +198,7 @@
       <!-- Ana Dosya Gezgini Alanı -->
       <main id="drop">
         <div class="bar">
-          <div class="path">
+          <div class="path" id="bc">
             <i class="fa-solid fa-folder-open"></i>Gelen Evraklar<small id="cnt">0</small>
             <span id="hint0" class="mu sm hidden" style="margin-left:10px">
               <i class="fa-regular fa-hand-pointer"></i> Düzenlemek için dosyanın köşesindeki daireye tıklayın
@@ -226,6 +226,7 @@
         <div id="inc" class="inc"></div>
 
         <div class="scroll">
+          <div id="fsec" class="folder-section"></div>
           <div id="empty" class="empty">
             <div class="big"><i class="fa-solid fa-cloud-arrow-up"></i></div>
             <h2>Klasör henüz boş</h2>
@@ -258,7 +259,57 @@
     <div id="cmask" class="hidden"></div>
     <div class="frame"></div>
 
+    <!-- Mobil Ana Menü (Hub) -->
+    <div id="mhub" class="mhub">
+      <div class="mhub-top">
+        <div class="mst">
+          <span id="md2"></span>
+          <div><div id="ms2">Bağlı</div></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="glass" onclick="resetPC()" title="Başka bilgisayara bağlan"><i class="fa-solid fa-qrcode" style="color:#93c5fd"></i></button>
+          <button class="glass" onclick="rename()"><i class="fa-solid fa-user-pen" style="color:#93c5fd"></i><span id="mn2"></span></button>
+        </div>
+      </div>
+      <div class="mhub-content">
+        <div class="hub-hero">
+          <div class="hub-icon"><i class="fa-solid fa-qrcode"></i></div>
+          <h2>TonoScan <span style="color:#60a5fa">Studio</span></h2>
+          <p><i class="fa-solid fa-shield-halved" style="color:#34d399"></i> Uçtan uca AES-256 şifreli güvenli bağlantı kuruldu. Aktarmak istediğiniz yöntemi seçin:</p>
+        </div>
+        <div class="hub-actions">
+          <button class="hub-btn camera" onclick="openCam()">
+            <div class="hb-icon"><i class="fa-solid fa-camera"></i></div>
+            <div class="hb-info">
+              <b>Kamera ile Çek / Tara</b>
+              <span>Belge veya fotoğraf çekip anında PC'ye aktarın</span>
+            </div>
+            <i class="fa-solid fa-chevron-right hb-arrow"></i>
+          </button>
+          <label class="hub-btn gallery">
+            <div class="hb-icon"><i class="fa-solid fa-images"></i></div>
+            <div class="hb-info">
+              <b>Galeri ve Fotoğraflar</b>
+              <span>Telefonunuzdaki görsel ve videoları gönderin</span>
+            </div>
+            <i class="fa-solid fa-arrow-up-from-bracket hb-arrow"></i>
+            <input type="file" accept="image/*,video/*" multiple onchange="pick(this)">
+          </label>
+          <label class="hub-btn files">
+            <div class="hb-icon"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="hb-info">
+              <b>Dosya ve Belgeler</b>
+              <span>PDF, Word, Excel, CAD ve tüm belgeler</span>
+            </div>
+            <i class="fa-solid fa-arrow-up-from-bracket hb-arrow"></i>
+            <input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.txt,.csv,.rtf,.zip,.rar,.7z,.dwg,.dxf,.kml,.kmz,.gpx,.json,.xml,.mp3,.m4a,.wav,application/pdf,application/zip,text/plain" multiple onchange="pick(this)">
+          </label>
+        </div>
+      </div>
+    </div>
+
     <div class="mtop">
+      <button class="glass cam-back" onclick="closeCam()" title="Menüye Dön"><i class="fa-solid fa-arrow-left"></i> Menü</button>
       <div class="mst">
         <span id="md"></span>
         <div><div id="ms">Bağlanıyor...</div><div id="ml"></div></div>
@@ -325,6 +376,16 @@
         <div style="margin-top:14px"><a class="ilink" onclick="openInfo()">TonoScan nedir?</a></div>
       </div>
       <div id="sview" class="hidden">
+        <div class="scan-topbar">
+          <div class="scan-brand">
+            <div class="scan-logo"><i class="fa-solid fa-qrcode"></i></div>
+            <div>
+              <h3>TonoScan <span>Studio</span></h3>
+              <p><i class="fa-solid fa-shield-halved"></i> Uçtan Uca Şifreli</p>
+            </div>
+          </div>
+          <div class="scan-badge">AES-256</div>
+        </div>
         <div class="sq"><i class="c1"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i><b></b></div>
         <p class="sh">Bilgisayar ekranındaki karekodu çerçeveye alın</p>
       </div>

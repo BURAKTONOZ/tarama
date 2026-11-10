@@ -75,14 +75,30 @@ Telefonda çektiğiniz belgeler, seçtiğiniz fotoğraflar veya 250 MB'a kadar b
   - *Her Sayfayı Ayrı PDF Yap:* Sayfaları ayırarak arşivler.
   - *ZIP İndir:* Tüm sayfaları ayrı ayrı numaralandırıp tek ZIP paketi olarak sunar.
 
-### 🎨 4. Kolaj ve Evrak Düzenleyici (A4 / A5 / Letter)
+### 📁 4. Cihaz Bazlı Klasörleme & Ekmek Kırıntısı (Breadcrumbs)
+- Dosyalar ana ekranda düzensizce yığılmaz; her bağlanan cihazın kendine özel bir **klasör kartı** oluşturulur (örn: *Burak*, *Hasan* vb.).
+- Kullanıcı tek tıkla herhangi bir cihaz klasörünün içine girebilir, o cihaza ait dosyaları yönetebilir veya "Tüm Dosyalar" görünümüne dönebilir.
+- Dosya kartlarındaki cihaz etiketine veya sol cihaz listesindeki herhangi bir cihaza tıklanarak doğrudan o cihazın klasörüne geçilebilir.
+
+### 🏷️ 5. Benzersiz Cihaz Adlandırma & Çakışma Önleme
+- Her bağlanan telefona sistem tarafından kolay hatırlanabilir, akıllı ve Türkçe bir cihaz adı atanır (örn: *Cesur Kartal*, *Hızlı Şahin* vb.).
+- Kullanıcı dilediği an cihaz adını telefonundan değiştirebilir.
+- Eğer oturumda aynı ada sahip aktif bir cihaz varsa, sistem bunu algılar ve kullanıcıyı uyararak yeni bir ad seçmesini ister.
+
+### 📱 6. Mobil Karşılama Ekranı (Hub) & Pil Tasarrufu
+- Karekod okutulduktan sonra telefon doğrudan gereksiz yere kamerayı açık bırakıp pili tüketmez.
+- Şık bir **Mobil Hub** açılır: Kullanıcı isterse "Kamera ile Çek / Tara", isterse doğrudan "Galeri" veya "Dosya" butonuna dokunarak aktarım yapar.
+- Kamera vizöründe yer alan **Geri / Menü** butonu sayesinde kullanıcı istediği an çekimi sonlandırıp ana menüye dönebilir ve kamera donanımı arka planda durdurulur.
+- Karekod tarayıcı ekranında uçtan uca AES-256 şifreli bağlantı rozeti ve anlaşılır bilgilendirme üst barı bulunur.
+
+### 🎨 7. Kolaj ve Evrak Düzenleyici (A4 / A5 / Letter)
 - Kimlik ön-arka çekimlerini, faturaları veya sözleşmeleri A4 sayfasına hazır şablonlarla (2'li alt alta, yan yana, 4'lü, 6'lı ızgara) dizin.
 - Hassas hizalama kılavuzları, 1 mm adım ok kontrolleri ve "Net Evrak / Fotokopi" filtreleri.
 
-### 📁 5. Bilgisayar Klasörüne Otomatik Kaydetme
+### 💾 8. Bilgisayar Klasörüne Otomatik Kaydetme
 - Chrome ve Edge tarayıcılarının modern *File System Access API* desteği sayesinde; telefondan gelen her evrak, bilgisayarınızda belirlediğiniz klasöre (örn: `İndirilenler/Evraklar`) otomatik olarak yazılır.
 
-### 📷 6. Mobil Vizör & Akıllı Belge Çekim Modu
+### 📷 9. Mobil Vizör & Akıllı Belge Çekim Modu
 - **A4 / 3:4 / Tam Ekran Maskesi:** Çekmek istediğiniz belgenin oranına göre vizör sınırlandırılır.
 - **Çoklu Sayfa (Belge) Modu:** Sayfaları art arda çekin, "Bitir ve PDF Gönder" butonuna bastığınız anda tüm sayfalar telefonda tek PDF yapılıp bilgisayara şifreli uçurulur.
 - **Flaş & Ön/Arka Kamera:** Tek dokunuşla fener kontrolü ve kamera geçişi.

@@ -153,6 +153,19 @@ async function onReq(s) {
   } catch {
     return;
   }
+  const reqName = (i.name || '').trim();
+
+  // Çakışma kontrolü: Başka bir aktif online cihazda bu isim var mı?
+  const hasConflict = Object.values(devs).some(d => d.id !== id && d.online && (d.name || '').trim().toLowerCase() === reqName.toLowerCase());
+
+  if (hasConflict) {
+    R('conflict/' + id).set({ conflict: true, name: reqName });
+    toast('«' + reqName + '» adı başka bir cihaz tarafından kullanılıyor. Cihazdan yeni ad istendi.');
+    return;
+  } else {
+    R('conflict/' + id).remove().catch(() => {});
+  }
+
   const isNew = !devs[id] || !devs[id].online;
   const d = devs[id] || (devs[id] = { id, n: 0, color: PAL[Object.keys(devs).length % PAL.length] });
   Object.assign(d, i, { online: true });
@@ -178,7 +191,7 @@ function renderDevs() {
   $('dc').textContent = v.filter(d => d.online).length + ' aktif';
   $('dl').innerHTML = v.length ? v.map(d => {
     const s = a[d.id];
-    return `<div class="dev">
+    return `<div class="dev" style="cursor:pointer" onclick="openFolder('${esc(d.name || '').replace(/'/g, "\\'")}')" title="Bu cihazın klasörünü aç">
       <div class="av" style="background:${d.color}22;color:${d.color}"><i class="fa-solid fa-mobile-screen"></i></div>
       <div style="min-width:0;flex:1">
         <div class="dr">
@@ -186,7 +199,7 @@ function renderDevs() {
           <span class="mu sm">${d.n} dosya</span>
         </div>
         <div class="mu sm">${esc(d.os || '')} • ${esc(d.model || '')}${d.online ? '' : ' • çevrimdışı'}</div>
-        <div class="acts" style="margin-top:8px">
+        <div class="acts" style="margin-top:8px" onclick="event.stopPropagation()">
           ${s === 'ok' ? '<span class="chip ok">İzinli</span>' : `<button class="btn sm ok" onclick="decide('${d.id}','ok')">İzin ver</button>`}
           ${s === 'no' ? '<span class="chip bad">Engelli</span>' : `<button class="btn sm dg" onclick="decide('${d.id}','no')">Engelle</button>`}
         </div>
@@ -322,16 +335,109 @@ function setFlt(k) {
   render();
 }
 
+function openFolder(name) {
+  curFolder = name;
+  sel = [];
+  render();
+}
+
 function render() {
   const q = $('q').value.toLowerCase();
-  $('cnt').textContent = files.length;
-  const l = files.filter(f => (flt === 'all' || f.type === flt) && (f.name + f.sender).toLowerCase().includes(q)),
-        so = $('srt').value;
+
+  // Gönderen/cihaz bazlı gruplama
+  const senderMap = {};
+  files.forEach(f => {
+    const s = f.sender || 'Bilinmeyen Cihaz';
+    if (!senderMap[s]) senderMap[s] = { count: 0, color: f.color || PAL[0], lastTime: f.time, size: 0 };
+    senderMap[s].count++;
+    senderMap[s].size += f.size;
+    if (f.time > senderMap[s].lastTime) senderMap[s].lastTime = f.time;
+  });
+  const senders = Object.keys(senderMap);
+
+  // Ekmek kırıntısı (Breadcrumbs)
+  const bc = $('bc');
+  if (curFolder === 'all') {
+    bc.innerHTML = `<i class="fa-solid fa-folder-open"></i>Gelen Evraklar<small id="cnt">${files.length}</small>
+      <span id="hint0" class="mu sm ${files.length && !sel.length ? '' : 'hidden'}" style="margin-left:10px">
+        <i class="fa-regular fa-hand-pointer"></i> Düzenlemek için dosyanın köşesindeki daireye tıklayın
+      </span>`;
+  } else {
+    const cinf = senderMap[curFolder] || { count: 0, color: '#60a5fa' };
+    bc.innerHTML = `<div class="breadcrumb">
+      <a class="bc-link" onclick="openFolder('all')"><i class="fa-solid fa-folder"></i> Evraklar</a>
+      <span class="bc-sep"><i class="fa-solid fa-chevron-right"></i></span>
+      <span class="bc-cur"><i class="fa-solid fa-folder-open" style="color:${cinf.color}"></i> ${esc(curFolder)}</span>
+      <small id="cnt">${cinf.count}</small>
+    </div>`;
+  }
+
+  // Klasör Bölümü (#fsec)
+  const fsec = $('fsec');
+  if (fsec) {
+    if (curFolder === 'all') {
+      if (senders.length > 0) {
+        fsec.innerHTML = `
+          <div class="folder-grid">
+            <div class="folder-card active" onclick="openFolder('all')">
+              <div class="fc-icon"><i class="fa-solid fa-inbox"></i></div>
+              <div class="fc-info">
+                <div class="fc-title">Tüm Dosyalar</div>
+                <div class="fc-count">${files.length} dosya · ${fmt(files.reduce((a, f) => a + f.size, 0))}</div>
+              </div>
+            </div>
+            ${senders.map(s => {
+              const inf = senderMap[s];
+              return `<div class="folder-card" onclick="openFolder('${esc(s).replace(/'/g, "\\'")}')">
+                <div class="fc-icon" style="background:${inf.color}22;color:${inf.color}"><i class="fa-solid fa-folder"></i></div>
+                <div class="fc-info">
+                  <div class="fc-title">${esc(s)}</div>
+                  <div class="fc-count">${inf.count} dosya · ${fmt(inf.size)}</div>
+                </div>
+              </div>`;
+            }).join('')}
+          </div>`;
+        fsec.style.display = 'block';
+      } else {
+        fsec.innerHTML = '';
+        fsec.style.display = 'none';
+      }
+    } else {
+      const inf = senderMap[curFolder] || { count: 0, size: 0, color: '#60a5fa' };
+      fsec.innerHTML = `
+        <div class="folder-banner">
+          <div class="fb-info">
+            <div class="fb-icon" style="background:${inf.color}22;color:${inf.color}"><i class="fa-solid fa-folder-open"></i></div>
+            <div>
+              <h3>${esc(curFolder)} Klasörü</h3>
+              <p>${inf.count} dosya · ${fmt(inf.size)}</p>
+            </div>
+          </div>
+          <button class="btn sm" onclick="openFolder('all')"><i class="fa-solid fa-arrow-left"></i> Tüm Dosyalar</button>
+        </div>`;
+      fsec.style.display = 'block';
+    }
+  }
+
+  // Dosyaları filtrele
+  const l = files.filter(f => {
+    if (curFolder !== 'all' && f.sender !== curFolder) return false;
+    if (flt !== 'all' && f.type !== flt) return false;
+    if (q && !(f.name + f.sender).toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  const so = $('srt').value;
   l.sort(so === 'o' ? (a, b) => a.time - b.time
        : so === 'n' ? (a, b) => a.name.localeCompare(b.name, 'tr')
        : so === 's' ? (a, b) => b.size - a.size
        : (a, b) => b.time - a.time);
-  $('empty').classList.toggle('hidden', files.length > 0);
+
+  const emp = $('empty');
+  emp.classList.toggle('hidden', l.length > 0 || (curFolder === 'all' && files.length > 0));
+  const h2 = emp.querySelector('h2');
+  if (h2) h2.textContent = curFolder !== 'all' ? 'Bu klasörde henüz dosya yok' : 'Klasör henüz boş';
+
   $('grid').innerHTML = l.map(f => {
     const n = sel.indexOf(f.id) + 1,
           ext = (f.name.split('.').pop() || '').slice(0, 5).toUpperCase();
@@ -340,7 +446,7 @@ function render() {
     <div class="th" onclick="prev('${f.id}')">
       ${f.thumb ? `<img src="${f.thumb}" alt="">` : `<i class="fa-solid ${f.type === 'video' ? 'fa-film' : 'fa-file-lines'} ico"></i>`}
       <div class="num" title="Seçim sırası" onclick="event.stopPropagation();tog('${f.id}')">${n || ''}</div>
-      <span class="who" style="background:${f.color}33;color:${f.color}" title="${esc(f.sender)}">${esc(f.sender)}</span>
+      <span class="who" style="background:${f.color}33;color:${f.color}" title="${esc(f.sender)} (Klasörü aç)" onclick="event.stopPropagation();openFolder('${esc(f.sender).replace(/'/g, "\\'")}')">${esc(f.sender)}</span>
       <span class="tag ${f.type === 'pdf' ? 'pdf' : ''}">${esc(lbl)}</span>
     </div>
     <div class="ci" onclick="tog('${f.id}')" style="cursor:pointer">
@@ -430,8 +536,9 @@ function tog(id) {
 }
 
 function selAll() {
-  const all = files.length && files.every(f => sel.includes(f.id));
-  sel = all ? [] : [...files].reverse().map(f => f.id);
+  const visible = files.filter(f => curFolder === 'all' || f.sender === curFolder);
+  const all = visible.length && visible.every(f => sel.includes(f.id));
+  sel = all ? [] : [...visible].reverse().map(f => f.id);
   render();
 }
 

@@ -63,9 +63,21 @@ function show(id, on) {
   if (el) el.classList.toggle('on', !!on);
 }
 
+// Benzersiz ve kolay akılda kalıcı cihaz adı üreticisi
+function generateDeviceName(model) {
+  const ADJ = ['Mavi', 'Neon', 'Kozmik', 'Hızlı', 'Parlak', 'Kuzey', 'Altın', 'Gümüş', 'Şimşek', 'Fırtına', 'Cesur', 'Atlas', 'Doruk', 'Pusula', 'Zirve'];
+  const NOUNS = ['Kartal', 'Şahin', 'Kaplan', 'Pars', 'Kurt', 'Yunus', 'Yıldız', 'Bulut', 'Rüzgar', 'Kılıç', 'Gezgin', 'Şafak'];
+  const a = ADJ[Math.floor(Math.random() * ADJ.length)];
+  const n = NOUNS[Math.floor(Math.random() * NOUNS.length)];
+  const num = Math.floor(10 + Math.random() * 90);
+  const base = (model && model !== 'Telefon' && model !== 'Android') ? model : n;
+  return `${a}-${base}-${num}`;
+}
+
 // Genel durum değişkenleri
 let db, room, K;
 let files = [], sel = [], devs = {}, rx = {}, flt = 'all';
+let curFolder = 'all'; // 'all' veya belirli bir sender adı (örn: 'Burak', 'Hasan')
 let cr = null, edF = 'none', ed = null;
 let pvId = null, dragI = -1, dirH = null, unread = 0;
 const baseT = document.title;

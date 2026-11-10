@@ -6,20 +6,22 @@ const isMob = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
               (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform));
 
 let dev, pcUp = false, state = null, mName, mInfo, stream, facing = 'environment',
-    tOn = false, wake = null, queue = Promise.resolve(), mScan = null;
+    tOn = false, wake = null, queue = Promise.resolve(), mScan = null, camActive = false;
 
 function ui() {
   const [c, t] = !pcUp ? ['#fbbf24', 'PC bekleniyor...']
                : state === 'ok' ? ['#34d399', "PC'ye bağlı (şifreli)"]
                : state === 'no' ? ['#ef4444', 'Bu cihaz engellendi']
                : ['#fbbf24', "PC'de onay bekleniyor..."];
-  $('md').style.background = c;
-  $('md').style.boxShadow = `0 0 0 4px ${c}33`;
-  $('ms').textContent = t;
+  if ($('md')) { $('md').style.background = c; $('md').style.boxShadow = `0 0 0 4px ${c}33`; }
+  if ($('ms')) $('ms').textContent = t;
+  if ($('md2')) { $('md2').style.background = c; $('md2').style.boxShadow = `0 0 0 4px ${c}33`; }
+  if ($('ms2')) $('ms2').textContent = t;
 }
 
 function hint() {
   const e = $('fs');
+  if (!e) return;
   e.style.animation = 'none';
   e.offsetHeight;
   e.style.animation = '';
@@ -52,15 +54,19 @@ async function mobInit() {
   }
 
   mInfo = { os, model };
-  mName = localStorage.ts_name || model;
-  $('mn').textContent = mName;
-  $('ml').textContent = os + ' • ' + model;
+  if (!localStorage.ts_name) {
+    localStorage.ts_name = generateDeviceName(model);
+  }
+  mName = localStorage.ts_name;
+  if ($('mn')) $('mn').textContent = mName;
+  if ($('mn2')) $('mn2').textContent = mName;
+  if ($('ml')) $('ml').textContent = os + ' • ' + model;
 
   const v = $('mv');
   addEventListener('resize', () => { if (CAPS[capI][0]) maskUi(); });
-  v.addEventListener('pause', () => { if (!document.hidden) v.play().catch(() => {}); });
+  v.addEventListener('pause', () => { if (!document.hidden && camActive) v.play().catch(() => {}); });
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden || !stream) return;
+    if (document.hidden || !camActive || !stream) return;
     const t = stream.getVideoTracks()[0];
     if (!t || t.readyState !== 'live') startCam();
     else v.play().catch(() => {});
@@ -76,18 +82,12 @@ async function mobInit() {
 async function connectMode(r, k) {
   $('mob').classList.remove('scan');
   ui();
-  hint();
-  if (!stream || !stream.active) {
-    startCam().then(ok => {
-      if (!ok) toast('Kamera açılamadı. Galeri ve Dosya düğmeleriyle gönderebilirsiniz.');
-    });
-  }
   try {
     room = r;
     await initKey(k);
     await fbInit();
   } catch (e) {
-    $('ms').textContent = 'Karekodu yeniden okutun';
+    if ($('ms')) $('ms').textContent = 'Karekodu yeniden okutun';
     return;
   }
   dev = localStorage.ts_did || (localStorage.ts_did = rid(8));
@@ -99,6 +99,13 @@ async function connectMode(r, k) {
   R('dev/' + dev).on('value', s => {
     state = s.val();
     ui();
+  });
+  // İsim çakışması dinleyicisi
+  R('conflict/' + dev).on('value', s => {
+    if (s.exists() && s.val() && s.val().conflict) {
+      toast('«' + (s.val().name || mName) + '» adı başka bir cihaz tarafından kullanılıyor. Lütfen yeni bir ad seçin.');
+      rename();
+    }
   });
   db.ref('usage/pool').on('value', x => {
     pool = x.val();
@@ -176,6 +183,10 @@ function scanGot(t) {
   }
   if (!r || !k || r.length < 20) return;
   clearInterval(mScan);
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
   if (navigator.vibrate) navigator.vibrate(60);
   localStorage.ts_mr = r;
   localStorage.ts_mk = k;
@@ -195,6 +206,28 @@ async function hello() {
   await q.set({ e: await enc(JSON.stringify({ name: mName, ...mInfo }), 'hello:' + dev) });
 }
 
+/* Kamera Açma ve Kapatma (Hub -> Kamera -> Hub) */
+async function openCam() {
+  camActive = true;
+  $('mob').classList.add('cam-mode');
+  const ok = await startCam();
+  if (!ok) {
+    toast('Kamera açılamadı. Lütfen kamera iznini kontrol edin.');
+    closeCam();
+  } else {
+    hint();
+  }
+}
+
+function closeCam() {
+  camActive = false;
+  $('mob').classList.remove('cam-mode');
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+  }
+}
+
 /* İsim değiştirme */
 function rename() {
   $('rni').value = mName;
@@ -203,6 +236,7 @@ function rename() {
 }
 
 function resumeCam() {
+  if (!camActive) return;
   setTimeout(() => {
     const v = $('mv');
     (!stream || !stream.active) ? startCam() : v.play().catch(() => {});
@@ -220,7 +254,9 @@ function saveName() {
   if (n) {
     mName = n;
     localStorage.ts_name = n;
-    $('mn').textContent = n;
+    if ($('mn')) $('mn').textContent = n;
+    if ($('mn2')) $('mn2').textContent = n;
+    if (R && dev) R('conflict/' + dev).remove().catch(() => {});
     if (pcUp) hello();
   }
   resumeCam();
